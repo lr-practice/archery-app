@@ -787,7 +787,8 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   Innenabstand. Oben (10 px unter der Fensterkante, mittig, so breit wie nötig,
   höchstens Fensterbreite − 200 px, damit die Fensterknöpfe frei bleiben): die
   neun Ansichten und Mischen, immer gleich. Unten (wie 4.11, bis 960 px): ohne
-  Auswahl Flächen-Quadrat, „+ Objekte“, Linien, Autoplay, Snapshot, rechts
+  Auswahl Flächen-Quadrat, „+ Objekte“, „+5 ähnliche“ (seit 0.43.4 wieder
+  direkt daneben, Lukas 01.11.), Linien, Autoplay, Snapshot, rechts
   Ausblenden und Schließen; mit Auswahl „n gewählt“, Groß,
   Vergleichen (ab zwei) bzw. In die Mitte (eins), rechts Entfernen und ×. Zu
   schmal brechen beide in eine zweite Zeile um. Aktiv = gefüllter Knopf

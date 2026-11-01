@@ -866,6 +866,8 @@
     nav.appendChild(tone);
     nav.appendChild(sep());
     nav.appendChild(lbBtn("+ " + t("cloudAdd"), C.picker, togglePicker, t("cloudAddTitle")));
+    // Direkt daneben wieder in der Leiste (Lukas 01.11.), auch weiter im Glas
+    nav.appendChild(lbBtn(t("cloudSimilar"), false, addSimilar, t("cloudSimilarTitle")));
     nav.appendChild(sep());
     nav.appendChild(lbBtn(t("cloudLines"), C.lines, toggleLines, t("cloudLinesTitle")));
     nav.appendChild(lbBtn(t("cloudAuto"), !!C.auto, () => toggleAuto(), t("cloudAutoTitle")));
