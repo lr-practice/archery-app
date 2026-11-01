@@ -771,7 +771,7 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   auswählen, einzelne groß, mehr Zusammenspiel, mehr Ansichten“, dann „eine
   Menübar, ausblendbar, als Bild speichern, Autoplay“). Vorabversion.
 - **Name:** Collection (Lukas 23.10., vorher Atlas nach Warburgs Bildatlas,
-  kurz Table). Englisch und Deutsch gleich, „die Collection“. Gesicherte Stände heißen Fassungen.
+  kurz Table). Englisch und Deutsch gleich, „die Collection“.
   Im Code bleibt `cloud`.
 - **Öffnen:** aus der Lightbox (Knopf Collection, W) oder in der Zone: mehrere
   wählen, Rechtsklick › In der Collection öffnen. Das erste Bild ist die Mitte, die
@@ -787,16 +787,22 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   Innenabstand. Oben (10 px unter der Fensterkante, mittig, so breit wie nötig,
   höchstens Fensterbreite − 200 px, damit die Fensterknöpfe frei bleiben): die
   neun Ansichten und Mischen, immer gleich. Unten (wie 4.11, bis 960 px): ohne
-  Auswahl Flächen-Quadrat, „+ Objekte“, „Fassungen ▾“, Linien, Autoplay, Als
-  Bild, rechts Ausblenden und Schließen; mit Auswahl „n gewählt“, Groß,
+  Auswahl Flächen-Quadrat, „+ Objekte“, Linien, Autoplay, Snapshot, rechts
+  Ausblenden und Schließen; mit Auswahl „n gewählt“, Groß,
   Vergleichen (ab zwei) bzw. In die Mitte (eins), rechts Entfernen und ×. Zu
   schmal brechen beide in eine zweite Zeile um. Aktiv = gefüllter Knopf
   (ink × 0.15). Lukas 23.10.: erst „Ansichten in die Leiste“, dann „doch zwei,
   oben und unten, weil sie zu lang wird“.
 - **Feld über der Leiste:** Glas wie das Menü (`--menu-bg`, `--menu-shadow`,
   `--r-lg`), steht über dem Knopf, der es öffnet, nie über den Rand.
-  „Fassungen ▾“: die Fassungen und „+ Fassung sichern“. Flächen-Quadrat: die
-  neun Flächen als Quadrate 20 px. Klick auf die Fläche oder Esc schließt.
+  Flächen-Quadrat: die neun Flächen als Quadrate 20 px, die gewählte mit
+  gestricheltem Rahmen. Klick auf die Fläche oder Esc schließt.
+- **Flächen-Quadrat in der Leiste (0.43.4):** 13 px, sitzt in einem Knopf wie
+  die anderen (`.lb-btn.cl-tone-btn`, 10 px Abstand), offen = gefüllter Knopf
+  statt gestricheltem Rahmen. Lightbox zeigt hier die volle `--lightbox-bg`,
+  nicht die halbe Diagonale aus dem Feld (Lukas 01.11.: „wird komisch
+  angezeigt“, der Rahmen ragte über die Leiste, die leere Hälfte verschwamm mit
+  ihr).
 - **Rechtsklick auf ein Bild:** Menü wie in den Zonen (`.p-ctx-menu`): Groß
   ansehen, In die Mitte (eins) oder Vergleichen (mehrere), Eigene Collection
   (dieses Bild als Mitte, ↩), In der Zone zeigen (schließt, öffnet die Zone und
@@ -846,7 +852,7 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
 - **Ausblenden (0.42.0):** H oder Knopf, nur noch die Bilder auf der Fläche.
   H oder Esc holt beide Leisten zurück, ein Hinweis sagt das einmal. Bleibt für
   die nächste Collection gemerkt (`archiver.cloudBarHidden`).
-- **Als Bild (0.42.0):** PNG der ganzen Anordnung, wie sie gerade liegt, mit
+- **Snapshot (0.42.0 als „Als Bild“, Snapshot seit 0.43.4, Lukas 01.11.):** PNG der ganzen Anordnung, wie sie gerade liegt, mit
   6 % Rand (mind. 24 px) im Ton der Fläche; Lightbox wird deckend (#0a0a0a
   dunkel, #ebebeb hell). Feste Linien und der Faden im Strang kommen mit, unter
   den Bildern, in der Schriftfarbe der Fläche auf 45 %, Strich 1 und 4/4
@@ -855,9 +861,9 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   `collection_<zone>_<jjjj-mm-tt>_<hhmm>.png`, Zone klein, ohne Akzente,
   Leerzeichen als „-“. Sichern-Dialog in Downloads, danach im Finder gezeigt
   (`export_cloud_image`, `atlas.rs`).
-- **Fassungen (0.42.0):** „+ Fassung sichern“ hält die aktuelle Lage als freie
-  Lage fest, mit Ansicht und Fläche, Namen „Fassung 1, 2 …“, höchstens 12 je
-  Collection. Klick legt sie wieder aus (Ansicht Frei), Rechtsklick löscht.
+- **Fassungen (0.42.0 bis 0.43.3, entfernt):** Lukas 01.11.: „Versionen bitte
+  löschen“. Knopf, Feld und Speicher sind raus; gesicherte Fassungen fallen
+  beim nächsten Speichern weg.
 - **Groß ansehen:** Leertaste oder Doppelklick; Fläche wie die Collection, Bild
   `contain` in einer festen Zelle (`grid-template: minmax(0, 1fr) / minmax(0,
   1fr)`, sonst laufen hohe Bilder aus dem Fenster, 0.42.1), ← → blättert durch die Auswahl (bei einer: alle), Label unten mit
@@ -874,7 +880,7 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
 - **Bewegung:** Bei `prefers-reduced-motion` springen die Objekte ohne Gleiten,
   Feld und Glas erscheinen ohne Einblenden.
 - **Speichern:** Mitglieder, Größe, Platz (Tauschen), Ansicht, Fläche, die
-  freie Lage (Anteile der Fläche) und die Fassungen je Objekt, lokal unter
+  freie Lage (Anteile der Fläche) je Objekt, lokal unter
   `archiver.clouds` (höchstens 300). Keine Datei, keine Kopien. Alte Modi werden
   beim Öffnen übersetzt: Orbit → Fokus, Farbe → Spektrum, Konstellation → Strang.
 - **Nicht:** Keine Rundung an Objekten, keine Akzentfarbe, keine Schatten an

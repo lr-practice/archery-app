@@ -266,6 +266,17 @@
   outline-offset: 3px;
 }
 
+/* In der Leiste: das Quadrat sitzt in einem Knopf wie die anderen (0.43.4),
+   offen = gefüllter Knopf; Lightbox voll statt halb, sonst verschwimmt die
+   leere Hälfte mit der Leiste */
+.cl-tone-btn .cl-tone {
+  display: block;
+}
+
+.cl-tone-btn .cl-tone[data-tone="lightbox"] {
+  background: var(--lightbox-bg);
+}
+
 /* ---- Leisten: wie die Lightbox-Leiste ---- */
 
 /* Auf farbiger Fläche decken die Leisten wie ein Menü, damit sie lesbar bleiben */
