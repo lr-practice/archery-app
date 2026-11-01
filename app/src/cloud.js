@@ -1,4 +1,4 @@
-// cloud.js — Collection (0.39.1 „Wolke“, 0.42.0 „Atlas“, seit 0.42.1 Collection):
+// cloud.js — Table (0.39.1 „Wolke“, 0.42.0 „Atlas“, 0.42.1 Collection, seit 0.43.4 Table, deutsch Tisch):
 // Am offenen Objekt weitere Referenzen andocken und sie wie auf einem Tisch
 // ordnen. Eine Leiste unten, Rechtsklick auf ein Bild. Neun Ansichten:
 // Wolke, Fokus, Raster, Spalten, Spektrum, Strang, Stapel, Vergleich, Frei.
@@ -1084,10 +1084,10 @@
     const segs = linePairs();
     if (C.view === "strand" && C.chain) for (let i = 1; i < C.chain.length; i++) segs.push([C.chain[i - 1], C.chain[i]]);
     const lines = segs.map(([a, b]) => [(a.x - x0) * k, (a.y - y0) * k, (b.x - x0) * k, (b.y - y0) * k]);
-    // Schema (0.42.1): collection_<zone>_<jjjj-mm-tt>_<hhmm>.png, z. B. collection_mortar_2026-10-23_1836.png
+    // Schema (0.43.4): table_<zone>_<jjjj-mm-tt>_<hhmm>.png, z. B. table_mortar_2026-10-23_1836.png
     const d = new Date(), two = (v) => String(v).padStart(2, "0");
     const slug = zoneName(C.focus.zone).toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "archiver";
-    const name = `collection_${slug}_${d.getFullYear()}-${two(d.getMonth() + 1)}-${two(d.getDate())}_${two(d.getHours())}${two(d.getMinutes())}.png`;
+    const name = `table_${slug}_${d.getFullYear()}-${two(d.getMonth() + 1)}-${two(d.getDate())}_${two(d.getHours())}${two(d.getMinutes())}.png`;
     try {
       const out = await A.invoke("export_cloud_image", {
         fileName: name,

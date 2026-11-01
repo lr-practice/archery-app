@@ -330,7 +330,7 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   Die Info gibt es per `I` oder im Seitenblatt.
 
 ### 4.6a Farbmarke (App 0.41.0, `.card-mark`, `.p-marks`)
-- **Zweck:** Objekte gehören zusammen. Unabhängig von der Collection, in jeder Zone.
+- **Zweck:** Objekte gehören zusammen. Unabhängig vom Tisch (4.25), in jeder Zone.
 - **Farben:** die fünf Farben der Textkarten (Rot, Grün, Violett, Cyan, Gelb,
   `QUOTE_TONES`), ein Objekt hat höchstens eine.
 - **Form:** Innenrand 4 px in der Farbe auf dem Bild (`box-shadow: inset`),
@@ -412,8 +412,8 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   Dateiname nicht, kürzt `fitLbName` ihn in der Mitte („Anfang … Ende.png“),
   damit Anfang und Endung sichtbar bleiben. Der volle Name steht im Tooltip.
 - **Seitenblatt:** Details von rechts, `--sheet-w` = min(560 px, 46 vw).
-- **Collection (0.39.1 als Wolke, 0.42 Atlas):** Knopf „Collection“ in der Leiste und Taste W
-  öffnen die Collection (4.25) über der Lightbox.
+- **Table (0.39.1 als Wolke, 0.42 Atlas, 0.42.1 Collection):** Knopf „Table“
+  (deutsch „Tisch“) in der Leiste und Taste W öffnen den Table (4.25) über der Lightbox.
 
 ### 4.11a Bildtext (`.card-cap`, `.lb-caption`, 0.29)
 - **Zweck:** Credits oder Unterschrift zu einem Bild, wie unter einem Bild im
@@ -764,17 +764,18 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
 - **Sichtbar:** nur mit Vorab-Kanal oder nach ⌥-Klick auf die Versionsnummer.
 - **Kürzel:** ⌘I öffnet Information.
 
-### 4.25 Collection (App 0.39.1 als Wolke, neu 0.41.0, als Atlas 0.42.0, Collection seit 0.42.1, `cloud.css`, `cloud.js`)
+### 4.25 Table (App 0.39.1 als Wolke, neu 0.41.0, als Atlas 0.42.0, Collection 0.42.1, Table seit 0.43.4, `cloud.css`, `cloud.js`)
 - **Zweck:** Am offenen Objekt weitere Referenzen andocken und sie wie auf einem
   Tisch ordnen, als Moodboard für genau dieses Objekt (Lukas 17.10.: „eine Wolke
   an Referenzen, die als Mood-Strang agieren“; 23.10.: „intuitiver, mehrere
   auswählen, einzelne groß, mehr Zusammenspiel, mehr Ansichten“, dann „eine
   Menübar, ausblendbar, als Bild speichern, Autoplay“). Vorabversion.
-- **Name:** Collection (Lukas 23.10., vorher Atlas nach Warburgs Bildatlas,
-  kurz Table). Englisch und Deutsch gleich, „die Collection“.
+- **Name:** Table, deutsch Tisch (Lukas 01.11., vorher Collection ab 23.10.,
+  davor Atlas nach Warburgs Bildatlas). Menü: „Open on Table“ / „Auf dem Tisch
+  öffnen“, „Own Table“ / „Eigener Tisch“, „Remove from Table“ / „Vom Tisch nehmen“.
   Im Code bleibt `cloud`.
-- **Öffnen:** aus der Lightbox (Knopf Collection, W) oder in der Zone: mehrere
-  wählen, Rechtsklick › In der Collection öffnen. Das erste Bild ist die Mitte, die
+- **Öffnen:** aus der Lightbox (Knopf Table, W) oder in der Zone: mehrere
+  wählen, Rechtsklick › Auf dem Tisch öffnen. Das erste Bild ist die Mitte, die
   anderen liegen gleich daneben. Kopf, Navigation und Ablage der App treten
   weg wie bei der Lightbox.
 - **Fläche:** ab Werk wie die Lightbox (`--lightbox-bg`, `blur(24px)`). Wählbar
@@ -805,9 +806,9 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   angezeigt“, der Rahmen ragte über die Leiste, die leere Hälfte verschwamm mit
   ihr).
 - **Rechtsklick auf ein Bild:** Menü wie in den Zonen (`.p-ctx-menu`): Groß
-  ansehen, In die Mitte (eins) oder Vergleichen (mehrere), Eigene Collection
+  ansehen, In die Mitte (eins) oder Vergleichen (mehrere), Eigener Tisch
   (dieses Bild als Mitte, ↩), In der Zone zeigen (schließt, öffnet die Zone und
-  wählt das Bild), Aus der Collection nehmen (rot, ⌫). Rechtsklick auf ein ungewähltes
+  wählt das Bild), Vom Tisch nehmen (rot, ⌫). Rechtsklick auf ein ungewähltes
   Bild wählt es. Keine Größe im Menü (0.42.1).
 - **Größe am Bild (0.42.1):** Beim Überfahren unten rechts im Bild − und + (je
   22 px, Glas wie das Menü, `--r-sm`, 6 px vom Rand). Nur in Wolke, Spektrum,
@@ -852,20 +853,20 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   Fläche, eine Taste oder Esc hält an. Knopf aktiv, solange es läuft.
 - **Ausblenden (0.42.0):** H oder Knopf, nur noch die Bilder auf der Fläche.
   H oder Esc holt beide Leisten zurück, ein Hinweis sagt das einmal. Bleibt für
-  die nächste Collection gemerkt (`archiver.cloudBarHidden`).
+  den nächsten Tisch gemerkt (`archiver.cloudBarHidden`).
 - **Snapshot (0.42.0 als „Als Bild“, Snapshot seit 0.43.4, Lukas 01.11.):** PNG der ganzen Anordnung, wie sie gerade liegt, mit
   6 % Rand (mind. 24 px) im Ton der Fläche; Lightbox wird deckend (#0a0a0a
   dunkel, #ebebeb hell). Feste Linien und der Faden im Strang kommen mit, unter
   den Bildern, in der Schriftfarbe der Fläche auf 45 %, Strich 1 und 4/4
   gestrichelt, im Maß des Bildes (0.42.1). Lange Seite bis 4000 px, aus den
   Originalen, sonst der Vorschau. Dateiname nach Schema (0.42.1):
-  `collection_<zone>_<jjjj-mm-tt>_<hhmm>.png`, Zone klein, ohne Akzente,
+  `table_<zone>_<jjjj-mm-tt>_<hhmm>.png` (bis 0.43.3 `collection_…`), Zone klein, ohne Akzente,
   Leerzeichen als „-“. Sichern-Dialog in Downloads, danach im Finder gezeigt
   (`export_cloud_image`, `atlas.rs`).
 - **Fassungen (0.42.0 bis 0.43.3, entfernt):** Lukas 01.11.: „Versionen bitte
   löschen“. Knopf, Feld und Speicher sind raus; gesicherte Fassungen fallen
   beim nächsten Speichern weg.
-- **Groß ansehen:** Leertaste oder Doppelklick; Fläche wie die Collection, Bild
+- **Groß ansehen:** Leertaste oder Doppelklick; Fläche wie der Tisch, Bild
   `contain` in einer festen Zelle (`grid-template: minmax(0, 1fr) / minmax(0,
   1fr)`, sonst laufen hohe Bilder aus dem Fenster, 0.42.1), ← → blättert durch die Auswahl (bei einer: alle), Label unten mit
   Zone, Name und Stelle. Esc oder Leertaste schließt.
@@ -877,8 +878,8 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   Bildern): oben „Alle Zonen › Zone“, darunter die Zonen als Karten wie im Tray
   (Cover aus bis zu drei Bildern 8:3, Name, Mono-Anzahl, vier je Zeile, unter
   700 px zwei), Klick öffnet die Zone, ihre Bilder brechen um. Die Suche gilt
-  auch dort. Enter macht das gewählte Objekt zur Mitte seiner eigenen
-  Collection.
+  auch dort. Enter macht das gewählte Objekt zur Mitte seines eigenen
+  Tischs.
 - **Bewegung:** Bei `prefers-reduced-motion` springen die Objekte ohne Gleiten,
   Feld und Glas erscheinen ohne Einblenden.
 - **Speichern:** Mitglieder, Größe, Platz (Tauschen), Ansicht, Fläche, die
@@ -886,7 +887,7 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   `archiver.clouds` (höchstens 300). Keine Datei, keine Kopien. Alte Modi werden
   beim Öffnen übersetzt: Orbit → Fokus, Farbe → Spektrum, Konstellation → Strang.
 - **Nicht:** Keine Rundung an Objekten, keine Akzentfarbe, keine Schatten an
-  den Objekten. Die Extension kennt die Collection nicht.
+  den Objekten. Die Extension kennt den Tisch nicht.
 
 ### 4.24c Seitenkopf (vorher Labor › Kopf, fest seit App 0.42.3)
 - Ein Kopf für alle Seiten: Titel und Satz als ein Absatz, Titel `--p-text`,

@@ -11,10 +11,12 @@
 - Zonen kommen von selbst nur noch für Bild, Link oder markierten Text. Das
   eigene Ziehen einer Seite (Kanban, Listen, Web-Apps) und Text oder Links
   von außen bleiben frei; mit ⌥ beim Ziehen kommen die Zonen trotzdem.
-- Collection: Das Flächen-Quadrat sitzt in der Leiste wie ein Knopf, offen
+- Collection heißt jetzt Table, auf Deutsch Tisch (Menü „Auf dem Tisch öffnen“).
+  Snapshots heißen `table_<zone>_<datum>_<zeit>.png`.
+- Table: Das Flächen-Quadrat sitzt in der Leiste wie ein Knopf, offen
   gefüllt statt mit Rahmen über den Rand; Lightbox zeigt die volle Farbe.
-- Collection: Fassungen sind raus. „Als Bild“ heißt jetzt Snapshot.
-- Collection: „+5 ähnliche“ steht wieder direkt neben „+ Objekte“ in der Leiste
+- Table: Fassungen sind raus. „Als Bild“ heißt jetzt Snapshot.
+- Table: „+5 ähnliche“ steht wieder direkt neben „+ Objekte“ in der Leiste
   und nicht mehr im Glas darüber.
 
 ## App 0.43.3 · Extension 3.31.2
