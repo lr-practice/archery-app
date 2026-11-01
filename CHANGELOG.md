@@ -1,7 +1,9 @@
 # Changelog
 
-## Extension 3.31.3 (noch nicht veröffentlicht)
+## App 0.43.4 · Extension 3.31.3 (noch nicht veröffentlicht)
 
+- Konto: neue Preise. Lizenz ab 1.0 einmalig 19 €, Beta-Bonus 9 € bis 31.01.
+  (vorher 9,99 € und 4,99 €).
 - Karten lassen sich wieder verschieben: Google Maps, OpenStreetMap und
   eingebettete Karten öffnen beim Ziehen keine Zonen mehr.
 - Text auf Hintergrundbildern lässt sich wieder markieren, Zeichenflächen und
