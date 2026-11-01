@@ -866,7 +866,7 @@
     nav.appendChild(tone);
     nav.appendChild(sep());
     nav.appendChild(lbBtn("+ " + t("cloudAdd"), C.picker, togglePicker, t("cloudAddTitle")));
-    // Direkt daneben wieder in der Leiste (Lukas 01.11.), auch weiter im Glas
+    // Fünf ähnlichste auf einmal, seit 0.43.4 nur hier in der Leiste (Lukas 01.11.)
     nav.appendChild(lbBtn(t("cloudSimilar"), false, addSimilar, t("cloudSimilarTitle")));
     nav.appendChild(sep());
     nav.appendChild(lbBtn(t("cloudLines"), C.lines, toggleLines, t("cloudLinesTitle")));
@@ -1120,8 +1120,6 @@
       });
       const row = el("div", "cl-picker-row");
       row.appendChild(input);
-      // Fünf ähnlichste auf einmal, seit 0.42.0 hier statt in der Leiste
-      row.appendChild(lbBtn(t("cloudSimilar"), false, addSimilar, t("cloudSimilarTitle")));
       const more = lbBtn("", false, toggleMore, t("cloudMoreTitle"));
       more.classList.add("cl-more-btn");
       row.appendChild(more);

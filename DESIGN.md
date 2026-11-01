@@ -870,7 +870,8 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   1fr)`, sonst laufen hohe Bilder aus dem Fenster, 0.42.1), ← → blättert durch die Auswahl (bei einer: alle), Label unten mit
   Zone, Name und Stelle. Esc oder Leertaste schließt.
 - **Hinzufügen („+ Objekte“, 0.42.1, vorher „+ Referenz“):** Glas über der
-  Leiste (2.4) mit Suchfeld, daneben „+5 ähnliche“ und „Zonen ▾“, darunter
+  Leiste (2.4) mit Suchfeld, daneben „Zonen ▾“ („+5 ähnliche“ seit 0.43.4 nur
+  in der Leiste), darunter
   Streifen 88 px, ähnlichste Bilder zuerst (Farbanteile, gleiche Zone). Klick
   dockt an. „Zonen ▾“ klappt auf (höchstens 52vh/460 px, liegt über den
   Bildern): oben „Alle Zonen › Zone“, darunter die Zonen als Karten wie im Tray

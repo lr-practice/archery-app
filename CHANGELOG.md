@@ -14,7 +14,8 @@
 - Collection: Das Flächen-Quadrat sitzt in der Leiste wie ein Knopf, offen
   gefüllt statt mit Rahmen über den Rand; Lightbox zeigt die volle Farbe.
 - Collection: Fassungen sind raus. „Als Bild“ heißt jetzt Snapshot.
-- Collection: „+5 ähnliche“ steht wieder direkt neben „+ Objekte“ in der Leiste.
+- Collection: „+5 ähnliche“ steht wieder direkt neben „+ Objekte“ in der Leiste
+  und nicht mehr im Glas darüber.
 
 ## App 0.43.3 · Extension 3.31.2
 
