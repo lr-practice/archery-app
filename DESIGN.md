@@ -597,7 +597,14 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   Text oder Links ohne Datei. Zeigt nie „Gesichert“, bevor es gesichert ist.
   Im Browser (Extension 3.29.5) erscheint sie nur, wenn das Ziehen auf der
   Seite beginnt, nicht bei Dateien von außen. Regler, Links und kleine
-  Bedienelemente über Bildern und Videos bleiben Bedienelemente.
+  Bedienelemente über Bildern und Videos bleiben Bedienelemente. Seit 3.31.3
+  kommt sie von selbst nur für Bild, Link oder markierten Text; eigenes Ziehen
+  der Seite (Kanban, sortierbare Listen) sowie Text und Links von außen nur
+  mit ⌥, das auch erst beim Ziehen kommen darf. Ohne Zonen bleibt das Ablegen
+  ganz bei der Seite. Karten aus Kacheln (Google Maps, OpenStreetMap), Text und
+  Zeichenflächen auf Hintergrundbildern und schmale Griffe über Bildern
+  (Vorher/Nachher) gehören der Seite: Ein verstecktes Bild zählt nur, wenn es
+  mindestens die Hälfte der gedrückten Fläche deckt und umgekehrt.
 
 ### 4.14 Zuletzt gelöscht (`.p-deleted`, `.card.del`)
 - **Zweck:** Gelöschte Objekte und Zonen liegen 7 Tage unter

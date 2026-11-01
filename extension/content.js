@@ -33,6 +33,7 @@
   const hotOf = (list, info) => (info && Array.isArray(info.hot) && info.hot.length ? info.hot.slice() : list);
   let shortcut = DEFAULT_SHORTCUT;
   let dragCounter = 0;
+  let zonesOn = false; // Zonen für dieses Ziehen eingeblendet (3.31.3)
   let manualOpen = false; // true, wenn per Tastenkombination geöffnet (nicht durch Drag)
   let recordingShortcut = false; // true, während in den Einstellungen eine neue Kombination aufgenommen wird
   let fallbackImageUrl = null; // beim dragstart ermittelte (möglichst hochauflösende) Bildquelle
@@ -794,6 +795,7 @@
     }
     removeLibBar();
     dragCounter = 0;
+    zonesOn = false;
   }
 
   // Abgelegt (3.29.8, wie die App, DESIGN.md 4.13): Das Bild fliegt als Miniatur
@@ -805,6 +807,7 @@
     zonesBarEl = null;
     zoneEls = [];
     dragCounter = 0;
+    zonesOn = false;
     removeLibBar();
     zone.classList.add("active");
     if (src) stampZone(zone, src, pos);
@@ -1454,6 +1457,37 @@
   const CONTROL_ROLES =
     "a[href], label, summary, [role='button'], [role='link'], [role='menuitem'], [role='tab'], [role='checkbox'], [role='switch'], [role='option']";
 
+  // Bild unter der gedrückten Fläche, wenn es sie wirklich deckt (3.31.3). Nein
+  // bei Karten aus vielen Kacheln (Google Maps, OpenStreetMap), bei Text und
+  // Zeichenflächen auf einem Hintergrundbild und bei schmalen Griffen über einem
+  // Bild (Vorher/Nachher-Regler): Dort gehört das Ziehen der Seite.
+  function coveredImage(t, x, y) {
+    for (const el of document.elementsFromPoint(x, y)) {
+      if (el === document.documentElement || el === document.body) continue;
+      let src = null;
+      if (el.tagName === "IMG" || el.tagName === "PICTURE" || (el.tagName === "VIDEO" && el.poster)) src = el;
+      else if (bgImageOf(el) && !(el !== t && el.contains(t))) src = el; // Hintergrund einer Hülle zählt nicht
+      else if (el.querySelector)
+        src = [...el.querySelectorAll("img")].find((i) => {
+          const r = i.getBoundingClientRect();
+          return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+        });
+      if (!src) continue;
+      if (!covers(t, src)) return null;
+      return src === el && el.tagName === "VIDEO" ? el.poster : src.tagName === "IMG" || src.tagName === "PICTURE" ? findBestImageUrl(src) : bgImageOf(src);
+    }
+    return null;
+  }
+
+  // Sichtbare Schnittfläche: mindestens die Hälfte der Fläche und des Bildes
+  function covers(a, b) {
+    const ra = a.getBoundingClientRect();
+    const rb = b.getBoundingClientRect();
+    const vis = (l, t, r, btm) => Math.max(0, Math.min(r, innerWidth) - Math.max(l, 0)) * Math.max(0, Math.min(btm, innerHeight) - Math.max(t, 0));
+    const both = vis(Math.max(ra.left, rb.left), Math.max(ra.top, rb.top), Math.min(ra.right, rb.right), Math.min(ra.bottom, rb.bottom));
+    return both > 0 && both >= 0.5 * vis(ra.left, ra.top, ra.right, ra.bottom) && both >= 0.5 * vis(rb.left, rb.top, rb.right, rb.bottom);
+  }
+
   function armHiddenDrag(e) {
     if (!e.isTrusted) return; // nur echte Eingaben, keine von der Seite erzeugten Events
     clearHiddenDrag();
@@ -1477,7 +1511,7 @@
     if (t.closest("[draggable='true']") || (t.tagName === "IMG" && t.getAttribute("draggable") !== "false")) return;
     if (selectedText() && insideSelection(e.clientX, e.clientY)) return;
     const video = videoAt(e.clientX, e.clientY);
-    const url = video && video.poster && !IG ? video.poster : video ? null : imageAt(e.clientX, e.clientY);
+    const url = video && video.poster && !IG ? video.poster : video ? null : IG ? imageAt(e.clientX, e.clientY) : coveredImage(t, e.clientX, e.clientY);
     if (!url && !video) return;
     if (IG) return startMediaDrag(e, t, url, url ? null : video);
     hiddenDrag = { el: t, prev: t.getAttribute("draggable"), url, video: url ? null : video };
@@ -1502,6 +1536,8 @@
       setTimeout(() => {
         clearHiddenDrag();
         dragSource = null;
+        dragStarted = false;
+        pageDrag = false;
       }, 0),
     true
   );
@@ -1511,6 +1547,11 @@
     (e) => {
       if (!e.isTrusted) return; // nur echte Eingaben, keine von der Seite erzeugten Events
       dragSource = e.target instanceof Element ? e.target : null;
+      dragStarted = true;
+      // Ein Element, das die Seite selbst ziehbar gemacht hat (Kanban-Karte,
+      // sortierbare Liste, Datei in einer Web-App): Das Ziehen gehört der Seite (3.31.3)
+      const own = dragSource && dragSource.closest("[draggable='true']");
+      pageDrag = !!own && dragSource.tagName !== "IMG" && !(hiddenDrag && own === hiddenDrag.el);
       if (!hiddenDrag || !e.dataTransfer || !(e.target === hiddenDrag.el || hiddenDrag.el.contains(e.target))) return;
       e.dataTransfer.effectAllowed = "copy";
       if (hiddenDrag.video) {
@@ -1739,6 +1780,8 @@
   // gilt das angezeigte Bild in der größten Variante der Seite (srcset).
   const IG = /(^|\.)instagram\.com$/.test(location.hostname);
   let dragSource = null;
+  let dragStarted = false; // das Ziehen hat auf dieser Seite begonnen
+  let pageDrag = false; // ... mit einem Element, das die Seite selbst ziehbar gemacht hat
 
   // ---- Pinterest: Ziehen aus der Übersicht (3.28.4) ----
   // Jeder Pin ist ein Link um das Bild. Chrome zog darum den Link (Adresse am
@@ -2098,6 +2141,17 @@
     return !dragSource && !hiddenDrag && !!e.dataTransfer && [...e.dataTransfer.types].includes("Files");
   }
 
+  // Zonen von selbst nur für das, was Archery sichert und was auf der Seite
+  // begonnen hat: Bild, Link, markierter Text (3.31.3). Ziehen, das der Seite
+  // gehört, und Text oder Links von außen bekommen sie nur mit ⌥, wie die
+  // Leiste am ganzen Mac (DESIGN.md 4.13). ⌥ darf auch erst beim Ziehen kommen.
+  function openDragZones(e) {
+    if (zonesOn || !(e.altKey || hiddenDrag || (dragStarted && !pageDrag))) return;
+    zonesOn = true;
+    loadDragLibs();
+    showZones();
+  }
+
   window.addEventListener(
     "dragenter",
     (e) => {
@@ -2106,8 +2160,7 @@
       if (!e.dataTransfer || manualOpen) return; // im offenen Overlay übernehmen die Zonen-Karten
       if (foreignDrag(e)) return;
       dragCounter++;
-      if (dragCounter === 1 && !zonesBarEl) loadDragLibs();
-      showZones();
+      openDragZones(e);
     },
     true
   );
@@ -2118,6 +2171,8 @@
       if (!e.isTrusted) return; // nur echte Eingaben, keine von der Seite erzeugten Events
       if (gone()) return;
       if (!e.dataTransfer || manualOpen || foreignDrag(e)) return;
+      openDragZones(e);
+      if (!zonesOn) return; // ohne Zonen bleibt das Ablegen ganz bei der Seite
       e.preventDefault(); // notwendig, damit "drop" überhaupt feuert
       e.dataTransfer.dropEffect = "copy";
       // Mehrere Bibliotheken: jeder Druck auf ⇧ springt zur nächsten
@@ -2152,7 +2207,7 @@
     (e) => {
       if (!e.isTrusted) return; // nur echte Eingaben, keine von der Seite erzeugten Events
       if (gone()) return;
-      if (manualOpen || foreignDrag(e)) return;
+      if (manualOpen || foreignDrag(e) || !zonesOn) return;
       const zoneIdx = getZoneIndex(e.clientX, e.clientY);
       shiftDrop = dragLibs.length > 1 ? false : e.shiftKey;
       removeLibBar();
