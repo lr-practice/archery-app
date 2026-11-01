@@ -15,6 +15,8 @@
   `board_<zone>_<datum>_<zeit>.png`.
 - Board: Das Flächen-Quadrat sitzt in der Leiste wie ein Knopf, offen
   gefüllt statt mit Rahmen über den Rand; Lightbox zeigt die volle Farbe.
+- Board: Die obere Leiste mit den Ansichten hat keine Fläche mehr, nur noch die
+  Wörter; die gewählte Ansicht ist gefüllt.
 - Board: Fassungen sind raus. „Als Bild“ heißt jetzt Snapshot.
 - Board: „+5 ähnliche“ steht wieder direkt neben „+ Objekte“ in der Leiste
   und nicht mehr im Glas darüber.

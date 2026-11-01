@@ -303,6 +303,43 @@
   max-width: calc(100% - 200px);
 }
 
+/* 0.43.4: oben ohne Fläche (Lukas 01.11., Variante B). Nur die Wörter in der
+   Schriftfarbe der Fläche, die nicht gewählten auf 55 %, die gewählte gefüllt */
+.cloud .cl-top.lb-bar {
+  background: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  color: var(--cl-fg, var(--p-text));
+}
+
+.cl-top .lb-btn:not(.active):not(:hover) {
+  opacity: 0.55;
+}
+
+/* Gefüllt in der Schriftfarbe der Fläche, damit es auch auf Weiß und Farbe
+   sichtbar bleibt (ink × 0.15 verschwände dort) */
+.cloud .cl-top .lb-btn.active,
+.cloud .cl-top .lb-btn:hover {
+  position: relative;
+  background: transparent;
+}
+
+.cl-top .lb-btn.active::before,
+.cl-top .lb-btn:hover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: currentColor;
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+.cl-top .lb-btn:hover:not(.active)::before {
+  opacity: 0.07;
+}
+
 .cl-nav .lb-btn,
 .cl-top .lb-btn {
   padding: 0 10px;

@@ -789,7 +789,10 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
 - **Zwei Leisten (0.42.1):** Knöpfe wie die Lightbox-Leiste (4.11), aber 10 px
   Innenabstand. Oben (10 px unter der Fensterkante, mittig, so breit wie nötig,
   höchstens Fensterbreite − 200 px, damit die Fensterknöpfe frei bleiben): die
-  neun Ansichten und Mischen, immer gleich. Unten (wie 4.11, bis 960 px): ohne
+  neun Ansichten und Mischen, immer gleich. Seit 0.43.4 ohne Fläche (Lukas
+  01.11., Variante B): kein Glas, kein Schatten, Schrift in `--cl-fg`, nicht
+  gewählte Ansichten auf 55 %, die gewählte gefüllt in der Schriftfarbe × 0.15
+  (`::before` mit `currentColor`, damit es auf Weiß und Farbe sichtbar bleibt). Unten (wie 4.11, bis 960 px): ohne
   Auswahl Flächen-Quadrat, „+ Objekte“, „+5 ähnliche“ (seit 0.43.4 wieder
   direkt daneben, Lukas 01.11.), Linien, Autoplay, Snapshot, rechts
   Ausblenden und Schließen; mit Auswahl „n gewählt“, Groß,
