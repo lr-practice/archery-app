@@ -1,15 +1,15 @@
-// cloud.js — Collection (0.39.1 „Wolke“, 0.42.0 „Atlas“, seit 0.42.1 Collection):
+// cloud.js — Stage (0.39.1 „Wolke“, 0.42.0 „Atlas“, 0.42.1 Collection, seit 0.43.4 Stage):
 // Am offenen Objekt weitere Referenzen andocken und sie wie auf einem Tisch
-// ordnen. Eine Leiste unten, Rechtsklick auf ein Bild, Fassungen. Neun Ansichten:
+// ordnen. Eine Leiste unten, Rechtsklick auf ein Bild. Neun Ansichten:
 // Wolke, Fokus, Raster, Spalten, Spektrum, Strang, Stapel, Vergleich, Frei.
 // Jede Ansicht rechnet ihre Lage einmal aus, die Objekte gleiten per CSS
 // dorthin. Mehrfachauswahl (⇧/⌘, Lasso, ⌘A), Größe S M L XL,
 // groß ansehen (Leertaste), Fäden zu den ähnlichsten beim Überfahren,
-// Autoplay im Fokus (P), Leiste ausblenden (H), als PNG sichern.
+// Autoplay im Fokus (P), Leiste ausblenden (H), Snapshot als PNG.
 // Ziehen legt Objekte frei ab und schaltet auf „Frei“.
 //
 // Gespeichert wird nur, wer zur Wolke gehört (Hash, Größe, Platz), die freie
-// Lage, die Fläche und die Fassungen, lokal unter archiver.clouds. Siehe DESIGN.md 4.25.
+// Lage, die Fläche, lokal unter archiver.clouds. Siehe DESIGN.md 4.25.
 
 (function () {
   const { t } = window.ArchiverI18n;
@@ -26,7 +26,6 @@
   const HUES = { red: 0, orange: 28, yellow: 55, green: 125, teal: 175, blue: 215, purple: 275, pink: 330, brown: 24 };
   const NEUTRAL = ["white", "gray", "black"];
   const MAX_CLOUDS = 300;
-  const MAX_VERSIONS = 12;
   const AUTO_MS = 3200; // Autoplay: so lange bleibt ein Bild in der Mitte
   const reduce = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -44,12 +43,11 @@
     hover: null,
     drag: null,
     look: null, // { list, at }
-    pop: null, // offenes Auswahlfeld über der Leiste: "versions" oder "tone"
+    pop: null, // offenes Auswahlfeld über der Leiste: "tone"
     lines: false, // Linien zu den ähnlichsten Bildern stehen fest (und kommen mit ins Bild)
     auto: 0, // Autoplay-Takt
     barHidden: false,
     ctx: false, // Rechtsklick-Menü offen
-    versions: [], // Fassungen: [{ n, m, t, p }]
     picker: false,
     query: "",
     more: false, // + Objekte aufgeklappt: Zonen wie im Tray (0.42.1)
@@ -76,7 +74,7 @@
     const refs = C.nodes.slice(1).map((n) => [keyOf(n.item), n.step, n.rank != null ? n.rank : null]);
     const free = {};
     for (const [k, p] of C.free) free[k] = [Math.round(p[0] * 1000) / 1000, Math.round(p[1] * 1000) / 1000];
-    if (refs.length) all[key] = { m: C.view, t: C.tone, s: C.nodes[0].step, o: C.nodes[0].rank != null ? C.nodes[0].rank : null, r: refs, p: free, v: C.versions, at: Date.now() };
+    if (refs.length) all[key] = { m: C.view, t: C.tone, s: C.nodes[0].step, o: C.nodes[0].rank != null ? C.nodes[0].rank : null, r: refs, p: free, at: Date.now() };
     else delete all[key];
     const keys = Object.keys(all);
     if (keys.length > MAX_CLOUDS) keys.sort((a, b) => (all[a].at || 0) - (all[b].at || 0)).slice(0, keys.length - MAX_CLOUDS).forEach((k) => delete all[k]);
@@ -856,18 +854,20 @@
       nav.appendChild(lbBtn("×", false, () => selectOnly(null), "esc"));
       return;
     }
-    const tone = A.button("cl-tone cl-pop-btn" + (C.pop === "tone" ? " active" : ""), "", () => togglePop("tone"));
-    tone.dataset.tone = C.tone;
+    // Flächen-Quadrat in einem Knopf wie die anderen: gleicher Abstand, offen = gefüllt
+    const tone = lbBtn("", C.pop === "tone", () => togglePop("tone"), t("cloudTone_" + C.tone));
+    tone.classList.add("cl-pop-btn", "cl-tone-btn");
     tone.dataset.pop = "tone";
-    if (A.tones && A.tones[C.tone]) tone.style.setProperty("--sw", A.tones[C.tone][0]);
-    tone.title = t("cloudTone_" + C.tone);
+    tone.setAttribute("aria-label", t("cloudTonePick"));
+    const sw = el("span", "cl-tone");
+    sw.dataset.tone = C.tone;
+    if (A.tones && A.tones[C.tone]) sw.style.setProperty("--sw", A.tones[C.tone][0]);
+    tone.appendChild(sw);
     nav.appendChild(tone);
     nav.appendChild(sep());
     nav.appendChild(lbBtn("+ " + t("cloudAdd"), C.picker, togglePicker, t("cloudAddTitle")));
-    const vers = lbBtn(t("cloudVersions") + " ▾", C.pop === "versions", () => togglePop("versions"), t("cloudVersionsTitle"));
-    vers.classList.add("cl-pop-btn");
-    vers.dataset.pop = "versions";
-    nav.appendChild(vers);
+    // Fünf ähnlichste auf einmal, seit 0.43.4 nur hier in der Leiste (Lukas 01.11.)
+    nav.appendChild(lbBtn(t("cloudSimilar"), false, addSimilar, t("cloudSimilarTitle")));
     nav.appendChild(sep());
     nav.appendChild(lbBtn(t("cloudLines"), C.lines, toggleLines, t("cloudLinesTitle")));
     nav.appendChild(lbBtn(t("cloudAuto"), !!C.auto, () => toggleAuto(), t("cloudAutoTitle")));
@@ -877,7 +877,7 @@
     nav.appendChild(lbBtn(t("cloudClose"), false, close, "esc"));
   }
 
-  // ---- Feld über der Leiste: Fassungen oder Fläche ----
+  // ---- Feld über der Leiste: Fläche ----
 
   function togglePop(kind) {
     C.pop = C.pop === kind ? null : kind;
@@ -898,37 +898,17 @@
     box.replaceChildren();
     box.hidden = C.barHidden || !C.pop;
     if (box.hidden) return;
-    if (C.pop === "versions") {
-      box.appendChild(el("span", "cl-label", t("cloudVersions")));
-      const vs = el("div", "cl-pop-row");
-      C.versions.forEach((v, i) => {
-        const b = lbBtn(v.n, false, () => {
-          applyVersion(v);
-          closePop();
-        }, t("cloudVersionTitle"));
-        b.addEventListener("contextmenu", (e) => {
-          e.preventDefault();
-          C.versions.splice(i, 1);
-          save();
-          renderPop();
-        });
-        vs.appendChild(b);
-      });
-      vs.appendChild(lbBtn("+ " + t("cloudVersionSave"), false, saveVersion));
-      box.appendChild(vs);
-    } else {
-      box.appendChild(el("span", "cl-label", t("cloudTonePick")));
-      const row = el("div", "cl-pop-row cl-tones");
-      for (const k of TONES) {
-        const b = A.button("cl-tone big" + (C.tone === k ? " active" : ""), "", () => setTone(k));
-        b.dataset.tone = k;
-        if (A.tones && A.tones[k]) b.style.setProperty("--sw", A.tones[k][0]);
-        b.title = t("cloudTone_" + k);
-        b.setAttribute("aria-label", t("cloudTone_" + k));
-        row.appendChild(b);
-      }
-      box.appendChild(row);
+    box.appendChild(el("span", "cl-label", t("cloudTonePick")));
+    const row = el("div", "cl-pop-row cl-tones");
+    for (const k of TONES) {
+      const b = A.button("cl-tone big" + (C.tone === k ? " active" : ""), "", () => setTone(k));
+      b.dataset.tone = k;
+      if (A.tones && A.tones[k]) b.style.setProperty("--sw", A.tones[k][0]);
+      b.title = t("cloudTone_" + k);
+      b.setAttribute("aria-label", t("cloudTone_" + k));
+      row.appendChild(b);
     }
+    box.appendChild(row);
     // Über dem Knopf, der es geöffnet hat, aber nie über den Rand hinaus
     const btn = $("clNav").querySelector(`[data-pop="${C.pop}"]`);
     const r = C.root.getBoundingClientRect();
@@ -945,34 +925,6 @@
     } catch {}
     paint();
     renderBar();
-  }
-
-  // ---- Fassungen: benannte Stände eines Atlas (Ansicht, Fläche, freie Lage) ----
-
-  function saveVersion() {
-    const b = bounds();
-    const p = {};
-    // Was gerade zu sehen ist, als freie Lage festhalten
-    for (const n of C.nodes) p[keyOf(n.item)] = [Math.round(((n.x - b.x) / b.w) * 1000) / 1000, Math.round(((n.y - b.y) / b.h) * 1000) / 1000];
-    let k = C.versions.length + 1;
-    while (C.versions.some((v) => v.n === t("cloudVersionName", { n: k }))) k++;
-    C.versions.push({ n: t("cloudVersionName", { n: k }), m: C.view, t: C.tone, p });
-    if (C.versions.length > MAX_VERSIONS) C.versions.shift();
-    save();
-    renderPop();
-    A.toast(t("cloudVersionSaved", { name: C.versions[C.versions.length - 1].n }));
-  }
-
-  function applyVersion(v) {
-    stopAuto();
-    C.free = new Map(Object.entries(v.p || {}));
-    C.tone = TONES.includes(v.t) ? v.t : C.tone;
-    applyTone();
-    // Eine Fassung liegt immer so, wie sie gesichert wurde
-    C.view = "free";
-    C.fan = null;
-    layout();
-    save();
   }
 
   // ---- Rechtsklick auf ein Bild: was mit ihm geht, und die Wege hinaus ----
@@ -1132,10 +1084,10 @@
     const segs = linePairs();
     if (C.view === "strand" && C.chain) for (let i = 1; i < C.chain.length; i++) segs.push([C.chain[i - 1], C.chain[i]]);
     const lines = segs.map(([a, b]) => [(a.x - x0) * k, (a.y - y0) * k, (b.x - x0) * k, (b.y - y0) * k]);
-    // Schema (0.42.1): collection_<zone>_<jjjj-mm-tt>_<hhmm>.png, z. B. collection_mortar_2026-10-23_1836.png
+    // Schema (0.43.4): stage_<zone>_<jjjj-mm-tt>_<hhmm>.png, z. B. stage_mortar_2026-10-23_1836.png
     const d = new Date(), two = (v) => String(v).padStart(2, "0");
     const slug = zoneName(C.focus.zone).toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "archiver";
-    const name = `collection_${slug}_${d.getFullYear()}-${two(d.getMonth() + 1)}-${two(d.getDate())}_${two(d.getHours())}${two(d.getMinutes())}.png`;
+    const name = `stage_${slug}_${d.getFullYear()}-${two(d.getMonth() + 1)}-${two(d.getDate())}_${two(d.getHours())}${two(d.getMinutes())}.png`;
     try {
       const out = await A.invoke("export_cloud_image", {
         fileName: name,
@@ -1168,8 +1120,6 @@
       });
       const row = el("div", "cl-picker-row");
       row.appendChild(input);
-      // Fünf ähnlichste auf einmal, seit 0.42.0 hier statt in der Leiste
-      row.appendChild(lbBtn(t("cloudSimilar"), false, addSimilar, t("cloudSimilarTitle")));
       const more = lbBtn("", false, toggleMore, t("cloudMoreTitle"));
       more.classList.add("cl-more-btn");
       row.appendChild(more);
@@ -1484,7 +1434,6 @@
     C.lines = lastPref("cloudLines", (v) => typeof v === "boolean", false);
     C.tone = stored && TONES.includes(stored.t) ? stored.t : lastPref("cloudTone", (v) => TONES.includes(v), "lightbox");
     C.free = new Map(stored && stored.p ? Object.entries(stored.p) : []);
-    C.versions = stored && Array.isArray(stored.v) ? stored.v.filter((v) => v && v.n && v.p) : [];
     C.shuffle = 0;
     C.root.hidden = false;
     document.body.classList.add("cloud-open");
