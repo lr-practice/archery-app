@@ -227,12 +227,12 @@
 
       // Karten-Reihenfolge per nativer Drag-API am Griff (nur eine Zahl als Nutzlast).
       // Die neue Reihenfolge landet im Speicher, alle Oberflächen zeichnen daraufhin neu.
-      const isCardDrag = (e) => e.dataTransfer.types.includes("application/x-archiver-card");
+      const isCardDrag = (e) => e.dataTransfer.types.includes("application/x-archery-card");
 
       handle.addEventListener("dragstart", (e) => {
         e.stopPropagation();
         e.dataTransfer.effectAllowed = "move";
-        e.dataTransfer.setData("application/x-archiver-card", String(index));
+        e.dataTransfer.setData("application/x-archery-card", String(index));
       });
 
       card.addEventListener("dragenter", (e) => {
@@ -259,7 +259,7 @@
         if (isCardDrag(e)) {
           e.preventDefault();
           card.classList.remove("reorder-target");
-          const fromIndex = parseInt(e.dataTransfer.getData("application/x-archiver-card"), 10);
+          const fromIndex = parseInt(e.dataTransfer.getData("application/x-archery-card"), 10);
           const toIndex = parseInt(card.dataset.zoneIndex, 10);
           if (!Number.isNaN(fromIndex) && !Number.isNaN(toIndex) && fromIndex !== toIndex) {
             const order = zones.slice();
@@ -904,7 +904,7 @@
     appHint.style.display = "none";
     appBlock.appendChild(appHint);
     const exportRow = el("div", "zone-row shortcut-row");
-    const exportStatus = el("span", "shortcut-display", "archiver-export.json");
+    const exportStatus = el("span", "shortcut-display", "archery-export.json");
     exportRow.appendChild(exportStatus);
     exportRow.appendChild(
       button("mini-action", t("exportForApp"), () => {

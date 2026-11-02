@@ -111,9 +111,10 @@ fn check_library(root: &Path) -> Result<(), String> {
 }
 
 /// Wie check_library, zählt aber nur bei Ordnern, die noch keine Bibliothek
-/// sind. Eine gewachsene Bibliothek (mit .archiver) öffnet sich also auch über
+/// sind. Eine gewachsene Bibliothek (mit .archery) öffnet sich also auch über
 /// 20.000 Dateien weiter; vorher landete man beim Start auf „Bibliothek anlegen“.
 fn check_library_open(root: &Path) -> Result<(), String> {
+    library::migrate_meta_dir(root);
     check_folder(root, !root.join(library::META_DIR).is_dir())
 }
 
@@ -458,7 +459,7 @@ struct StartInfo {
 #[tauri::command]
 async fn start_info(app: AppHandle, state: State<'_, AppState>) -> Result<StartInfo, String> {
     let home = dirs::home_dir().unwrap_or_default();
-    let export = dirs::download_dir().unwrap_or_else(|| home.join("Downloads")).join("archiver-export.json");
+    let export = dirs::download_dir().unwrap_or_else(|| home.join("Downloads")).join("archery-export.json");
     Ok(StartInfo {
         library: state.library.lock().unwrap().as_ref().map(|l| l.root.to_string_lossy().into_owned()),
         pending: load_settings(&app).library.filter(|p| Path::new(p).is_dir()),
@@ -1897,7 +1898,7 @@ mod tests {
         assert_eq!(check_library(&home).unwrap_err(), "library-system");
         assert_eq!(check_library(Path::new("/")).unwrap_err(), "library-system");
         let dir = std::env::temp_dir().join(format!("archiver-guard-{}", std::process::id()));
-        std::fs::create_dir_all(dir.join(".archiver")).unwrap();
+        std::fs::create_dir_all(dir.join(library::META_DIR)).unwrap();
         for i in 0..20 {
             std::fs::write(dir.join(format!("{i}.txt")), "x").unwrap();
         }
@@ -1910,7 +1911,7 @@ mod tests {
         assert_eq!(check_library(&dir).unwrap_err(), "library-large");
         // Schon eine Bibliothek: öffnet sich trotz Menge, ein neuer Ordner nicht
         assert!(check_library_open(&dir).is_ok());
-        std::fs::remove_dir_all(dir.join(".archiver")).unwrap();
+        std::fs::remove_dir_all(dir.join(library::META_DIR)).unwrap();
         assert_eq!(check_library_open(&dir).unwrap_err(), "library-large");
         assert_eq!(check_library_open(&home).unwrap_err(), "library-system");
         std::fs::remove_dir_all(&dir).unwrap();

@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "Archery",
-  "version": "0.43.5",
-  "identifier": "app.archiver.desktop",
+  "version": "0.44.0",
+  "identifier": "app.archery.desktop",
   "build": {
     "frontendDist": "../src"
   },

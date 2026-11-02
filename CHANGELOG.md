@@ -1,10 +1,15 @@
 # Changelog
 
-## App 0.43.5 · Extension 3.31.4
+## App 0.44.0 · Extension 3.32.0
 
 - Erste mit Apple Developer ID signierte und notarisierte Version. Beim ersten
-  Start fragt macOS nicht mehr nach „Trotzdem öffnen“. Möglich, dass macOS
-  einmal neu nach Rechten fragt, weil sich die Signatur ändert.
+  Start fragt macOS nicht mehr nach „Trotzdem öffnen“.
+- Interne Namen heißen jetzt Archery: App-Kennung `app.archery.desktop`,
+  Brücke zur Extension `app.archery.bridge`, Datenordner `.archery` in der
+  Bibliothek, Export `archery-export.json`, Safari-Erweiterung „Archery
+  Extension“. Einstellungen und `.archiver` werden beim ersten Start
+  übernommen. App und Extension müssen beide neu sein, sonst finden sie sich
+  nicht; macOS fragt Rechte einmal neu ab.
 - Extension: Schriften sind für Webseiten nur noch über eine Adresse
   erreichbar, die pro Sitzung wechselt (`use_dynamic_url`). Fremde Seiten
   können Melange nicht mehr über die Extension einbinden.

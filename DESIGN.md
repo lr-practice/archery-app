@@ -660,7 +660,7 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   solange noch nichts markiert ist (Extension 3.29.1); erst während einer
   Sammlung nimmt er das Bild dazu.
 - **Form:** Text behält die Farbe der Markierung, also die Farbe der späteren
-  Textkarte (`::highlight(archiver-marks)`, gleiche Werte wie `::selection`).
+  Textkarte (`::highlight(archery-marks)`, gleiche Werte wie `::selection`).
   Alle Stücke einer Runde teilen eine Farbe. Bilder tragen den Ring aus 4.1:
   1 px gestrichelt 4/4, 3 px Abstand, eckig, weiß mit feinem dunklen Schatten,
   weil die Extension auf fremden Seiten keinen eigenen Grund hat. Einblenden

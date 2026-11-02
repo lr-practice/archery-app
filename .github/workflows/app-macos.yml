@@ -139,9 +139,9 @@ jobs:
             CONFIG=$(echo "$CONFIG" | jq -c --arg id "$IDENTITY" '.bundle.macOS.signingIdentity=$id')
           fi
           # Safari-Extension aus safari/build.sh nach Contents/PlugIns
-          APPEX="$GITHUB_WORKSPACE/build/safari/Archiver Extension.appex"
+          APPEX="$GITHUB_WORKSPACE/build/safari/Archery Extension.appex"
           test -d "$APPEX"
-          CONFIG=$(echo "$CONFIG" | jq -c --arg p "$APPEX" '.bundle.macOS.files["PlugIns/Archiver Extension.appex"]=$p')
+          CONFIG=$(echo "$CONFIG" | jq -c --arg p "$APPEX" '.bundle.macOS.files["PlugIns/Archery Extension.appex"]=$p')
           for v in APPLE_ID APPLE_PASSWORD APPLE_TEAM_ID; do [ -z "${!v}" ] && unset $v; done
           npx tauri build --bundles app,dmg --config "$CONFIG"
 
@@ -150,7 +150,7 @@ jobs:
       - name: Safari-Extension prüfen
         run: |
           APP=$(ls -d app/src-tauri/target/release/bundle/macos/*.app | head -1)
-          APPEX="$APP/Contents/PlugIns/Archiver Extension.appex"
+          APPEX="$APP/Contents/PlugIns/Archery Extension.appex"
           test -d "$APPEX"
           codesign --verify --strict "$APPEX"
           codesign -d --entitlements - "$APPEX" 2>/dev/null | grep -q com.apple.security.app-sandbox
@@ -241,7 +241,7 @@ jobs:
           cat "upd/$FEED"
           # Leeres Repository: erst eine README anlegen, sonst gibt es keine Releases.
           if ! gh api "repos/$REPO/commits?per_page=1" >/dev/null 2>&1; then
-            printf '# Archiver Releases\n\nUpdates für die Archiver-App (signiert, automatisch geladen).\n' > README.md
+            printf '# Archery Releases\n\nUpdates für die Archery-App (signiert, automatisch geladen).\n' > README.md
             gh api -X PUT "repos/$REPO/contents/README.md" -f message="README" -f content="$(base64 < README.md | tr -d '\n')"
           fi
           if [ "$CHANNEL" = "vorab" ]; then

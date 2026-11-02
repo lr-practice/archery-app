@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Baut die Safari-Web-Extension als App-Erweiterung für Archiver.app
+# Baut die Safari-Web-Extension als App-Erweiterung für Archery.app
 # (nur auf dem Mac mit Xcode). Ergebnis:
-#   build/safari/Archiver Extension.appex
+#   build/safari/Archery Extension.appex
 # Der Tauri-Build legt sie nach Contents/PlugIns (bundle.macOS.files, siehe
 # .github/workflows/app-macos.yml).
 #
@@ -18,8 +18,8 @@ set -euo pipefail
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 SAFARI="$ROOT/safari"
 OUT="${OUT:-$ROOT/build/safari}"
-APP_NAME="Archiver"
-EXT_NAME="Archiver Extension"
+APP_NAME="Archery"
+EXT_NAME="Archery Extension"
 
 for tool in xcrun xcodebuild codesign node plutil; do
   command -v "$tool" >/dev/null || { echo "safari/build.sh: $tool fehlt (nur auf dem Mac mit Xcode)" >&2; exit 1; }

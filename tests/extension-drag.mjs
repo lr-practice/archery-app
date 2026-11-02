@@ -108,7 +108,7 @@ try {
     await page2.mouse.down();
     for (let i = 1; i <= 6; i++) await page2.mouse.move(b.x + b.width / 2 + i * 30, b.y + b.height / 2 - i * 20);
     await page2.waitForTimeout(500);
-    const zones = await page2.evaluate(() => !!document.querySelector("archiver-overlay"));
+    const zones = await page2.evaluate(() => !!document.querySelector("archery-overlay"));
     await page2.mouse.up();
     return zones;
   }

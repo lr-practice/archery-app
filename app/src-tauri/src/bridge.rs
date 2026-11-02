@@ -27,8 +27,21 @@ use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 use std::time::{Duration, Instant};
 
-pub const HOST_NAME: &str = "app.archiver.bridge";
-const APP_IDENTIFIER: &str = "app.archiver.desktop";
+pub const HOST_NAME: &str = "app.archery.bridge";
+pub const APP_IDENTIFIER: &str = "app.archery.desktop";
+// Bis 0.43: alte Kennung und alter Hostname, werden beim Start übernommen bzw. entfernt.
+const OLD_HOST_NAME: &str = "app.archiver.bridge";
+const OLD_APP_IDENTIFIER: &str = "app.archiver.desktop";
+
+/// Einstellungen und Studio-Daten vom alten Ordner (app.archiver.desktop) in den
+/// neuen übernehmen (0.44.0). Nur wenn es den neuen noch nicht gibt.
+pub fn migrate_app_dir() {
+    let Some(base) = dirs::config_dir() else { return };
+    let (old, new) = (base.join(OLD_APP_IDENTIFIER), base.join(APP_IDENTIFIER));
+    if old.is_dir() && !new.exists() {
+        let _ = std::fs::rename(old, new);
+    }
+}
 const LIST_LIMIT: usize = 500;
 /// Chrome nimmt vom Host höchstens 1 MB je Nachricht; etwas Luft bleibt
 const MAX_OUT: usize = 900 * 1024;
@@ -113,6 +126,7 @@ pub fn install_manifests() -> Vec<PathBuf> {
     let text = serde_json::to_vec_pretty(&manifest).unwrap();
     let mut written = Vec::new();
     for (_, dir) in host_dirs() {
+        let _ = std::fs::remove_file(dir.join(format!("{OLD_HOST_NAME}.json")));
         let file = dir.join(format!("{HOST_NAME}.json"));
         if std::fs::read(&file).ok().as_deref() == Some(text.as_slice()) {
             written.push(file);

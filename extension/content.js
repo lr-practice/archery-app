@@ -79,7 +79,7 @@
 
   // Ein-/Ausblenden der Zonenleiste als animierbare Zahl (siehe overlay.css)
   try {
-    CSS.registerProperty({ name: "--archiver-zone-in", syntax: "<number>", inherits: true, initialValue: "1" });
+    CSS.registerProperty({ name: "--archery-zone-in", syntax: "<number>", inherits: true, initialValue: "1" });
   } catch (e) {
     // schon registriert (zweite Injektion) oder nicht unterstützt: Fallback 1 im CSS
   }
@@ -98,7 +98,7 @@
   function ensureOverlay() {
     if (!overlayReady) {
       overlayReady = loadStyles().then((texts) => {
-        const host = document.createElement("archiver-overlay");
+        const host = document.createElement("archery-overlay");
         ["position:fixed", "top:0", "left:0", "width:0", "height:0", "display:block", "z-index:2147483647"].forEach((rule) => {
           const [prop, value] = rule.split(":");
           host.style.setProperty(prop, value, "important");
@@ -297,13 +297,13 @@
   function showTone() {
     if (!toneStyle) {
       toneStyle = document.createElement("style");
-      toneStyle.setAttribute("data-archiver-tone", "");
+      toneStyle.setAttribute("data-archery-tone", "");
       (document.head || document.documentElement).appendChild(toneStyle);
     }
     const [bg, fg] = CARD_TONES[toneFor()];
     toneStyle.textContent =
       `::selection{background:${bg}!important;color:${fg}!important}` +
-      `::highlight(archiver-marks){background-color:${bg};color:${fg}}`;
+      `::highlight(archery-marks){background-color:${bg};color:${fg}}`;
   }
 
   // ---- PDF, Video und Audio ----
@@ -987,7 +987,7 @@
   function imageUnder(x, y) {
     for (const el of document.elementsFromPoint(x, y)) {
       if (el === document.documentElement || el === document.body) continue;
-      if (el.tagName === "ARCHIVER-OVERLAY") return null;
+      if (el.tagName === "ARCHERY-OVERLAY") return null;
       if (bigImage(el)) return el;
       // Bilder unter einer Fläche (Instagram u. a.)
       const img = el.querySelectorAll && [...el.querySelectorAll("img")].find((i) => {
@@ -1043,8 +1043,8 @@
   function paintMarks() {
     if (window.CSS && CSS.highlights && window.Highlight) {
       const ranges = marks.filter((m) => m.range).map((m) => m.range);
-      if (ranges.length) CSS.highlights.set("archiver-marks", new Highlight(...ranges));
-      else CSS.highlights.delete("archiver-marks");
+      if (ranges.length) CSS.highlights.set("archery-marks", new Highlight(...ranges));
+      else CSS.highlights.delete("archery-marks");
     }
     showTone();
     scheduleMarkRings();
@@ -1062,7 +1062,7 @@
     if (!imgs.length && !markLayer) return;
     if (!markLayer) {
       markLayer = document.createElement("div");
-      markLayer.setAttribute("data-archiver-marks", "");
+      markLayer.setAttribute("data-archery-marks", "");
       markLayer.style.cssText = "position:fixed;left:0;top:0;width:0;height:0;z-index:2147483000;pointer-events:none";
       document.documentElement.appendChild(markLayer);
     }
@@ -1105,7 +1105,7 @@
   // Seiten, die schon bei pointerdown/pointerup weiterspringen (Pinterest u. a.),
   // sehen ⌥-Klicks gar nicht erst. Nur stopPropagation: Archivers eigene
   // Listener am window laufen weiter, die Textauswahl bleibt möglich.
-  const OWN_FIELDS = "input, textarea, select, [contenteditable=''], [contenteditable='true'], archiver-overlay";
+  const OWN_FIELDS = "input, textarea, select, [contenteditable=''], [contenteditable='true'], archery-overlay";
   for (const type of ["pointerdown", "pointerup", "mouseup"]) {
     window.addEventListener(
       type,
@@ -1123,7 +1123,7 @@
       if (!e.isTrusted) return; // nur echte Eingaben, keine von der Seite erzeugten Events
       if (e.button !== 0 || manualOpen || textDrag || gone()) return;
       const t = e.target;
-      if (t instanceof Element && t.closest("input, textarea, select, [contenteditable=''], [contenteditable='true'], archiver-overlay")) return;
+      if (t instanceof Element && t.closest("input, textarea, select, [contenteditable=''], [contenteditable='true'], archery-overlay")) return;
       if (!e.altKey) {
         // Klick daneben hebt alle Stücke auf. Nicht auf einem Stück und nicht auf
         // der laufenden Markierung: von dort zieht das Ziehen unten alle Stücke mit.
@@ -1229,7 +1229,7 @@
     if (!box) return hideSpotlight();
     if (!spotEl) {
       spotEl = document.createElement("div");
-      spotEl.setAttribute("data-archiver-spotlight", "");
+      spotEl.setAttribute("data-archery-spotlight", "");
       spotEl.style.cssText =
         "position:fixed;left:0;top:0;z-index:2147483000;pointer-events:none;" +
 "opacity:0;";
@@ -1556,7 +1556,7 @@
       e.dataTransfer.effectAllowed = "copy";
       if (hiddenDrag.video) {
         fallbackImageUrl = null;
-        e.dataTransfer.setData("application/x-archiver-video", "1");
+        e.dataTransfer.setData("application/x-archery-video", "1");
         e.dataTransfer.setData("text/plain", location.href);
         // Vorschau beim Ziehen: das sichtbare Videobild statt der grauen Fläche
         const frame = videoFrame(hiddenDrag.video);
@@ -1860,7 +1860,7 @@
   }
 
   if (IG) {
-    document.addEventListener("archiver:ig-media", (e) => {
+    document.addEventListener("archery:ig-media", (e) => {
       let list;
       try {
         list = JSON.parse(e.detail);
@@ -1875,7 +1875,7 @@
         igRemember(item.pk, item);
       }
     });
-    document.dispatchEvent(new CustomEvent("archiver:ig-hello"));
+    document.dispatchEvent(new CustomEvent("archery:ig-hello"));
   }
 
   function postCodeNear(el) {

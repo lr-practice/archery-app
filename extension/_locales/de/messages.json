@@ -149,7 +149,7 @@
     "message": "Export fehlgeschlagen"
   },
   "exportHint": {
-    "message": "Legt archiver-export.json in deinen Downloads ab. Die Archery-App übernimmt damit alle Bilder samt Quellen in ihre Bibliothek."
+    "message": "Legt archery-export.json in deinen Downloads ab. Die Archery-App übernimmt damit alle Bilder samt Quellen in ihre Bibliothek."
   },
   "appConnected": {
     "message": "Mit der Archery-App verbunden · $LIB$",
