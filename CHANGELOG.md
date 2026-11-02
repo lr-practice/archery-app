@@ -1,6 +1,6 @@
 # Changelog
 
-## App 0.43.4 · Extension 3.31.3 (noch nicht veröffentlicht)
+## App 0.43.4 · Extension 3.31.3
 
 - Konto: neue Preise. Lizenz ab 1.0 einmalig 19 €, Beta-Bonus 9 € bis 31.01.
   (vorher 9,99 € und 4,99 €).
