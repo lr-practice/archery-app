@@ -18,7 +18,6 @@ type Result<T> = std::result::Result<T, String>;
 
 const SHARED_MARKER: &str = "shared.json";
 const PEOPLE_DIR: &str = "people";
-const APP_IDENTIFIER: &str = "app.archiver.desktop";
 
 /// Notiz, Rechte und Herkunft eines Objekts.
 #[derive(Serialize, Deserialize, Clone, Debug, Default, PartialEq)]
@@ -110,7 +109,7 @@ pub fn is_shared(root: &Path) -> bool {
 pub fn local_db(root: &Path) -> Result<PathBuf> {
     let base = dirs::data_local_dir().ok_or("Kein lokaler Datenordner")?;
     let key = blake3::hash(root.to_string_lossy().as_bytes()).to_hex()[..16].to_string();
-    let dir = base.join(APP_IDENTIFIER).join("libraries").join(key);
+    let dir = base.join(crate::bridge::APP_IDENTIFIER).join("libraries").join(key);
     fs::create_dir_all(&dir).map_err(err)?;
     Ok(dir.join("library.db"))
 }
@@ -605,7 +604,7 @@ mod tests {
 
         // Datenbank weg: alles kommt aus metadata.json zurück
         drop(lib);
-        fs::remove_file(root.join(".archiver/library.db")).unwrap();
+        fs::remove_file(root.join(META_DIR).join("library.db")).unwrap();
         let lib = Library::open(&root).unwrap();
         lib.scan().unwrap();
         let item = lib.items().unwrap().remove(0);
@@ -622,7 +621,7 @@ mod tests {
         assert_eq!(lib.items().unwrap()[0].mark, None);
         lib.set_note(&[item.hash.clone()], &NotePatch { mark: Some("cyan".into()), ..Default::default() }).unwrap();
         drop(lib);
-        fs::remove_file(root.join(".archiver/library.db")).unwrap();
+        fs::remove_file(root.join(META_DIR).join("library.db")).unwrap();
         let lib = Library::open(&root).unwrap();
         lib.scan().unwrap();
         assert_eq!(lib.items().unwrap()[0].mark.as_deref(), Some("cyan"));
@@ -648,7 +647,7 @@ mod tests {
         a.scan().unwrap();
         let hash = a.items().unwrap()[0].hash.clone();
         a.set_note(&[hash.clone()], &NotePatch { note: Some("von Anna".into()), ..Default::default() }).unwrap();
-        assert!(root.join(".archiver/people/anna.json").is_file());
+        assert!(root.join(META_DIR).join("people/anna.json").is_file());
 
         // Ben: eigener Cache (anderer DB-Pfad), liest Annas Datei
         let ben_db = tmp.path().join("ben.db");
@@ -662,7 +661,7 @@ mod tests {
         assert!(a.scan().unwrap());
         assert_eq!(a.items().unwrap()[0].note.as_deref(), Some("Ben war hier"));
         // metadata.json bleibt unberührt, jeder schreibt nur seine Datei
-        assert!(root.join(".archiver/people/ben.json").is_file());
+        assert!(root.join(META_DIR).join("people/ben.json").is_file());
     }
 
     /// Wie Library::open, aber mit frei gewählter Datenbank (zweiter Mac im Test).

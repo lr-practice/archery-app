@@ -23,7 +23,7 @@
   // fremden Seiten nichts in deren Konsole schreibt.
   const DEBUG = false;
   function debugLog(...args) {
-    if (DEBUG) console.log("[Archiver]", ...args);
+    if (DEBUG) console.log("[Archery]", ...args);
   }
 
   // Quelle der aktuellen Seite. In Frames wird, wenn erlaubt, die Top-Seite

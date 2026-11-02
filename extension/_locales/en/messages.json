@@ -149,7 +149,7 @@
     "message": "Export failed"
   },
   "exportHint": {
-    "message": "Saves archiver-export.json to your Downloads. The Archery app uses it to import every image with its source into its library."
+    "message": "Saves archery-export.json to your Downloads. The Archery app uses it to import every image with its source into its library."
   },
   "appConnected": {
     "message": "Connected to the Archery app · $LIB$",

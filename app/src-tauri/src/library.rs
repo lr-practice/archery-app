@@ -17,7 +17,18 @@ use std::sync::Mutex;
 use std::time::{SystemTime, UNIX_EPOCH};
 use walkdir::WalkDir;
 
-pub const META_DIR: &str = ".archiver";
+pub const META_DIR: &str = ".archery";
+/// Datenordner bis 0.43 (.archiver); wird beim Öffnen umbenannt.
+const LEGACY_META_DIR: &str = ".archiver";
+
+/// Benennt den alten Datenordner .archiver in .archery um (0.44.0), wenn es
+/// den neuen noch nicht gibt. Quellen, Zonen-Reihenfolge und Vorschauen bleiben so erhalten.
+pub fn migrate_meta_dir(root: &Path) {
+    let (old, new) = (root.join(LEGACY_META_DIR), root.join(META_DIR));
+    if old.is_dir() && !new.exists() {
+        let _ = fs::rename(old, new);
+    }
+}
 pub const INBOX: &str = "Unsorted";
 /// Frühere Standard-Zone (bis 0.23); wird beim Öffnen zu „Unsorted“ umbenannt.
 pub const LEGACY_INBOX: &str = "Inbox";
@@ -559,7 +570,7 @@ pub(crate) fn move_file(src: &Path, dst: &Path) -> Result<()> {
 /// Kopiert über eine versteckte Teildatei und benennt erst um, wenn alles da ist.
 fn copy_file(src: &Path, dst: &Path) -> Result<()> {
     let name = dst.file_name().and_then(|n| n.to_str()).unwrap_or("datei");
-    let part = dst.with_file_name(format!(".{name}.archiver-part"));
+    let part = dst.with_file_name(format!(".{name}.archery-part"));
     let done = fs::copy(src, &part).map_err(err).and_then(|n| {
         let want = fs::metadata(src).map_err(err)?.len();
         if n == want {
@@ -886,6 +897,7 @@ fn is_corrupt(e: &rusqlite::Error) -> bool {
 impl Library {
     /// Öffnet (und legt bei Bedarf an) eine Bibliothek in `root`.
     pub fn open(root: &Path) -> Result<Library> {
+        migrate_meta_dir(root);
         fs::create_dir_all(root.join(META_DIR).join("thumbs")).map_err(err)?;
         let shared = crate::studio::is_shared(root);
         // Geteilt: SQLite gehört nicht auf ein Netzlaufwerk, jede Person hat ihren eigenen Cache.
@@ -2497,12 +2509,12 @@ impl Library {
         Ok(true)
     }
 
-    /// Gesicherte Webseite zu einer Linkkarte (0.30.1): .archiver/web/<hash>.mhtml
+    /// Gesicherte Webseite zu einer Linkkarte (0.30.1): .archery/web/<hash>.mhtml
     pub fn web_archive(&self, hash: &str) -> Option<PathBuf> {
         if hash.is_empty() || !hash.chars().all(|c| c.is_ascii_alphanumeric()) {
             return None;
         }
-        let p = self.root.join(".archiver").join("web").join(format!("{hash}.mhtml"));
+        let p = self.root.join(META_DIR).join("web").join(format!("{hash}.mhtml"));
         p.is_file().then_some(p)
     }
 
@@ -2511,7 +2523,7 @@ impl Library {
         if !src.is_file() || hash.is_empty() || !hash.chars().all(|c| c.is_ascii_alphanumeric()) {
             return Ok(());
         }
-        let dir = self.root.join(".archiver").join("web");
+        let dir = self.root.join(META_DIR).join("web");
         fs::create_dir_all(&dir).map_err(err)?;
         let dst = dir.join(format!("{hash}.mhtml"));
         let _ = fs::remove_file(&dst); // ältere Fassung derselben Seite
@@ -2891,7 +2903,7 @@ impl Library {
         Ok(report)
     }
 
-    /// Import aus der Extension: die Datei archiver-export.json (Einstellungen →
+    /// Import aus der Extension: die Datei archery-export.json (Einstellungen →
     /// „Für die App exportieren“) kennt Zone, Speicherort und Quelle jedes Bildes.
     pub fn import_extension_export(&self, json_path: &Path) -> Result<ImportReport> {
         #[derive(Deserialize)]
@@ -2961,6 +2973,17 @@ mod tests {
         assert_eq!(img.get_pixel(0, 0).0, [42, 42, 42]);
         assert_eq!(img.get_pixel(300, 300).0, [140, 140, 140]);
         assert!(is_media(Path::new("a/Song.AIFF")) && is_audio(Path::new("b.flac")));
+    }
+
+    #[test]
+    fn open_renames_legacy_meta_dir() {
+        let tmp = tempfile::tempdir().unwrap();
+        let root = tmp.path();
+        fs::create_dir_all(root.join(".archiver")).unwrap();
+        fs::write(root.join(".archiver/metadata.json"), "{}").unwrap();
+        Library::open(root).unwrap();
+        assert!(!root.join(".archiver").exists());
+        assert_eq!(fs::read_to_string(root.join(META_DIR).join("metadata.json")).unwrap(), "{}");
     }
 
     #[test]
@@ -3094,7 +3117,7 @@ mod tests {
         let f = tmp.path().join("d.png");
         write_png(&f, 4, 4, 40);
         copy_file(&f, &tmp.path().join("Ziel/d.png")).unwrap();
-        assert!(fs::read_dir(tmp.path().join("Ziel")).unwrap().all(|e| !e.unwrap().file_name().to_string_lossy().ends_with(".archiver-part")));
+        assert!(fs::read_dir(tmp.path().join("Ziel")).unwrap().all(|e| !e.unwrap().file_name().to_string_lossy().ends_with(".archery-part")));
     }
 
     #[test]
@@ -3495,7 +3518,7 @@ mod tests {
         let lib = Library::open(&root).unwrap();
         write_png(&root.join("Unsorted/a.png"), 40, 20, 10);
         write_png(&root.join("Projekt 1/b.png"), 10, 30, 20);
-        write_png(&root.join(".archiver/thumbs/ignore.png"), 2, 2, 1);
+        write_png(&root.join(META_DIR).join("thumbs/ignore.png"), 2, 2, 1);
         assert!(lib.scan().unwrap());
         assert!(!lib.scan().unwrap(), "zweiter Scan ohne Änderung");
 
@@ -3568,9 +3591,9 @@ mod tests {
         lib.set_source(&hash, &Source { page_url: Some("https://a.b/".into()), ..Default::default() }).unwrap();
         lib.write_metadata().unwrap();
         drop(lib);
-        fs::remove_file(root.join(".archiver/library.db")).unwrap();
-        let _ = fs::remove_file(root.join(".archiver/library.db-wal"));
-        let _ = fs::remove_file(root.join(".archiver/library.db-shm"));
+        fs::remove_file(root.join(META_DIR).join("library.db")).unwrap();
+        let _ = fs::remove_file(root.join(META_DIR).join("library.db-wal"));
+        let _ = fs::remove_file(root.join(META_DIR).join("library.db-shm"));
         let lib = Library::open(&root).unwrap();
         lib.scan().unwrap();
         let item = lib.items().unwrap().into_iter().find(|i| i.hash == hash).unwrap();
@@ -3594,7 +3617,7 @@ mod tests {
                 { "zone": "Projekt 1", "file": downloads.join("Projekt 1/fehlt.png") },
             ]
         });
-        let json = tmp.path().join("archiver-export.json");
+        let json = tmp.path().join("archery-export.json");
         fs::write(&json, export.to_string()).unwrap();
 
         let root = tmp.path().join("Bib");
@@ -3607,7 +3630,7 @@ mod tests {
         assert_eq!(x.zone, "Projekt 1");
         assert_eq!(x.page_title.as_deref(), Some("Seite X"));
         assert_eq!(items.iter().find(|i| i.filename == "lose.png").unwrap().zone, "Unsorted");
-        assert!(root.join(".archiver/metadata.json").is_file());
+        assert!(root.join(META_DIR).join("metadata.json").is_file());
 
         let r = lib.import_folder(&downloads).unwrap();
         assert_eq!((r.imported, r.duplicates), (0, 3));

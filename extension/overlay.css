@@ -71,13 +71,13 @@ input {
   --ring-lg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='.5' y='.5' rx='17' style='width:calc(100%25 - 1px);height:calc(100%25 - 1px)' fill='none' stroke='black' stroke-dasharray='4 4'/%3E%3C/svg%3E");
 }
 
-/* Ein- und Ausblenden wie in der App: --archiver-zone-in (registriert in
+/* Ein- und Ausblenden wie in der App: --archery-zone-in (registriert in
    content.js, weil @property im Shadow DOM nicht greift) steuert Glas,
    Schatten und Inhalt direkt; opacity auf der Leiste würde das Glas
    (backdrop-filter) bis zum Ende der Animation verschlucken. */
 @keyframes zones-in {
   from {
-    --archiver-zone-in: 0;
+    --archery-zone-in: 0;
   }
 }
 
@@ -90,17 +90,17 @@ input {
   justify-content: space-between;
   padding: 16px 18px;
   border-radius: var(--r-lg, 8px);
-  background: color-mix(in srgb, var(--menu-bg) calc(var(--zone-alpha, 0.97) * var(--archiver-zone-in, 1) * 100%), transparent);
-  backdrop-filter: blur(calc(24px * var(--archiver-zone-in, 1))) saturate(calc(1 + 0.4 * var(--archiver-zone-in, 1)));
-  -webkit-backdrop-filter: blur(calc(24px * var(--archiver-zone-in, 1))) saturate(calc(1 + 0.4 * var(--archiver-zone-in, 1)));
+  background: color-mix(in srgb, var(--menu-bg) calc(var(--zone-alpha, 0.97) * var(--archery-zone-in, 1) * 100%), transparent);
+  backdrop-filter: blur(calc(24px * var(--archery-zone-in, 1))) saturate(calc(1 + 0.4 * var(--archery-zone-in, 1)));
+  -webkit-backdrop-filter: blur(calc(24px * var(--archery-zone-in, 1))) saturate(calc(1 + 0.4 * var(--archery-zone-in, 1)));
   box-shadow:
-    0 14px 44px rgba(0, 0, 0, calc(var(--zone-shadow) * var(--archiver-zone-in, 1))),
-    inset 0 0 0 1px rgba(var(--ink-rgb), calc(0.07 * var(--archiver-zone-in, 1)));
+    0 14px 44px rgba(0, 0, 0, calc(var(--zone-shadow) * var(--archery-zone-in, 1))),
+    inset 0 0 0 1px rgba(var(--ink-rgb), calc(0.07 * var(--archery-zone-in, 1)));
   transition: background 0.1s ease;
 }
 
 .zone > :not(.zone-hint) {
-  opacity: var(--archiver-zone-in, 1);
+  opacity: var(--archery-zone-in, 1);
 }
 
 .zone-key {
@@ -136,7 +136,7 @@ input {
 .zone.active {
   background: color-mix(
     in srgb,
-    color-mix(in srgb, var(--menu-bg) 88%, #fff) calc(var(--zone-alpha, 0.97) * var(--archiver-zone-in, 1) * 100%),
+    color-mix(in srgb, var(--menu-bg) 88%, #fff) calc(var(--zone-alpha, 0.97) * var(--archery-zone-in, 1) * 100%),
     transparent
   );
 }
@@ -150,12 +150,12 @@ input {
   background: var(--p-text);
   -webkit-mask: var(--ring-lg) 0 0 / 100% 100% no-repeat;
   mask: var(--ring-lg) 0 0 / 100% 100% no-repeat;
-  opacity: var(--archiver-zone-in, 1);
+  opacity: var(--archery-zone-in, 1);
 }
 
 /* Ziel blendet beim Gehen mit aus, statt hell stehen zu bleiben (3.29.8) */
 .zone.active .zone-hint {
-  opacity: var(--archiver-zone-in, 1);
+  opacity: var(--archery-zone-in, 1);
   color: var(--p-text);
 }
 
@@ -179,7 +179,7 @@ input {
 
 @keyframes zones-out {
   to {
-    --archiver-zone-in: 0;
+    --archery-zone-in: 0;
   }
 }
 

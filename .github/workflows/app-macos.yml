@@ -14,7 +14,7 @@ name: App macOS
 # Ausspielen (0.37.0):
 #   nein   nur bauen, DMG als Artefakt und unter „app-latest“ in diesem Repo
 #   vorab  Auto-Update nur für Macs mit eingeschalteten Vorabversionen (Lukas):
-#          Tag „vorab“ in Archiver-Releases, vorab.json, nicht „latest“
+#          Tag „vorab“ in archery-releases, vorab.json, nicht „latest“
 #   beta   Auto-Update an alle Tester (latest.json), wie bisher „publish“
 #   freigeben  kein Build: die geprüfte Vorabversion geht unverändert an alle
 #          (dieselben Dateien, die Signatur bleibt gültig). Version angeben.
@@ -58,7 +58,7 @@ jobs:
       - name: Melange holen
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
-          repository: lr-practice/archiver
+          repository: lr-practice/archery-website
           ref: archiv/claude/project-thread-85f33d
           token: ${{ secrets.RELEASES_TOKEN }}
           path: _melange
@@ -139,9 +139,9 @@ jobs:
             CONFIG=$(echo "$CONFIG" | jq -c --arg id "$IDENTITY" '.bundle.macOS.signingIdentity=$id')
           fi
           # Safari-Extension aus safari/build.sh nach Contents/PlugIns
-          APPEX="$GITHUB_WORKSPACE/build/safari/Archiver Extension.appex"
+          APPEX="$GITHUB_WORKSPACE/build/safari/Archery Extension.appex"
           test -d "$APPEX"
-          CONFIG=$(echo "$CONFIG" | jq -c --arg p "$APPEX" '.bundle.macOS.files["PlugIns/Archiver Extension.appex"]=$p')
+          CONFIG=$(echo "$CONFIG" | jq -c --arg p "$APPEX" '.bundle.macOS.files["PlugIns/Archery Extension.appex"]=$p')
           for v in APPLE_ID APPLE_PASSWORD APPLE_TEAM_ID; do [ -z "${!v}" ] && unset $v; done
           npx tauri build --bundles app,dmg --config "$CONFIG"
 
@@ -150,7 +150,7 @@ jobs:
       - name: Safari-Extension prüfen
         run: |
           APP=$(ls -d app/src-tauri/target/release/bundle/macos/*.app | head -1)
-          APPEX="$APP/Contents/PlugIns/Archiver Extension.appex"
+          APPEX="$APP/Contents/PlugIns/Archery Extension.appex"
           test -d "$APPEX"
           codesign --verify --strict "$APPEX"
           codesign -d --entitlements - "$APPEX" 2>/dev/null | grep -q com.apple.security.app-sandbox
@@ -217,7 +217,7 @@ jobs:
           exit 1
 
       # Auto-Update: Paket, Signatur und Feed ins öffentliche Repository
-      # Archiver-Releases. vorab → Tag „vorab“ + vorab.json (nur Lukas),
+      # archery-releases. vorab → Tag „vorab“ + vorab.json (nur Lukas),
       # beta → Tag vX.Y.Z + latest.json (alle Tester).
       - name: Update veröffentlichen
         env:
@@ -225,7 +225,7 @@ jobs:
         if: env.CHANNEL != 'nein'
         run: |
           VERSION=${{ steps.out.outputs.version }}
-          REPO=lr-practice/Archiver-Releases
+          REPO=lr-practice/archery-releases
           if [ "$CHANNEL" = "vorab" ]; then TAG=vorab; FEED=vorab.json; else TAG=v$VERSION; FEED=latest.json; fi
           BUNDLE=app/src-tauri/target/release/bundle/macos
           TGZ=$(ls "$BUNDLE"/*.app.tar.gz | head -1)
@@ -241,7 +241,7 @@ jobs:
           cat "upd/$FEED"
           # Leeres Repository: erst eine README anlegen, sonst gibt es keine Releases.
           if ! gh api "repos/$REPO/commits?per_page=1" >/dev/null 2>&1; then
-            printf '# Archiver Releases\n\nUpdates für die Archiver-App (signiert, automatisch geladen).\n' > README.md
+            printf '# Archery Releases\n\nUpdates für die Archery-App (signiert, automatisch geladen).\n' > README.md
             gh api -X PUT "repos/$REPO/contents/README.md" -f message="README" -f content="$(base64 < README.md | tr -d '\n')"
           fi
           if [ "$CHANNEL" = "vorab" ]; then
@@ -311,7 +311,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
-      REPO: lr-practice/Archiver-Releases
+      REPO: lr-practice/archery-releases
       VERSION: ${{ inputs.version }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4

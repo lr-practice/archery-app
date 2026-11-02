@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Baut die Safari-Web-Extension als App-Erweiterung für Archiver.app
+# Baut die Safari-Web-Extension als App-Erweiterung für Archery.app
 # (nur auf dem Mac mit Xcode). Ergebnis:
-#   build/safari/Archiver Extension.appex
+#   build/safari/Archery Extension.appex
 # Der Tauri-Build legt sie nach Contents/PlugIns (bundle.macOS.files, siehe
 # .github/workflows/app-macos.yml).
 #
@@ -18,8 +18,8 @@ set -euo pipefail
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 SAFARI="$ROOT/safari"
 OUT="${OUT:-$ROOT/build/safari}"
-APP_NAME="Archiver"
-EXT_NAME="Archiver Extension"
+APP_NAME="Archery"
+EXT_NAME="Archery Extension"
 
 for tool in xcrun xcodebuild codesign node plutil; do
   command -v "$tool" >/dev/null || { echo "safari/build.sh: $tool fehlt (nur auf dem Mac mit Xcode)" >&2; exit 1; }
@@ -48,6 +48,8 @@ const m = JSON.parse(fs.readFileSync(src, "utf8"));
 delete m.key;
 delete m.minimum_chrome_version;
 m.permissions = (m.permissions || []).filter((p) => !["downloads", "pageCapture"].includes(p));
+// Safari vergibt ohnehin pro Installation eigene Adressen
+for (const r of m.web_accessible_resources || []) delete r.use_dynamic_url;
 // OffscreenCanvas im Hintergrund, MV3-Service-Worker
 m.browser_specific_settings = { safari: { strict_min_version: "16.4" } };
 fs.writeFileSync(dst, JSON.stringify(m, null, 2) + "\n");

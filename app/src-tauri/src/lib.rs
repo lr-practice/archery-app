@@ -111,9 +111,10 @@ fn check_library(root: &Path) -> Result<(), String> {
 }
 
 /// Wie check_library, zählt aber nur bei Ordnern, die noch keine Bibliothek
-/// sind. Eine gewachsene Bibliothek (mit .archiver) öffnet sich also auch über
+/// sind. Eine gewachsene Bibliothek (mit .archery) öffnet sich also auch über
 /// 20.000 Dateien weiter; vorher landete man beim Start auf „Bibliothek anlegen“.
 fn check_library_open(root: &Path) -> Result<(), String> {
+    library::migrate_meta_dir(root);
     check_folder(root, !root.join(library::META_DIR).is_dir())
 }
 
@@ -458,7 +459,7 @@ struct StartInfo {
 #[tauri::command]
 async fn start_info(app: AppHandle, state: State<'_, AppState>) -> Result<StartInfo, String> {
     let home = dirs::home_dir().unwrap_or_default();
-    let export = dirs::download_dir().unwrap_or_else(|| home.join("Downloads")).join("archiver-export.json");
+    let export = dirs::download_dir().unwrap_or_else(|| home.join("Downloads")).join("archery-export.json");
     Ok(StartInfo {
         library: state.library.lock().unwrap().as_ref().map(|l| l.root.to_string_lossy().into_owned()),
         pending: load_settings(&app).library.filter(|p| Path::new(p).is_dir()),
@@ -1379,7 +1380,7 @@ async fn open_file(app: AppHandle, state: State<'_, AppState>, path: String) -> 
 }
 
 // ---- Updates ----
-// Die App fragt beim Start im öffentlichen Repo Archiver-Releases nach
+// Die App fragt beim Start im öffentlichen Repo archery-releases nach
 // latest.json. Gibt es eine neuere Version, zeigt die Oberfläche einen Hinweis;
 // „Installieren“ lädt das signierte Paket, ersetzt die App und startet neu.
 
@@ -1435,7 +1436,7 @@ fn set_appearance(window: tauri::WebviewWindow, light: bool, radius: Option<f64>
 /// Vorabversionen: eigener Kanal im selben Release-Repository (Tag „vorab“,
 /// kein „latest“). Die Beta-Tester sehen ihn nie; was dort geprüft ist, gibt
 /// „freigeben“ im Build-Workflow unverändert an alle frei.
-const PRERELEASE_FEED: &str = "https://github.com/lr-practice/Archiver-Releases/releases/download/vorab/vorab.json";
+const PRERELEASE_FEED: &str = "https://github.com/lr-practice/archery-releases/releases/download/vorab/vorab.json";
 
 /// Erst der Vorab-Kanal (falls an), dann der Beta-Kanal. Ist die Beta schon
 /// weiter als die letzte Vorabversion, gewinnt die Beta.
@@ -1480,13 +1481,13 @@ async fn update_install(app: AppHandle) -> Result<(), String> {
 }
 
 // ---- Version wählen (0.38.1) ----
-// Jede Beta-Freigabe liegt in Archiver-Releases unter vX.Y.Z mit latest.json,
+// Jede Beta-Freigabe liegt in archery-releases unter vX.Y.Z mit latest.json,
 // jede Vorabversion ab 0.38.0 zusätzlich unter vorab-X.Y.Z mit vorab.json.
 // Die Liste kommt über curl (in macOS enthalten) von der GitHub-API; die
 // Installation läuft wie ein Update, nur mit fester Quelle und auch rückwärts.
 
-const RELEASES_API: &str = "https://api.github.com/repos/lr-practice/Archiver-Releases/releases?per_page=60";
-const RELEASES_DL: &str = "https://github.com/lr-practice/Archiver-Releases/releases/download";
+const RELEASES_API: &str = "https://api.github.com/repos/lr-practice/archery-releases/releases?per_page=60";
+const RELEASES_DL: &str = "https://github.com/lr-practice/archery-releases/releases/download";
 
 #[derive(Serialize, Debug, PartialEq)]
 struct VersionEntry {
@@ -1897,7 +1898,7 @@ mod tests {
         assert_eq!(check_library(&home).unwrap_err(), "library-system");
         assert_eq!(check_library(Path::new("/")).unwrap_err(), "library-system");
         let dir = std::env::temp_dir().join(format!("archiver-guard-{}", std::process::id()));
-        std::fs::create_dir_all(dir.join(".archiver")).unwrap();
+        std::fs::create_dir_all(dir.join(library::META_DIR)).unwrap();
         for i in 0..20 {
             std::fs::write(dir.join(format!("{i}.txt")), "x").unwrap();
         }
@@ -1910,7 +1911,7 @@ mod tests {
         assert_eq!(check_library(&dir).unwrap_err(), "library-large");
         // Schon eine Bibliothek: öffnet sich trotz Menge, ein neuer Ordner nicht
         assert!(check_library_open(&dir).is_ok());
-        std::fs::remove_dir_all(dir.join(".archiver")).unwrap();
+        std::fs::remove_dir_all(dir.join(library::META_DIR)).unwrap();
         assert_eq!(check_library_open(&dir).unwrap_err(), "library-large");
         assert_eq!(check_library_open(&home).unwrap_err(), "library-system");
         std::fs::remove_dir_all(&dir).unwrap();

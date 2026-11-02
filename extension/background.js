@@ -161,12 +161,12 @@ function removeEntry(index, folderKey, id) {
 }
 
 // ---- Brücke zur Desktop-App (Chrome Native Messaging) ----
-// Die App meldet sich bei Chrome als Host "app.archiver.bridge" an. Eine
+// Die App meldet sich bei Chrome als Host "app.archery.bridge" an. Eine
 // Verbindung bleibt offen, solange Anfragen laufen, und schließt nach 30 s Ruhe.
 // Speichern: Chrome lädt das Bild wie gewohnt, aber in Downloads/Archery-Transfer;
 // die App verschiebt es von dort in die Zone und merkt sich die Quelle.
 
-const HOST_NAME = "app.archiver.bridge";
+const HOST_NAME = "app.archery.bridge";
 const TRANSFER_DIR = "Archery-Transfer"; // bis 3.31.1 Archiver-Transfer, die App nimmt beide an
 const HOST_TIMEOUT_MS = 20000;
 const BRIDGE_CACHE_MS = 5000;
@@ -291,15 +291,15 @@ async function launchAppNative() {
   const msg = { cmd: "launch" };
   try {
     if (globalThis.browser && browser.runtime && browser.runtime.sendNativeMessage) {
-      await browser.runtime.sendNativeMessage("app.archiver.desktop", msg);
+      await browser.runtime.sendNativeMessage("app.archery.desktop", msg);
     } else {
       await new Promise((res, rej) =>
-        chrome.runtime.sendNativeMessage("app.archiver.desktop", msg, (r) => (chrome.runtime.lastError ? rej(new Error(chrome.runtime.lastError.message)) : res(r)))
+        chrome.runtime.sendNativeMessage("app.archery.desktop", msg, (r) => (chrome.runtime.lastError ? rej(new Error(chrome.runtime.lastError.message)) : res(r)))
       );
     }
     return true;
   } catch (err) {
-    console.warn("[Archiver] App nicht gestartet:", err && err.message);
+    console.warn("[Archery] App nicht gestartet:", err && err.message);
     return false;
   }
 }
@@ -456,7 +456,7 @@ async function archiveTab(tabId) {
     }
     return { id, filename: item.filename };
   } catch (err) {
-    console.warn("[Archiver] Seite nicht gesichert:", err.message);
+    console.warn("[Archery] Seite nicht gesichert:", err.message);
     return null;
   }
 }
@@ -473,7 +473,7 @@ async function saveToApp(message, sender) {
   try {
     id = await startDownload({ url: message.url, filename, saveAs: false, conflictAction: "uniquify" });
   } catch (err) {
-    console.warn("[Archiver] Download fehlgeschlagen:", err.message);
+    console.warn("[Archery] Download fehlgeschlagen:", err.message);
     sendFeedback(tabId, frameId, t("downloadFailed"), false);
     return { ok: false };
   }
@@ -510,7 +510,7 @@ async function saveToApp(message, sender) {
     else if (!message.quiet) sendFeedback(tabId, frameId, t("savedIn", [where]), true);
     return { ok: true, id: r.path };
   } catch (err) {
-    console.warn("[Archiver] Übergabe an die App fehlgeschlagen:", err.message);
+    console.warn("[Archery] Übergabe an die App fehlgeschlagen:", err.message);
     bridgeCache.at = 0;
     // Hat die App abgelehnt, liegt die Datei ungenutzt im Zwischenordner: sofort
     // aufräumen. Ohne Antwort könnte sie noch übernehmen, also später (3.24.0)
@@ -544,7 +544,7 @@ async function saveToAppSafari(message, sender) {
     blob = await res.blob();
     if (!blob.size) throw new Error("leer");
   } catch (err) {
-    console.warn("[Archiver] Download fehlgeschlagen:", err.message);
+    console.warn("[Archery] Download fehlgeschlagen:", err.message);
     sendFeedback(tabId, frameId, t("downloadFailed"), false);
     return { ok: false };
   }
@@ -575,7 +575,7 @@ async function saveToAppSafari(message, sender) {
     else if (!message.quiet) sendFeedback(tabId, frameId, t("savedIn", [where]), true);
     return { ok: true, id: r.path };
   } catch (err) {
-    console.warn("[Archiver] Übergabe an die App fehlgeschlagen:", err.message);
+    console.warn("[Archery] Übergabe an die App fehlgeschlagen:", err.message);
     bridgeCache.at = 0;
     sendFeedback(tabId, frameId, t("appSaveFailed") + (err.fromApp && err.message ? ": " + err.message : ""), false);
     return { ok: false };
@@ -755,7 +755,7 @@ function buildMenus() {
     chrome.contextMenus.create({ id: "sep", parentId: "archiver", type: "separator", contexts: MENU_CONTEXTS });
     chrome.contextMenus.create({ id: "area", parentId: "archiver", title: t("menuArea"), contexts: MENU_CONTEXTS });
   });
-  menuBuild.catch((err) => console.warn("[Archiver] Menü nicht aufgebaut:", err && err.message));
+  menuBuild.catch((err) => console.warn("[Archery] Menü nicht aufgebaut:", err && err.message));
   return menuBuild;
 }
 
@@ -1066,7 +1066,7 @@ async function exportForApp() {
   let binary = "";
   for (let i = 0; i < bytes.length; i += 0x8000) binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
   const url = "data:application/json;base64," + btoa(binary);
-  await startDownload({ url, filename: "archiver-export.json", saveAs: false, conflictAction: "overwrite" });
+  await startDownload({ url, filename: "archery-export.json", saveAs: false, conflictAction: "overwrite" });
   return { ok: true, count: items.length };
 }
 
@@ -1081,7 +1081,7 @@ async function saveToDownloads(message, sender) {
   try {
     id = await startDownload({ url: message.url, filename, saveAs: false, conflictAction: "uniquify" });
   } catch (err) {
-    console.warn("[Archiver] Download fehlgeschlagen:", err.message);
+    console.warn("[Archery] Download fehlgeschlagen:", err.message);
     sendFeedback(tabId, frameId, t("downloadFailed"), false);
     return { ok: false };
   }
@@ -1121,7 +1121,7 @@ async function handleDownload(message, sender) {
   try {
     id = await startDownload({ url: message.url, filename, saveAs: false, conflictAction: "uniquify" });
   } catch (err) {
-    console.warn("[Archiver] Download fehlgeschlagen:", err.message);
+    console.warn("[Archery] Download fehlgeschlagen:", err.message);
     sendFeedback(tabId, frameId, t("downloadFailed"), false);
     return { ok: false };
   }
@@ -1228,7 +1228,7 @@ async function moveDownload(oldId, sourceFolderRaw, targetFolderRaw) {
   try {
     newId = await startDownload({ url: item.url, filename: newFilename, saveAs: false, conflictAction: "uniquify" });
   } catch (err) {
-    console.warn("[Archiver] Verschieben fehlgeschlagen:", err.message);
+    console.warn("[Archery] Verschieben fehlgeschlagen:", err.message);
     return { ok: false, error: t("moveSourceUnreachable") };
   }
 
@@ -1286,7 +1286,7 @@ function sanitizePath(pathStr) {
       .map((seg) => seg.trim())
       .filter((seg) => seg && seg !== "." && seg !== "..")
       .map(sanitizeSegment)
-      .join("/") || "Archiver"
+      .join("/") || "Archery"
   );
 }
 

@@ -39,7 +39,7 @@ try {
   await page.goto(url);
   await page.waitForTimeout(800); // Content-Scripts laufen nach document_idle
 
-  const hasOverlay = () => page.evaluate(() => !!document.querySelector("archiver-overlay"));
+  const hasOverlay = () => page.evaluate(() => !!document.querySelector("archery-overlay"));
 
   await check("erzeugtes Tastenkürzel öffnet kein Overlay", async () => {
     await page.evaluate(() =>
@@ -71,8 +71,8 @@ try {
     await page.bringToFront();
     await page.mouse.click(5, 5);
     await page.keyboard.press("Alt+Shift+KeyA");
-    await page.waitForFunction(() => !!document.querySelector("archiver-overlay"), null, { timeout: 5000 });
-    const open = await page.evaluate(() => document.querySelector("archiver-overlay").shadowRoot);
+    await page.waitForFunction(() => !!document.querySelector("archery-overlay"), null, { timeout: 5000 });
+    const open = await page.evaluate(() => document.querySelector("archery-overlay").shadowRoot);
     assert.equal(open, null, "shadowRoot ist von der Seite aus lesbar");
   });
 } finally {

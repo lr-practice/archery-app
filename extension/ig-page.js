@@ -2,10 +2,10 @@
 // Browser lädt (eigene Abrufe der Seite und eingebettete Daten). Archiver
 // stellt keine eigene Anfrage. Läuft in der Welt der Seite (world: MAIN),
 // weil nur dort die Antworten der Seite sichtbar sind, und reicht gefundene
-// Medien als Text an content.js weiter („archiver:ig-media“).
+// Medien als Text an content.js weiter („archery:ig-media“).
 (() => {
-  if (window.__archiverIgPage) return;
-  window.__archiverIgPage = true;
+  if (window.__archeryIgPage) return;
+  window.__archeryIgPage = true;
 
   const DATA_URL = /\/(api|graphql)\b/;
   const HINT = /video_versions|image_versions2/;
@@ -62,10 +62,10 @@
   }
 
   // Was vor content.js gefunden wurde, geht nicht verloren: content.js fragt
-  // beim Start einmal nach („archiver:ig-hello“) und bekommt alles nochmal.
+  // beim Start einmal nach („archery:ig-hello“) und bekommt alles nochmal.
   const sent = [];
-  const send = (list) => document.dispatchEvent(new CustomEvent("archiver:ig-media", { detail: JSON.stringify(list) }));
-  document.addEventListener("archiver:ig-hello", () => sent.length && send(sent));
+  const send = (list) => document.dispatchEvent(new CustomEvent("archery:ig-media", { detail: JSON.stringify(list) }));
+  document.addEventListener("archery:ig-hello", () => sent.length && send(sent));
 
   // Abrufe der Seite: Antwort kopieren und mitlesen, die Seite bekommt das Original
   const pageFetch = window.fetch;
