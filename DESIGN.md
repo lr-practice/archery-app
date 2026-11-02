@@ -114,7 +114,7 @@ Für die Typografie gilt:
 - Melange ist kommerziell (kimera, Freigabe für den internen Gebrauch) und
   liegt nicht in diesem Repo. Der Build holt die woff2-Schnitte 100, 300, 350
   (Semi-Light), 350 kursiv, 400, 400 kursiv, 500, 600 und 700 aus dem privaten
-  Repo `lr-practice/archiver` (Branch `claude/project-thread-85f33d`)
+  Repo `lr-practice/archery-website` (Branch `claude/project-thread-85f33d`)
   (`fonts/melange/`) nach `app/src/fonts/melange/` und
   `extension/fonts/melange/` (beide in `.gitignore`). Fehlen sie, springt
   Geist ein. Text-Karten und Bildbeschriftungen der Extension behalten ihre

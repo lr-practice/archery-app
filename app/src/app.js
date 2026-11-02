@@ -3234,7 +3234,7 @@
   }
 
   // ---- Einstellungen › App › Updates: Kanal Beta/Vorab und Version wählen (0.38.1) ----
-  // Die Liste kommt aus Archiver-Releases (lib.rs: update_versions). Installiert
+  // Die Liste kommt aus archery-releases (lib.rs: update_versions). Installiert
   // wird wie bei einem Update, auch rückwärts; vorher fragt ein Dialog.
   async function renderUpdates(box, showVersion) {
     const pre = await invoke("update_channel").catch(() => false);

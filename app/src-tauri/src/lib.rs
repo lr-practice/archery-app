@@ -1380,7 +1380,7 @@ async fn open_file(app: AppHandle, state: State<'_, AppState>, path: String) -> 
 }
 
 // ---- Updates ----
-// Die App fragt beim Start im öffentlichen Repo Archiver-Releases nach
+// Die App fragt beim Start im öffentlichen Repo archery-releases nach
 // latest.json. Gibt es eine neuere Version, zeigt die Oberfläche einen Hinweis;
 // „Installieren“ lädt das signierte Paket, ersetzt die App und startet neu.
 
@@ -1436,7 +1436,7 @@ fn set_appearance(window: tauri::WebviewWindow, light: bool, radius: Option<f64>
 /// Vorabversionen: eigener Kanal im selben Release-Repository (Tag „vorab“,
 /// kein „latest“). Die Beta-Tester sehen ihn nie; was dort geprüft ist, gibt
 /// „freigeben“ im Build-Workflow unverändert an alle frei.
-const PRERELEASE_FEED: &str = "https://github.com/lr-practice/Archiver-Releases/releases/download/vorab/vorab.json";
+const PRERELEASE_FEED: &str = "https://github.com/lr-practice/archery-releases/releases/download/vorab/vorab.json";
 
 /// Erst der Vorab-Kanal (falls an), dann der Beta-Kanal. Ist die Beta schon
 /// weiter als die letzte Vorabversion, gewinnt die Beta.
@@ -1481,13 +1481,13 @@ async fn update_install(app: AppHandle) -> Result<(), String> {
 }
 
 // ---- Version wählen (0.38.1) ----
-// Jede Beta-Freigabe liegt in Archiver-Releases unter vX.Y.Z mit latest.json,
+// Jede Beta-Freigabe liegt in archery-releases unter vX.Y.Z mit latest.json,
 // jede Vorabversion ab 0.38.0 zusätzlich unter vorab-X.Y.Z mit vorab.json.
 // Die Liste kommt über curl (in macOS enthalten) von der GitHub-API; die
 // Installation läuft wie ein Update, nur mit fester Quelle und auch rückwärts.
 
-const RELEASES_API: &str = "https://api.github.com/repos/lr-practice/Archiver-Releases/releases?per_page=60";
-const RELEASES_DL: &str = "https://github.com/lr-practice/Archiver-Releases/releases/download";
+const RELEASES_API: &str = "https://api.github.com/repos/lr-practice/archery-releases/releases?per_page=60";
+const RELEASES_DL: &str = "https://github.com/lr-practice/archery-releases/releases/download";
 
 #[derive(Serialize, Debug, PartialEq)]
 struct VersionEntry {

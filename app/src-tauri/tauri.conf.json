@@ -282,7 +282,7 @@
     "updater": {
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEMwRjdCRTQ2QzEyMDM3Q0QKUldUTk55REJScjczd01Fbkk3YWl3SHZNYzRXMUN4U2l1MFh2RWdMTkFMcFhuUUJOSG5EOTJ2ME8K",
       "endpoints": [
-        "https://github.com/lr-practice/Archiver-Releases/releases/latest/download/latest.json"
+        "https://github.com/lr-practice/archery-releases/releases/latest/download/latest.json"
       ]
     }
   }
