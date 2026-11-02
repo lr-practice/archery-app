@@ -48,6 +48,8 @@ const m = JSON.parse(fs.readFileSync(src, "utf8"));
 delete m.key;
 delete m.minimum_chrome_version;
 m.permissions = (m.permissions || []).filter((p) => !["downloads", "pageCapture"].includes(p));
+// Safari vergibt ohnehin pro Installation eigene Adressen
+for (const r of m.web_accessible_resources || []) delete r.use_dynamic_url;
 // OffscreenCanvas im Hintergrund, MV3-Service-Worker
 m.browser_specific_settings = { safari: { strict_min_version: "16.4" } };
 fs.writeFileSync(dst, JSON.stringify(m, null, 2) + "\n");

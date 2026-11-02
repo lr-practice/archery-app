@@ -1,10 +1,13 @@
 # Changelog
 
-## App 0.43.5
+## App 0.43.5 · Extension 3.31.4
 
 - Erste mit Apple Developer ID signierte und notarisierte Version. Beim ersten
   Start fragt macOS nicht mehr nach „Trotzdem öffnen“. Möglich, dass macOS
   einmal neu nach Rechten fragt, weil sich die Signatur ändert.
+- Extension: Schriften sind für Webseiten nur noch über eine Adresse
+  erreichbar, die pro Sitzung wechselt (`use_dynamic_url`). Fremde Seiten
+  können Melange nicht mehr über die Extension einbinden.
 
 ## App 0.43.4 · Extension 3.31.3
 
