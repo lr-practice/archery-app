@@ -45,7 +45,7 @@ concurrency:
 jobs:
   build:
     if: inputs.ausspielen != 'freigeben'
-    runs-on: macos-15 # 0.42.0: macos-14 hatte keine freien Runner
+    runs-on: macos-14 # 02.11.: macos-15 drei Mal ohne Runner (0.42.0 war es umgekehrt)
     env:
       CHANNEL: ${{ inputs.ausspielen }}
       HAS_RELEASE_SECRETS: ${{ secrets.RELEASES_TOKEN != '' && secrets.TAURI_SIGNING_PRIVATE_KEY != '' }}
