@@ -1,5 +1,11 @@
 # Changelog
 
+## App 0.43.5
+
+- Erste mit Apple Developer ID signierte und notarisierte Version. Beim ersten
+  Start fragt macOS nicht mehr nach „Trotzdem öffnen“. Möglich, dass macOS
+  einmal neu nach Rechten fragt, weil sich die Signatur ändert.
+
 ## App 0.43.4 · Extension 3.31.3
 
 - Konto: neue Preise. Lizenz ab 1.0 einmalig 19 €, Beta-Bonus 9 € bis 31.01.
