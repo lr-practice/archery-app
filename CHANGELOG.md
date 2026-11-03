@@ -1,5 +1,14 @@
 # Changelog
 
+## App 0.45.2 · Extension 3.32.1
+
+- Notes und Textkarten zeigen im Raster nur noch den Titel, groß. Ohne Titel
+  steht der Anfang des Texts. Bis zu drei verknüpfte Referenzen stehen klein
+  darunter.
+- Gelb ist etwas weniger grell (`#f2e14b` statt `#ffff00`), in App, Tray und
+  Extension.
+- Eine Note ohne Verknüpfung steht in der Lightbox wieder in der Mitte.
+
 ## App 0.45.1
 
 - Jede Zonenkarte in der Übersicht hat ein festes Titelbild. Ohne eigene Wahl

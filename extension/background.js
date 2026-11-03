@@ -618,7 +618,7 @@ const PREVIEW_TONES = {
   green: ["#00b050", "#003d1c"],
   violet: ["#7030a0", "#e2c8f5"],
   cyan: ["#00b0f0", "#003d54"],
-  yellow: ["#ffff00", "#5c5c00"],
+  yellow: ["#f2e14b", "#4d4500"],
   white: ["#f4f3ef", "#141414"],
 };
 function textPreview(quote, tone, hash) {

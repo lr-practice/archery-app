@@ -258,7 +258,7 @@
 }
 
 .cl-tone[data-tone="auto"] {
-  background: linear-gradient(90deg, #ff0000, #ffff00, #00b050, #00b0f0, #7030a0);
+  background: linear-gradient(90deg, #ff0000, #f2e14b, #00b050, #00b0f0, #7030a0);
 }
 
 .cl-tone.active {

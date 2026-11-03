@@ -673,7 +673,7 @@
     green: ["#00b050", "#003d1c", 0.7],
     violet: ["#7030a0", "#e2c8f5", 0.75],
     cyan: ["#00b0f0", "#003d54", 0.7],
-    yellow: ["#ffff00", "#5c5c00", 0.75],
+    yellow: ["#f2e14b", "#4d4500", 0.75],
     white: ["#ffffff", "#141414", 0.5],
     black: ["#141414", "#ededed", 0.5],
   };
@@ -4960,6 +4960,17 @@
     sheet.appendChild(el("div", "ts-title", title || t("noteUntitled")));
     sheet.appendChild(el("div", "ts-body", body));
     const n = linkedItems(item).length;
+    // 0.45.2: im Raster stehen die verknüpften Referenzen klein unter dem Titel
+    const figs = linkedItems(item).filter((it) => !quoteOf(it)).slice(0, 3);
+    if (figs.length) {
+      const row = el("div", "ts-figs");
+      // als Fläche, nicht als <img>: die Karte sucht ihr Bild mit querySelector("img")
+      for (const it of figs) {
+        const f = row.appendChild(el("span"));
+        f.style.backgroundImage = `url("${thumbSrc(it)}")`;
+      }
+      sheet.appendChild(row);
+    }
     sheet.appendChild(el("div", "ts-foot", [domainOf(item.pageUrl), n ? t("noteObjects", { n }) : ""].filter(Boolean).join("  ·  ")));
     return sheet;
   }
