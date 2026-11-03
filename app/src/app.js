@@ -144,7 +144,7 @@
       body: JSON.stringify(body),
     });
     const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw Object.assign(new Error(data.msg || data.error_description || data.message || "HTTP " + res.status), { status: res.status });
+    if (!res.ok) throw Object.assign(new Error(data.msg || data.error_description || data.message || "HTTP " + res.status), { status: res.status, code: data.error_code });
     return data;
   }
 
@@ -160,7 +160,8 @@
       id: u.id || base.id || null,
       refresh: data.refresh_token || base.refresh || null,
       studio: u.app_metadata?.studio === true,
-      name: String(u.user_metadata?.username || ""),
+      name: String(u.user_metadata?.username || u.user_metadata?.name || ""),
+      terms: u.user_metadata?.terms_version || null,
     });
   }
 
@@ -182,15 +183,20 @@
     if (state.page === "settings") renderPage(true);
   }
 
-  async function setUsername(name) {
+  // user_metadata ergänzen (PUT /user führt die Schlüssel zusammen)
+  async function updateUser(data) {
     if (!accessToken) await checkAccount();
     if (!accessToken) throw new Error(t("accountOffline"));
     const res = await fetch(SUPABASE + "/auth/v1/user", {
       method: "PUT",
       headers: { apikey: SUPABASE_KEY, Authorization: "Bearer " + accessToken, "Content-Type": "application/json" },
-      body: JSON.stringify({ data: { username: name } }),
+      body: JSON.stringify({ data }),
     });
     if (!res.ok) throw new Error("HTTP " + res.status);
+  }
+
+  async function setUsername(name) {
+    await updateUser({ username: name });
     setPref("account", { ...account(), name });
   }
 
@@ -200,6 +206,7 @@
     setPref("account", null);
     accessToken = null;
     lockState.email = "";
+    lockState.mode = "in";
     $("lockList").replaceChildren();
     state.settingsSub = null;
     closePage();
@@ -207,7 +214,9 @@
     renderZones();
   }
 
-  const sendCode = (email) => auth("otp", { email, create_user: true });
+  // „Anmelden“ legt kein Konto an, das macht nur „Konto anlegen“ mit Namen und
+  // angenommenen Beta-Bedingungen, wie auf der Webseite (Legal 03.11.)
+  const sendCode = (email, data) => auth("otp", data ? { email, create_user: true, data } : { email, create_user: false });
 
   async function verifyCode(email, token) {
     const data = await auth("verify", { type: "email", email, token });
@@ -215,130 +224,303 @@
     saveSession(data, { email, at: Date.now() });
   }
 
+  // Beta-Bedingungen (Legal 03.11.): Version und Zeitpunkt der Annahme stehen im
+  // Konto (user_metadata), gleich wie bei „Create account“ auf der Webseite.
+  // Konten ohne Annahme sehen beim nächsten Abgleich einmal die Frage danach.
+  const TERMS_VERSION = "2026-11-02";
+  const SITE = "https://archery-visual.com/";
+  const TERMS_URL = SITE + (lang === "de" ? "beta-terms.html" : "beta-terms-en.html");
+  const PRIVACY_URL = SITE + (lang === "de" ? "datenschutz.html" : "privacy.html");
+  const termsData = () => ({ terms_version: TERMS_VERSION, terms_accepted_at: new Date().toISOString() });
+  // null = der Server sagt, es fehlt; undefined = noch nicht abgeglichen (Konto von vor 0.45)
+  const needsTerms = () => isUnlocked() && account().terms === null;
+
+  async function acceptTerms() {
+    await updateUser(termsData());
+    setPref("account", { ...account(), terms: TERMS_VERSION });
+  }
+
   function applyLock() {
     const shared = isUnlocked() && sharedBlocked();
-    const locked = !isUnlocked() || shared;
+    const terms = !shared && needsTerms();
+    const locked = !isUnlocked() || shared || terms;
     document.body.classList.toggle("locked", locked);
     $("lock").hidden = !locked;
     if (shared) renderLockForm("shared");
-    else if (locked && (!$("lockList").firstChild || lockState.step === "shared")) renderLockForm("mail");
+    else if (terms) {
+      if (lockState.step !== "terms") renderLockForm("terms");
+    } else if (locked && (!$("lockList").firstChild || lockState.step === "shared" || lockState.step === "terms")) renderLockForm("mail");
   }
 
-  // Sperre als Liste: "mail" (E-Mail eingeben), "code" (Code aus der Mail), "beta" (Freischalt-Code)
-  const lockState = { email: "" };
-  // Anmelden (0.40.9, Variante B „Satz“): Der Satz sagt, was zu tun ist, darunter
-  // ein einziges Feld in Satzgröße auf einer Linie, rechts ein runder Pfeil.
-  // Zwei Schritte: "mail" (E-Mail) und "code" (Code aus der Mail).
+  // Erster Start (0.45, Variante W): Schrittzeile oben rechts, n = 1–3, 0 blendet sie aus
+  function setOnbSteps(n) {
+    const bar = $("onbSteps");
+    bar.hidden = !n;
+    if (n) bar.replaceChildren(el("span", "onb-steps-n", "(" + n + " / 3)"), " " + t("onbSteps"));
+  }
+
+  // Bausteine wie auf der Webseite (account/): Satz, Feld mit Label, Knopf, Hinweis, Kleingedrucktes
+  function onbSay(title, sub) {
+    const h = el("h1", "onb-say", title + " ");
+    h.appendChild(el("span", "onb-say-sub", sub));
+    return h;
+  }
+
+  function onbGo(label, arrow = "→") {
+    const b = el("button", "onb-go");
+    b.type = "button";
+    b.append(label, el("span", null, arrow));
+    return b;
+  }
+
+  function onbLink(label, url) {
+    const a = el("a", null, label);
+    a.href = url;
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      invoke("open_url", { url }).catch(fail);
+    });
+    return a;
+  }
+
+  // Text mit {platzhaltern}, die Knöpfe oder Links werden
+  function onbFine(text, parts) {
+    const p = el("p", "onb-fine");
+    for (const bit of text.split(/(\{\w+\})/)) {
+      const key = bit.match(/^\{(\w+)\}$/);
+      p.append(key && parts[key[1]] ? parts[key[1]] : bit);
+    }
+    return p;
+  }
+
+  const termsLink = () => onbLink(t("lockTermsLink"), TERMS_URL);
+  const privacyLink = () => onbLink(t("lockPrivacyLink"), PRIVACY_URL);
+
+  function onbCheck() {
+    const label = el("label", "onb-check");
+    const box = el("input");
+    box.type = "checkbox";
+    const text = t("lockAccept").split("{terms}");
+    const span = el("span", null, text[0]);
+    span.append(termsLink(), text[1] || "");
+    label.append(box, span);
+    return { label, box };
+  }
+
+  // Sperre: "mail" (Anmelden oder Konto anlegen), "code" (Code aus der Mail),
+  // "terms" (Beta-Bedingungen nachholen), "shared" (geteilte Bibliothek ohne Studio)
+  const lockState = { email: "", mode: "in", draft: {}, notice: "", after: null };
+
+  // Angemeldet und Bedingungen angenommen: Sperre weg, beim ersten Start geht es weiter
+  function signedIn() {
+    applyLock();
+    if (!$("lock").hidden) return;
+    if (state.page) renderPage(true);
+    const after = lockState.after;
+    lockState.after = null;
+    if (after) after();
+    else toast(t("lockWelcome", { email: account().email }));
+  }
+
   function renderLockForm(step) {
     lockState.step = step;
     const form = $("lockList");
-    const foot = $("lockGo");
     form.replaceChildren();
-    foot.replaceChildren();
     form.onsubmit = null;
-    form.hidden = step === "shared";
-    form.classList.remove("wrong");
-    const input = el("input", "p-lock-input");
-    input.spellcheck = false;
-    input.addEventListener("keydown", (e) => e.stopPropagation());
-    input.addEventListener("input", () => form.classList.remove("wrong"));
-    const go = el("button", "p-lock-go", "→");
-    go.type = "submit";
-    form.append(input, go);
-    const status = el("span", "p-lock-msg");
-    const link = (label, fn) => button("p-lock-end", "(" + label + ")", fn);
-    const fail = (text) => {
-      status.textContent = text;
-      form.classList.remove("wrong");
-      void form.offsetWidth;
-      form.classList.add("wrong");
-      go.disabled = false;
+    const note = el("p", "onb-note");
+    note.setAttribute("aria-live", "polite");
+    const say = (text, err) => {
+      note.textContent = text ? "→ " + text : "";
+      note.classList.toggle("err", !!err);
+    };
+    const go = (label) => {
+      const b = onbGo(label);
+      b.type = "submit";
+      return b;
+    };
+    let submit;
+    const fail = (text, focus) => {
+      say(text, true);
+      submit.disabled = false;
+      if (focus) focus.focus();
+    };
+    const busy = (text) => {
+      say(text);
+      submit.disabled = true;
     };
 
     // Geteilte Bibliothek ohne Studio (0.43.2): nur eine andere Bibliothek wählen
     if (step === "shared") {
-      $("lockTitle").textContent = t("lockSharedTitle");
-      $("lockText").textContent = t("lockSharedText");
-      foot.append(
-        link(t("lockSharedPick"), async () => {
-          const path = await invoke("pick_folder");
-          if (!path) return;
-          try {
-            await invoke("open_library", { path });
-            await afterLibrarySwitch();
-          } catch (e) {
-            libraryFail(e);
-          }
-        })
-      );
+      submit = onbGo(t("lockSharedPick"));
+      submit.onclick = async () => {
+        const path = await invoke("pick_folder");
+        if (!path) return;
+        try {
+          await invoke("open_library", { path });
+          await afterLibrarySwitch();
+        } catch (e) {
+          libraryFail(e);
+        }
+      };
+      form.append(onbSay(t("lockSharedTitle"), t("lockSharedText")), submit);
       return;
     }
 
-    if (step === "code") {
-      $("lockTitle").textContent = t("lockCodeTitle");
-      $("lockText").textContent = t("lockCodeText", { email: lockState.email });
-      input.type = "text";
+    // Konto ohne angenommene Beta-Bedingungen: einmal fragen, Abmelden geht immer
+    if (step === "terms") {
+      const check = onbCheck();
+      submit = go(t("lockTermsGo"));
+      const foot = el("div", "onb-foot");
+      foot.append(button("onb-link", "(" + t("accountSignOut") + ")", () => signOut()), el("span", null, account().email));
+      form.append(onbSay(t("lockTermsTitle"), t("lockTermsText")), check.label, submit, note, foot, onbFine(t("lockFinePrivacy"), { privacy: privacyLink() }));
+      form.onsubmit = async (e) => {
+        e.preventDefault();
+        if (!check.box.checked) return fail(t("lockTermsMissing"), check.box);
+        busy(t("lockSending"));
+        try {
+          await acceptTerms();
+          signedIn();
+        } catch (err) {
+          fail(String((err && err.message) || err));
+        }
+      };
+      return;
+    }
+
+    const code = step === "code";
+    const join = lockState.mode === "join";
+    const draft = lockState.draft;
+
+    const mode = el("div", "onb-mode");
+    mode.setAttribute("role", "group");
+    for (const m of ["in", "join"]) {
+      const b = button(null, t(m === "in" ? "lockSignIn" : "lockJoin"), () => {
+        if (lockState.mode === m && !code) return;
+        lockState.mode = m;
+        renderLockForm("mail");
+      });
+      b.setAttribute("aria-pressed", String(lockState.mode === m));
+      mode.appendChild(b);
+    }
+    form.append(mode, onbSay(t(join ? "lockJoinTitle" : "lockTitle"), t(join ? "lockJoinText" : "lockText")));
+
+    const field = (key, label, opts = {}) => {
+      const wrap = el("label", "onb-field");
+      const k = el("span", "onb-k", label);
+      if (opts.optional) k.append(" ", el("span", "onb-o", t("lockOptional")));
+      const input = el("input", "onb-input");
+      input.type = opts.type || "text";
+      input.spellcheck = false;
+      if (opts.autocomplete) input.autocomplete = opts.autocomplete;
+      if (opts.placeholder) input.placeholder = opts.placeholder;
+      if (opts.maxLength) input.maxLength = opts.maxLength;
+      input.value = key === "email" ? lockState.email : draft[key] || "";
+      input.addEventListener("keydown", (e) => e.stopPropagation());
+      input.addEventListener("input", () => {
+        if (key === "email") lockState.email = input.value.trim();
+        else draft[key] = input.value;
+      });
+      wrap.append(k, input);
+      form.appendChild(wrap);
+      return input;
+    };
+
+    const fields = {};
+    if (join && !code) fields.name = field("name", t("lockName"), { autocomplete: "name", maxLength: 120, placeholder: t("lockNamePlaceholder") });
+    fields.email = field("email", t("lockMail"), { type: "email", autocomplete: "email", placeholder: t("lockMailPlaceholder") });
+    if (join && !code) {
+      fields.company = field("company", t("lockCompany"), { optional: true, autocomplete: "organization", maxLength: 120, placeholder: t("lockCompanyPlaceholder") });
+      fields.website = field("website", t("lockWebsite"), { optional: true, autocomplete: "url", maxLength: 200, placeholder: t("lockWebsitePlaceholder") });
+    }
+
+    // Schritt Code: E-Mail bleibt sichtbar, wer sie ändert, ist wieder beim Senden
+    if (code) {
+      const sentTo = lockState.email;
+      fields.email.addEventListener("input", () => {
+        if (fields.email.value.trim() === sentTo) return;
+        renderLockForm("mail");
+        const again = $("lockList").querySelector('input[type="email"]');
+        again.focus();
+        again.setSelectionRange(again.value.length, again.value.length);
+      });
+      const input = field("code", t("lockCode"), { autocomplete: "one-time-code", maxLength: 10, placeholder: "123456" });
       input.inputMode = "numeric";
-      input.autocomplete = "one-time-code";
-      input.placeholder = "12345678";
-      input.maxLength = 10;
       input.classList.add("is-code");
-      go.setAttribute("aria-label", t("lockSignInGo"));
+      input.value = "";
+      submit = go(t("lockSignInGo"));
+      const resend = button("onb-inline", t("lockResendLink"), async () => {
+        say(t("lockSending"));
+        try {
+          await sendCode(sentTo, lockState.data);
+          say(t("lockSentTo", { email: sentTo }));
+        } catch (err) {
+          say(String(err.message || err), true);
+        }
+      });
+      form.append(submit, note, onbFine(t("lockFineCode"), { resend }));
+      say(t("lockSentTo", { email: sentTo }));
       form.onsubmit = async (e) => {
         e.preventDefault();
         const token = input.value.replace(/\D/g, "");
         // Supabase verschickt je nach Projekt 6 oder 8 Ziffern
-        if (token.length < 6 || token.length > 8) return fail(t("lockCodeShort"));
-        go.disabled = true;
-        status.textContent = t("lockChecking");
+        if (token.length < 6 || token.length > 8) return fail(t("lockCodeShort"), input);
+        busy(t("lockChecking"));
         try {
-          await verifyCode(lockState.email, token);
-          applyLock();
-          if (state.page) renderPage(true);
-          toast(t("lockWelcome", { email: lockState.email }));
+          await verifyCode(sentTo, token);
         } catch (err) {
           // abgelaufen/falsch → eigene Meldung, alles andere mit dem Grund von Supabase
           const why = String((err && err.message) || "");
-          fail(/expired|invalid/i.test(why) || !why ? t("lockWrongCode") : why);
+          return fail(/expired|invalid/i.test(why) || !why ? t("lockWrongCode") : why, input);
         }
+        // „Konto anlegen“ mit einer E-Mail, die schon ein Konto hat: Supabase
+        // übernimmt die Daten dann nicht, die Annahme der Bedingungen schon
+        if (lockState.data && needsTerms()) await acceptTerms().catch(() => {});
+        lockState.data = null;
+        lockState.draft = {};
+        signedIn();
       };
-      const again = link(t("lockResend"), async () => {
-        status.textContent = t("lockSending");
-        try {
-          await sendCode(lockState.email);
-          status.textContent = t("lockSent");
-        } catch (err) {
-          fail(String(err.message || err));
-        }
-      });
-      foot.append(again, link(t("lockOtherMail"), () => renderLockForm("mail")), status);
       setTimeout(() => input.focus(), 60);
       return;
     }
 
-    $("lockTitle").textContent = t("lockTitle");
-    $("lockText").textContent = t("lockText");
-    input.type = "email";
-    input.autocomplete = "email";
-    input.placeholder = t("lockMailPlaceholder");
-    input.value = lockState.email;
-    go.setAttribute("aria-label", t("lockSendCode"));
+    let check = null;
+    if (join) {
+      check = onbCheck();
+      form.appendChild(check.label);
+    }
+    submit = go(t(join ? "lockJoin" : "lockSendCode"));
+    const fine = join ? onbFine(t("lockFineJoin"), { privacy: privacyLink() }) : onbFine(t("lockFineIn"), { privacy: privacyLink(), terms: termsLink() });
+    form.append(submit, note, fine);
+    if (lockState.notice) say(lockState.notice);
+    lockState.notice = "";
+
     form.onsubmit = async (e) => {
       e.preventDefault();
-      const email = input.value.trim();
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return fail(t("lockBadMail"));
-      go.disabled = true;
-      status.textContent = t("lockSending");
+      const email = fields.email.value.trim();
+      const name = join ? fields.name.value.trim() : "";
+      if (join && !name) return fail(t("lockNoName"), fields.name);
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return fail(t("lockBadMail"), fields.email);
+      if (join && !check.box.checked) return fail(t("lockNoTerms"), check.box);
+      const data = join ? { name, company: fields.company.value.trim(), website: fields.website.value.trim(), ...termsData() } : null;
+      busy(t("lockSending"));
       try {
-        await sendCode(email);
+        await sendCode(email, data);
         lockState.email = email;
+        lockState.data = data;
         renderLockForm("code");
       } catch (err) {
+        // Anmelden mit einer E-Mail ohne Konto: weiter zu „Konto anlegen“
+        if (!join && (err.code === "otp_disabled" || /signups? not allowed/i.test(err.message))) {
+          lockState.mode = "join";
+          lockState.email = email;
+          lockState.notice = t("lockNoAccount");
+          renderLockForm("mail");
+          return;
+        }
         fail(String(err.message || err));
       }
     };
-    foot.append(el("span", "p-lock-hint", "(" + t("lockHow") + ")"), status);
-    setTimeout(() => input.focus(), 60);
+    setTimeout(() => (join ? fields.name : fields.email).focus(), 60);
   }
 
   // ---- Zustand ----
@@ -8283,74 +8465,105 @@
     return b;
   }
 
-  // ---- Erster Start: 1 Bibliothek, 2 Extension, 3 erstes Bild ----
+  // ---- Erster Start (0.45, Variante W): 1 Konto, 2 Bibliothek, 3 Browser, dann erstes Bild ----
 
-  function welcomeStep(n, title, text) {
+  const tilde = (path) => path.replace(/^\/(Users|home)\/[^/]+/, "~");
+
+  function welcomeStep(n, note, title, text) {
     $("app").hidden = true;
     $("welcome").hidden = false;
-    $("welcomeMark").textContent = t("onbStep", { n });
-    $("welcomeTitle").textContent = title;
-    $("welcomeText").textContent = text;
-    $("welcomeStatus").hidden = true;
+    setOnbSteps(n);
+    const col = $("welcomeCol");
+    col.replaceChildren(el("p", "onb-note onb-lead", "→ " + note), onbSay(title, text));
+    return col;
   }
 
   function showWelcome(info) {
-    welcomeStep(1, t("welcomeTitle"), t("welcomeText"));
-    const home = info.suggestedLibrary.replace(/^\/(Users|home)\/[^/]+/, "~");
-    $("welcomeCreate").textContent = t("welcomeCreate", { path: home });
-    $("welcomeCreate").onclick = async () => {
-      try {
-        await invoke("open_library", { path: info.suggestedLibrary });
-        showExtensionStep();
-      } catch (e) {
-        libraryFail(e);
-      }
-    };
-    $("welcomeChoose").textContent = t("welcomeChoose");
-    $("welcomeChoose").onclick = async () => {
-      const path = await invoke("pick_folder");
-      if (!path) return;
+    // Zuerst das Konto: die Sperre steht allein da, danach geht es hier weiter
+    if (!isUnlocked() || needsTerms()) {
+      $("app").hidden = true;
+      $("welcome").hidden = true;
+      setOnbSteps(1);
+      lockState.after = () => showWelcome(info);
+      applyLock();
+      return;
+    }
+    let path = info.suggestedLibrary;
+    const col = welcomeStep(2, t("lockWelcome", { email: account().email }), t("welcomeTitle"), t("welcomeText"));
+    const wrap = el("div", "onb-field");
+    const box = el("div", "onb-box");
+    const shown = el("span", "onb-box-val", tilde(path));
+    box.append(
+      shown,
+      button("onb-link", "(" + t("welcomeChoose") + ")", async () => {
+        const picked = await invoke("pick_folder");
+        if (!picked) return;
+        path = picked;
+        shown.textContent = tilde(picked);
+      })
+    );
+    wrap.append(el("span", "onb-k", t("onbFolder")), box);
+    const go = onbGo(t("welcomeCreate"));
+    go.onclick = async () => {
+      go.disabled = true;
       try {
         await invoke("open_library", { path });
-        showExtensionStep();
+        showExtensionStep(tilde(path));
       } catch (e) {
+        go.disabled = false;
         libraryFail(e);
       }
     };
+    col.append(wrap, go, onbFine(t("welcomeFine"), {}));
   }
 
-  function showExtensionStep() {
-    welcomeStep(2, t("onbExtTitle"), t("onbExtText"));
-    const status = $("welcomeStatus");
-    status.hidden = false;
+  function showExtensionStep(where) {
+    const col = welcomeStep(3, t("onbLibIn", { path: where }), t("onbExtTitle"), t("onbExtText"));
+    const label = el("div", "onb-label");
+    label.append(el("span", null, "(" + t("onbExtHere") + ")"), el("span", null, t("onbExtLive")));
+    const list = el("div", "onb-list");
+    const row = (key) => {
+      const r = el("div", "onb-row");
+      const v = el("span", "onb-row-v");
+      const x = el("span", "onb-row-x");
+      r.append(el("span", "onb-row-k", key), v, x);
+      list.appendChild(r);
+      return { v, x };
+    };
+    const ext = row(t("onbExtName"));
+    const browsers = row(t("onbExtBrowsers"));
+    const go = onbGo(t("onbExtOpen"), "↗");
+    const foot = el("div", "onb-foot");
+    let on = false;
     let timer = 0;
-    const check = () =>
-      Promise.all([invoke("bridge_browsers"), extensionState()])
-        .then(([chromium, s]) => {
-          const list = s && s.safari && s.safariBridge ? [...chromium, "Safari"] : chromium;
-          // Verbunden heißt: Die Extension hat sich gemeldet (nicht nur die Brücke eingerichtet)
-          const on = list.length > 0 && !!s && s.kind !== "missing";
-          status.textContent = on ? t("onbExtOn", { list: list.join(", ") }) : t("onbExtWaiting");
-          status.classList.toggle("ok", on);
-          $("welcomeCreate").textContent = t(on ? "onbNext" : "onbExtOpen");
-        })
-        .catch(() => (status.textContent = t("onbExtWaiting")));
-    check();
-    timer = setInterval(check, 2000);
     const next = () => {
       clearInterval(timer);
       showFirstDropStep();
     };
-    $("welcomeCreate").onclick = () => {
-      if (status.classList.contains("ok")) next();
-      else
-        navigator.clipboard
-          .writeText("chrome://extensions")
-          .then(() => toast(t("onbExtCopied")))
-          .catch(fail);
-    };
-    $("welcomeChoose").textContent = t("onbSkip");
-    $("welcomeChoose").onclick = next;
+    foot.append(
+      button("onb-link", "(" + t("onbSkip") + ")", next),
+      onbLink(t("onbHelp"), SITE + "manual/#" + (lang === "de" ? "de" : "en") + "-extension")
+    );
+    col.append(label, list, go, foot);
+    go.onclick = () => (on ? next() : openExtensionDownload());
+    const check = () =>
+      Promise.all([invoke("bridge_browsers"), extensionState()])
+        .then(([chromium, s]) => {
+          const found = s && s.safari && s.safariBridge ? [...chromium, "Safari"] : chromium;
+          // Verbunden heißt: Die Extension hat sich gemeldet (nicht nur die Brücke eingerichtet)
+          const now = found.length > 0 && !!s && s.kind !== "missing";
+          ext.v.textContent = t(now ? "onbExtOn" : "onbExtWaiting");
+          ext.x.textContent = now ? String(s.version || "") : "";
+          browsers.v.textContent = found.length ? found.join(", ") : t("onbExtNone");
+          browsers.v.classList.toggle("dim", !found.length);
+          if (now === on) return;
+          on = now;
+          go.replaceChildren(t(on ? "onbNext" : "onbExtOpen"), el("span", null, on ? "→" : "↗"));
+        })
+        .catch(() => (ext.v.textContent = t("onbExtWaiting")));
+    ext.v.textContent = t("onbExtWaiting");
+    check();
+    timer = setInterval(check, 2000);
   }
 
   async function showFirstDropStep() {
@@ -8392,7 +8605,6 @@
   function showDropHint() {
     if (state.items.length) return;
     const hint = el("div", "onb-drop");
-    hint.appendChild(el("div", "onb-drop-mark", t("onbStep", { n: 3 })));
     hint.appendChild(el("div", "onb-drop-title", t("onbDropTitle")));
     hint.appendChild(el("div", "onb-drop-text", t("onbDropText")));
     hint.appendChild(button("onb-drop-close", "×", () => hint.remove()));
@@ -8414,6 +8626,7 @@
   }
 
   function showApp() {
+    setOnbSteps(0);
     $("welcome").hidden = true;
     $("app").hidden = false;
     applyLock();
@@ -8523,7 +8736,7 @@
   // Der Host notiert bei jedem Kontakt die Version der Extension. Gleiche Leiste
   // wie der Update-Hinweis; × blendet ihn aus, bis sich der Zustand ändert.
 
-  const EXTENSION_DOWNLOAD = "https://archiver-app.com/download/";
+  const EXTENSION_DOWNLOAD = "https://archery-visual.com/download/";
   const EXT_MISSING_GRACE = 2 * 24 * 60 * 60 * 1000;
 
   function openExtensionDownload() {

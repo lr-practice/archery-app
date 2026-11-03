@@ -16,17 +16,14 @@
       </div>
     </div>
 
-    <div id="welcome" class="welcome" hidden>
-      <div class="welcome-inner">
-        <div id="welcomeMark" class="welcome-mark">Archer<span class="wm-y">y</span></div>
-        <h1 id="welcomeTitle"></h1>
-        <p id="welcomeText"></p>
-        <p id="welcomeStatus" class="welcome-status" hidden></p>
-        <div class="welcome-actions">
-          <button type="button" id="welcomeCreate" class="btn primary"></button>
-          <button type="button" id="welcomeChoose" class="btn"></button>
-        </div>
-      </div>
+    <header id="onbSteps" class="onb-steps" data-tauri-drag-region hidden></header>
+
+    <div id="welcome" class="welcome onb" hidden>
+      <div id="welcomeCol" class="onb-col"></div>
+    </div>
+
+    <div id="lock" class="p-lock onb" hidden>
+      <form id="lockList" class="onb-col" novalidate></form>
     </div>
 
     <div id="app" class="app" hidden>
@@ -35,13 +32,6 @@
       <aside id="info" class="info-panel" hidden></aside>
       <aside id="sheet" class="p-sheet"></aside>
       <div id="dropbar" class="p-dropbar" hidden></div>
-      <div id="lock" class="p-lock" hidden>
-        <div class="p-lock-inner">
-          <h1 class="p-say"><span id="lockTitle"></span> <span id="lockText" class="p-say-sub"></span></h1>
-          <form id="lockList" class="p-lock-line" novalidate></form>
-          <div id="lockGo" class="p-lock-foot"></div>
-        </div>
-      </div>
       <header id="top" class="p-top" data-tauri-drag-region>
       <nav id="nav" class="p-nav">
         <button type="button" id="navBrand" class="p-nav-btn p-nav-brand">Archer<span class="wm-y">y</span></button>

@@ -130,8 +130,7 @@ Für die Typografie gilt:
   gezogen und nicht neu eingeführt.
 
 ### 2.2a Schriftzug
-- „Archery“ als Schriftzug (Navigation, Startbild, Willkommen, Kopf unter
-  Information): das y steht in `<span class="wm-y">` mit `margin-left:
+- „Archery“ als Schriftzug (Navigation, Startbild, Kopf unter Information): das y steht in `<span class="wm-y">` mit `margin-left:
   0.035em` (+35/1000 em, Brand Guideline › Logo). Gilt für jede Größe und
   für Melange wie Geist. Fenstertitel und Fließtext bleiben ohne.
 
@@ -375,7 +374,7 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
 ### 4.8a Rückfrage (`.dialog.confirm`)
 - **Zweck:** Kleine Dialoge über der Fläche: Löschen, Installieren,
   Umbenennen. Dieselbe Form haben Importieren
-  (`.dialog`), die Willkommen-Schritte (`.welcome-inner`), Schritt 3
+  (`.dialog`), der Hinweis zum ersten Bild
   (`.onb-drop`) und die Tour-Karten (18.10., vorher gestrichelte, eckige
   Rahmen).
 - **Form (18.10.):** Glas wie Menüs (2.4: `--menu-bg`, `--menu-shadow`,
@@ -999,18 +998,51 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
 - **Liste (`.p-list`):** Fläche ink × 0.045, `--r-lg`, Innenabstand
   2 / 16 px. Zeilen 12 px hoch gepolstert mit Linie `--p-rule`, Schlüssel
   132 px in `--p-dim`, Wert, Zusatz in `--p-faint`. Als Knopf Hover ink × 0.07.
-- **Sperre (Anmelden, 0.40.9, Variante B „Satz“):** Eine Spalte von höchstens
-  640 px in der Mitte. Satz (`.p-say`) „Deine Bibliothek. Melde dich mit deiner
-  E-Mail an.“, 28 px Abstand, dann eine Linie (`.p-lock-line`, Unterkante
-  ink × 0.22, im Fokus × 0.5, bei Fehler `--danger`): das Feld in Satzgröße
-  (34 px, 500, Laufweite 0), rechts ein runder Pfeil 44 px (Pille, ink auf
-  `--ink-inverse`). Darunter 14 px Abstand und eine Mono-Zeile 11 px: Hinweis
-  „(Wir schicken einen Code, kein Passwort)“ bzw. „(Neuer Code) (Andere
-  E-Mail)“, rechts die Meldung. Schritt Code: Satz „Code aus der Mail.
-  Gesendet an …“, Ziffern mit 0.06em Laufweite, 6 bis 8 Ziffern. Keine
-  Fläche, keine Zeilen „Weg“ und „Beta“. Den alten Freischalt-Code gibt es seit 0.43.0 nicht
-  mehr, auch nicht als Übergang: frei ist nur, wer ein Konto hat. Abmelden
-  vergisst das Konto.
+- **Anmelden und erster Start (0.45, Variante W, Lukas 03.11.: „W“):** Wie
+  „Sign in“ auf der Webseite (`account/`), damit Webseite und App gleich
+  aussehen. Gilt für die Sperre (`#lock`) und die Schritte (`#welcome`), Klassen
+  `.onb-*` in `app.css`. Eine Spalte von 480 px, mittig, scrollt, wenn das
+  Fenster niedrig ist.
+  - Oben rechts nur beim ersten Start eine Mono-Zeile „(1 / 3) Konto ·
+    Bibliothek · Browser“ (`.onb-steps`, Nummer in `--p-text`). Keine
+    Wortmarke oben (Lukas 03.11.).
+  - Umschalter „Anmelden / Konto anlegen“ (`.onb-mode`): Fläche ink × 0.07,
+    Knöpfe 32 px, 13.5 px, gedrückt ink × 0.12, Ecke `--r-md`. In den Schritten
+    2 und 3 steht an seiner Stelle, gleich hoch (40 px), ein Mono-Hinweis
+    „→ Angemeldet als …“ bzw. „→ Bibliothek in …“.
+  - Satz (`.onb-say`): `clamp(34px, 3.4vw, 52px)`, Zeilenhöhe 1.04, Laufweite
+    −0.025em, 350, 28 px Abstand oben und unten, der Rest in `--p-dim`.
+  - Feld (`.onb-field`): Mono-Label 11 px, 0.04em, Versalien, `--p-dim`,
+    „(optional)“ in `--p-faint`. Eingabe 56 px hoch, 16 px Innenabstand,
+    Rahmen ink × 0.22 (im Fokus `--p-text`), Fläche ink × 0.04, 19 px, Ecke
+    `--r-lg`. Code in Mono 22 px mit 0.3em Laufweite. Der Ordner in Schritt 2
+    ist ein Feld mit dem Pfad als Wert und „(Anderer Ordner)“ rechts darin.
+  - Haken (`.onb-check`): 20 px, Rahmen ink × 0.35, gesetzt `--p-text` mit
+    4 px Innenrand in `--ink-inverse`. Nie vorausgewählt.
+  - Primärknopf (`.onb-go`): volle Breite, 56 px, 17 px, Text links, Pfeil
+    rechts, `--p-text` auf `--ink-inverse`, Ecke `--r-md`.
+  - Darunter die Meldung (`.onb-note`, „→ …“, Fehler in `--danger`) und das
+    Kleingedruckte (`.onb-fine`, 13 px, `--p-dim`, Links unterstrichen in
+    `--p-text`). Mono-Fußzeile (`.onb-foot`) für „(Später)“ und „(Abmelden)“.
+  - Schritt 3 „Browser“: Liste wie 4.26 (`.onb-list`) mit „Extension“
+    (Verbunden + Version oder Noch nicht da) und „Browser“ (gefundene Browser).
+    Der Knopf heißt „Extension laden ↗“, bis sie sich meldet, dann „Zur
+    Bibliothek →“. Prüft alle 2 s.
+  - Ablauf: Konto → Bibliothek → Browser → App mit Hinweis zum ersten Bild.
+    „Anmelden“ legt kein Konto an (`create_user: false`); gibt es zur E-Mail
+    keins, wechselt die Sperre zu „Konto anlegen“ mit Hinweis. „Konto anlegen“
+    fragt Name (Pflicht), Firma und Website (freiwillig) und den Haken für die
+    Beta-Bedingungen ab, gespeichert wie auf der Webseite in `user_metadata`
+    (`terms_version`, `terms_accepted_at`). Konten ohne `terms_version` sehen
+    beim nächsten Abgleich einmal „Noch ein Schritt.“ mit dem Haken, ohne
+    Annahme geht es nicht weiter, Abmelden geht immer (Legal 03.11.).
+  - Code-Schritt: Wer die E-Mail ändert, ist wieder beim Senden.
+    „einen neuen Code senden“ steht im Kleingedruckten. 6 bis 8 Ziffern.
+  - Abweichung zur Webseite: Fehlerfarbe `--danger` statt `#ff6b5e`, Gewicht
+    350 statt 300 (Melange gibt es in der App nur in 350), Ecken folgen der
+    Rundung aus Einstellungen › Darstellung (bei „Weich“ wie die Webseite).
+  Den alten Freischalt-Code gibt es seit 0.43.0 nicht mehr, auch nicht als
+  Übergang: frei ist nur, wer ein Konto hat. Abmelden vergisst das Konto.
 - **Konto (Einstellungen):** Oben über der Liste der Bereiche: „(Konto)“ und
   eine Liste als Knopf mit Status und Danach (Abonnent: Läuft bis). Öffnet
   Einstellungen › Konto. Dort ist der Kopf ein Satz zum Zustand (seit 0.43.2
@@ -1023,8 +1055,9 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
 - **Vorschau und Lese-Modus (0.40.5 bis 0.43.1):** entfernt. Der Umschalter
   Beta / Abonnent / Lese-Modus / Anmelden erlaubte, zwischen Zuständen zu
   springen. Abo und Lese-Modus kommen mit der Lizenz zurück.
-- **Nicht:** Keine Highlights, keine Eingabekästen mit Rahmen, keine großen
-  Titelblätter.
+- **Nicht:** Keine Highlights, keine großen Titelblätter. Eingabekästen mit
+  Rahmen gibt es nur beim Anmelden und im ersten Start (seit 0.45, wie die
+  Webseite), nicht in den Einstellungen.
 
 ### 4.27 Safari-Extension (in Arbeit, `safari/`, `http_bridge.rs`)
 - **Zweck:** Dieselbe Extension in Safari am Mac. Sie steckt als

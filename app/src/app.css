@@ -101,67 +101,366 @@ button {
   cursor: default;
 }
 
-/* ---- Willkommen ---- */
+/* ---- Erster Start und Anmelden (0.45, Variante W, DESIGN 4.26) ----
+   Wie „Sign in“ auf der Webseite (account/): eine Spalte von 480 px, der Satz
+   in Webseitengröße, echte Felder mit Mono-Label, ein Primärknopf über die
+   volle Breite. Gilt für die Sperre (#lock) und die Schritte (#welcome). */
 
-.welcome {
-  height: 100%;
+:is(.welcome, .p-lock).onb {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  overflow-y: auto;
+  padding: 0 24px;
+  box-sizing: border-box;
 }
 
-.welcome-inner {
-  max-width: 520px;
-  border-radius: var(--r-lg);
-  background: var(--menu-bg);
-  box-shadow: var(--menu-shadow);
-  padding: 44px 40px;
+.welcome.onb {
+  height: 100%;
 }
 
-.welcome-mark {
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.welcome h1 {
-  font-size: 30px;
-  line-height: 1.12;
-  font-weight: 600;
-  letter-spacing: 0;
-  margin: 18px 0 12px;
-}
-
-.welcome p {
-  color: var(--muted);
-  margin: 0 0 28px;
-  font-size: 14px;
-}
-
-.welcome .welcome-status {
-  font-family: "Geist Mono", ui-monospace, monospace;
-  font-size: 12px;
-  margin-top: -14px;
-}
-
-.welcome .welcome-status::before {
-  content: "○ ";
-}
-
-.welcome .welcome-status.ok {
-  color: var(--ink);
-}
-
-.welcome .welcome-status.ok::before {
-  content: "● ";
-}
-
-.welcome-actions {
+.onb-col {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  width: min(480px, 100%);
+  margin: auto;
+  padding: 76px 0 56px;
+  box-sizing: border-box;
+  font-size: 14px;
+  color: var(--p-text);
+}
+
+/* Schrittzeile oben rechts, auf Höhe der Ampel, nur beim ersten Start */
+.onb-steps {
+  position: fixed;
+  top: 0;
+  left: 88px;
+  right: 40px;
+  z-index: 41;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1ch;
+  font-family: var(--p-mono);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--p-dim);
+}
+
+.onb-steps-n {
+  color: var(--p-text);
+}
+
+/* Anmelden / Konto anlegen */
+.onb-mode {
+  align-self: flex-start;
+  display: inline-flex;
+  gap: 3px;
+  padding: 4px;
+  border-radius: var(--r-md);
+  background: rgba(var(--ink-rgb), 0.07);
+}
+
+.onb-mode button {
+  height: 32px;
+  padding: 0 14px;
+  border: none;
+  border-radius: var(--r-md);
+  background: none;
+  color: var(--p-dim);
+  font: inherit;
+  font-size: 13.5px;
+  cursor: pointer;
+}
+
+.onb-mode button:hover {
+  color: var(--p-text);
+}
+
+.onb-mode button[aria-pressed="true"] {
+  background: rgba(var(--ink-rgb), 0.12);
+  color: var(--p-text);
+}
+
+/* An der Stelle des Umschalters: „→ Angemeldet als …“, gleich hoch */
+.onb-lead {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  margin: 0;
+  font-family: var(--p-mono);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--p-dim);
+}
+
+.onb-say {
+  margin: 28px 0;
+  font-size: clamp(34px, 3.4vw, 52px);
+  font-weight: inherit;
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.onb-say-sub {
+  color: var(--p-dim);
+}
+
+.onb-field {
+  display: block;
+  margin-bottom: 12px;
+}
+
+.onb-k {
+  display: block;
+  margin-bottom: 8px;
+  font-family: var(--p-mono);
+  font-size: 11px;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--p-dim);
+}
+
+.onb-o {
+  color: var(--p-faint);
+}
+
+.onb-input,
+.onb-box {
+  box-sizing: border-box;
+  width: 100%;
+  height: 56px;
+  padding: 0 16px;
+  border: 1px solid rgba(var(--ink-rgb), 0.22);
+  border-radius: var(--r-lg);
+  background: rgba(var(--ink-rgb), 0.04);
+  color: var(--p-text);
+  font: inherit;
+  font-size: 19px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.onb-input::placeholder {
+  color: var(--p-faint);
+}
+
+.onb-input:focus {
+  border-color: var(--p-text);
+}
+
+.onb-input.is-code {
+  font-family: var(--p-mono);
+  font-size: 22px;
+  letter-spacing: 0.3em;
+}
+
+/* Ordner: Pfad als Wert, „(Anderer Ordner)“ im Feld */
+.onb-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.onb-box-val {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.onb-check {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0 16px;
+  font-size: 15px;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.onb-check input {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  border: 1px solid rgba(var(--ink-rgb), 0.35);
+  border-radius: var(--r-md);
+  background: rgba(var(--ink-rgb), 0.04);
+  cursor: pointer;
+}
+
+.onb-check input:checked {
+  border-color: var(--p-text);
+  background: var(--p-text);
+  box-shadow: inset 0 0 0 4px var(--ink-inverse);
+}
+
+.onb-go {
+  width: 100%;
+  height: 56px;
+  margin-top: 4px;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: none;
+  border-radius: var(--r-md);
+  background: var(--p-text);
+  color: var(--ink-inverse);
+  font: inherit;
+  font-size: 17px;
+  cursor: pointer;
+  transition: opacity 0.12s ease;
+}
+
+.onb-go:hover {
+  opacity: 0.88;
+}
+
+.onb-go:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+:is(.onb-mode button, .onb-check input, .onb-go, .onb-link, .onb-inline, .onb-col a):focus-visible {
+  outline: 1px dashed var(--p-text);
+  outline-offset: 3px;
+}
+
+.onb-mode button:focus-visible {
+  outline-offset: -3px;
+}
+
+.onb-note {
+  min-height: 22px;
+  margin: 14px 0 0;
+}
+
+.onb-note.err {
+  color: var(--danger);
+}
+
+.onb-fine {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--p-dim);
+}
+
+.onb-go + .onb-fine {
+  margin-top: 20px;
+}
+
+:is(.onb-fine, .onb-check) :is(a, .onb-inline) {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--p-text);
+  font: inherit;
+  text-decoration: underline;
+  text-decoration-color: rgba(var(--ink-rgb), 0.45);
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+/* Mono-Links und -Zeilen wie die Fußzeilen der Webseite */
+.onb-link {
+  flex: none;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--p-text);
+  font-family: var(--p-mono);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.onb-foot,
+.onb-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  font-family: var(--p-mono);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--p-dim);
+}
+
+.onb-foot {
+  margin-top: 14px;
+}
+
+.onb-foot a {
+  color: var(--p-dim);
+  text-decoration: none;
+}
+
+.onb-foot a:hover {
+  color: var(--p-text);
+}
+
+.onb-label {
+  padding: 0 2px;
+  margin-bottom: 8px;
+}
+
+/* Browser: Zeilen wie die Listen in den Einstellungen (4.26) */
+.onb-list {
+  margin-bottom: 12px;
+  padding: 2px 16px;
+  border-radius: var(--r-lg);
+  background: rgba(var(--ink-rgb), 0.045);
+}
+
+.onb-row {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 12px 0;
+}
+
+.onb-row + .onb-row {
+  border-top: 1px solid var(--p-rule);
+}
+
+.onb-row-k {
+  flex: 0 0 132px;
+  color: var(--p-dim);
+}
+
+.onb-row-v {
+  flex: 1;
+  min-width: 0;
+}
+
+.onb-row-v.dim,
+.onb-row-x {
+  color: var(--p-dim);
+}
+
+.onb-row-x {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .onb-input,
+  .onb-box,
+  .onb-go {
+    transition: none;
+  }
 }
 
 /* ---- Grundlayout: Toolbar oben, darunter die Zonen-Kacheln ---- */
@@ -2590,14 +2889,6 @@ body.has-selection .card:not(.selected):hover img {
   pointer-events: none;
 }
 
-.onb-drop-mark {
-  font-family: "Geist Mono", ui-monospace, monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--muted);
-}
-
 .onb-drop-title {
   margin: 14px 0 8px;
   font-size: 24px;
@@ -4246,26 +4537,10 @@ body.page-open .p-lock {
   right: var(--sheet-w);
 }
 
-.p-lock-inner {
-  display: grid;
-  justify-items: center;
-  gap: 14px;
-  text-align: center;
-  max-width: 320px;
-  padding: 0 24px;
-}
-
 .p-lock-mark {
   font-size: 22px;
   font-weight: 500;
   letter-spacing: 0;
-}
-
-.p-lock-inner p {
-  margin: 0;
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.5;
 }
 
 .p-lock-btn {
@@ -7232,36 +7507,9 @@ button.p-list:hover {
   justify-content: center;
 }
 
-.p-lock-inner {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  width: min(560px, 100%);
-  max-width: none;
-  padding: 0 var(--p-pad);
-  text-align: left;
-  box-sizing: border-box;
-}
-
-.p-lock-inner .p-say {
-  max-width: none;
-  margin-bottom: 8px;
-}
-
 .p-lock-tr {
   display: flex;
   gap: 16px;
-}
-
-.p-lock-end {
-  padding: 0;
-  border: none;
-  background: none;
-  font: inherit;
-  letter-spacing: inherit;
-  text-transform: inherit;
-  color: var(--p-text);
-  cursor: pointer;
 }
 
 /* Das Feld ist kein Kasten, sondern der Wert der Zeile */
@@ -7284,51 +7532,6 @@ button.p-list:hover {
 
 .p-lock .p-unlock-form.wrong .p-unlock-input {
   color: var(--danger);
-}
-
-.p-lock-foot {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.p-lock-foot .p-unlock-go {
-  margin-left: auto;
-}
-
-.p-lock-foot .p-lock-end,
-.p-list-row .p-lock-end {
-  font-family: var(--p-mono);
-  font-size: 11px;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-}
-
-.p-lock-msg {
-  color: var(--p-dim);
-}
-
-.p-list.wrong + .p-lock-foot .p-lock-msg {
-  color: var(--danger);
-}
-
-/* Eingabe als Wert der Zeile: kein Rahmen, keine Fläche (4.26) */
-.p-lock-input {
-  min-width: 0;
-  padding: 0;
-  border: none;
-  background: none;
-  color: var(--ink);
-  font: inherit;
-  outline: none;
-}
-
-.p-lock-input::placeholder {
-  color: var(--p-faint);
-}
-
-.p-list.wrong .p-lock-input {
-  animation: unlock-shake 0.36s;
 }
 
 .p-unlock-go:disabled {
@@ -7357,99 +7560,6 @@ button.p-list:hover {
   line-height: 1.14;
   letter-spacing: 0;
   text-wrap: balance;
-}
-
-/* ---- 0.40.9: Anmelden als Satz (Variante B) ----
-   Satz, darunter ein einziges Feld in Satzgröße auf einer Linie, rechts ein
-   runder Pfeil (Pille). Darunter Mono-Hinweis oder Mono-Links und die Meldung. */
-.p-lock-inner {
-  gap: 0;
-  width: min(640px, 100%);
-}
-
-.p-lock-inner .p-say {
-  margin-bottom: 28px;
-}
-
-.p-lock-line {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 6px 0 14px;
-  border-bottom: 1px solid rgba(var(--ink-rgb), 0.22);
-  transition: border-color 0.12s ease;
-}
-
-.p-lock-line:focus-within {
-  border-bottom-color: rgba(var(--ink-rgb), 0.5);
-}
-
-.p-lock-line .p-lock-input {
-  flex: 1;
-  min-width: 0;
-  font-size: 34px;
-  font-weight: 500;
-  line-height: 1.14;
-  letter-spacing: 0;
-}
-
-.p-lock-line .p-lock-input.is-code {
-  letter-spacing: 0.06em;
-  font-variant-numeric: tabular-nums;
-}
-
-.p-lock-line.wrong {
-  border-bottom-color: var(--danger);
-}
-
-.p-lock-line.wrong .p-lock-input {
-  animation: unlock-shake 0.36s;
-}
-
-.p-lock-go {
-  flex: none;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  border: none;
-  border-radius: 999px;
-  background: var(--ink);
-  color: var(--ink-inverse);
-  font-size: 18px;
-  cursor: pointer;
-  transition: opacity 0.12s ease;
-}
-
-.p-lock-go:disabled {
-  opacity: 0.5;
-}
-
-.p-lock-inner .p-lock-foot {
-  margin-top: 14px;
-  gap: 20px;
-  font-family: var(--p-mono);
-  font-size: 11px;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-}
-
-.p-lock-hint {
-  color: var(--p-dim);
-}
-
-.p-lock-inner .p-lock-msg {
-  margin-left: auto;
-  color: var(--p-dim);
-}
-
-.p-lock-line.wrong + .p-lock-foot .p-lock-msg {
-  color: var(--danger);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .p-lock-line.wrong .p-lock-input {
-    animation: none;
-  }
 }
 
 /* ---- 0.40.11: Übersicht mit Kontaktbogen (Variante E) ----
