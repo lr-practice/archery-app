@@ -2289,11 +2289,10 @@
     return card;
   }
 
-  // Kartenfläche (0.42.6): kleine Bilder wie in den Index-Zeilen über die volle
-  // Breite. Mit eigenem Titelbild steht es groß, darunter eine Reihe der ersten
-  // Bilder (Entwurf J). Seit 0.43.2 ohne Auslaufen (Labor entfernt).
-  function thumbCover(zone, items) {
-    const own = coverItem(zone.path, items);
+  // Kartenfläche (0.42.6, seit 0.45.1 immer mit Titelbild): oben groß das
+  // Titelbild, darunter eine Reihe der übrigen Bilder (Entwurf J). Ohne eigenes
+  // Titelbild ist es das zuerst gesicherte Bild der Zone (Lukas 03.11.).
+  function thumbCover(zone, items, own = coverItem(zone.path, items) || autoCover(items)) {
     const cover = el("div", "p-card-cover p-thumb-cover" + (own ? " has-own" : ""));
     if (own) {
       const big = el("div", "p-cover-big");
@@ -2324,6 +2323,12 @@
     const want = (pref("covers", {})[state.root] || {})[zonePath];
     return want ? items.find((i) => i.path === want) || null : null;
   }
+  // Titelbild ohne eigene Wahl: das zuerst gesicherte Bild
+  function autoCover(items) {
+    let first = null;
+    for (const i of items) if (!first || itemTime(i) < itemTime(first)) first = i;
+    return first;
+  }
   function setCover(zonePath, itemPath) {
     const all = pref("covers", {});
     const mine = { ...(all[state.root] || {}) };
@@ -2344,7 +2349,10 @@
   function groupCard(top, zones) {
     const card = el("article", "p-card p-card-group");
     const paths = new Set(zones.map((z) => z.path));
-    card.appendChild(cardCover(state.items.filter((i) => paths.has(i.zone))));
+    const items = state.items.filter((i) => paths.has(i.zone));
+    // Eigenes Titelbild der obersten Zone, sonst das erste einer Unterzone, sonst automatisch
+    const own = zones.map((z) => coverItem(z.path, items)).find(Boolean) || autoCover(items);
+    card.appendChild(thumbCover({ path: top }, items, own));
     card.appendChild(el("div", "p-card-group-title", top));
     for (const zone of zones) {
       const row = el("div", "p-card-row");

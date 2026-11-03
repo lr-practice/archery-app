@@ -1,5 +1,12 @@
 # Changelog
 
+## App 0.45.1
+
+- Jede Zonenkarte in der Übersicht hat ein festes Titelbild. Ohne eigene Wahl
+  ist es die zuerst gesicherte Referenz; Rechtsklick › „Als Titelbild der
+  Zone“ legt es von Hand fest. Gruppenkarten nehmen das Titelbild der
+  obersten Zone, sonst einer Unterzone, sonst die erste Referenz der Gruppe.
+
 ## App 0.45.0
 
 - Erster Start und Anmelden sehen aus wie „Sign in“ auf der Webseite: eine
