@@ -914,16 +914,18 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   Namen). Die frühere Tabelle (Nr., Zone, Bilder, Zuletzt, Vorschau) ist weg;
   „Neue Zone“ und „Zuletzt gelöscht“ stehen im Menü.
 - **Karten-Fläche (0.42.5, seit 0.42.6 einzige Form, `.p-thumb-cover`):**
-  Active Zones und Zonenkarten zeigen die kleinen Bilder des Kontaktbogens
-  (13:10, 4 px Abstand, höchstens 48, „+N“) als Raster über die volle
-  Breite: Mindestbreite 1,3 × Zeilen-Miniatur, die Spalten dehnen sich, bis
-  die Reihe bündig ist. Name und Anzahl unten. Oben 44 px Luft für Nummer und
-  Etikett der Active Zones, sonst 16 px, seitlich 16 px. **Titelbild:**
-  Rechtsklick auf ein Objekt › „Als Titelbild der Zone“ zeigt dieses Bild groß
-  oben, darunter eine Reihe der ersten übrigen Bilder (Entwurf J, mind. 42 px
-  breit, 8 px Abstand zum Bild). „Titelbild zurücksetzen“ nimmt es zurück.
-  Gespeichert je Bibliothek in `archiver.covers` (lokal), fehlt das Bild,
-  gilt wieder das Raster. Notes und Textkarten stehen als Kachel mit dem Anfang
+  Active Zones, Zonenkarten und Gruppenkarten zeigen seit 0.45.1 immer ein
+  **Titelbild** groß oben, darunter eine Reihe der übrigen Bilder (Entwurf J,
+  mind. 42 px breit, 8 px Abstand zum Bild). Name und Anzahl unten. Oben 44 px
+  Luft für Nummer und Etikett der Active Zones, sonst 16 px, seitlich 16 px.
+  Ohne eigene Wahl ist das Titelbild die zuerst gesicherte Referenz der Zone
+  (Lukas 03.11.: steht fest und macht die Zone wiedererkennbar, das Neueste
+  steht vorne in der Reihe). Rechtsklick auf ein Objekt › „Als Titelbild der
+  Zone“ legt es fest, „Titelbild zurücksetzen“ nimmt es zurück. Gruppenkarten
+  nehmen das eigene Titelbild der obersten Zone, sonst das erste einer
+  Unterzone, sonst die erste Referenz der Gruppe. Gespeichert je Bibliothek in
+  `archiver.covers` (lokal). Fehlt das Bild, gilt wieder die erste Referenz.
+  Ordnerkarten in der Zone bleiben bei 1 oder 3 Bildern (`cardCover`). Notes und Textkarten stehen als Kachel mit dem Anfang
   ihres Texts (Innenabstand 9 %, wie im Index; bis 0.42.7 schob der
   Abstand der ganzseitigen Karte den Text aus der Kachel).
 - **Kontaktbogen:** Je übrige Zone eine Zeile als Karte (`.p-card`, gleiche
