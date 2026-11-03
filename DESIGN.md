@@ -1048,7 +1048,8 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   Einstellungen › Konto. Dort ist der Kopf ein Satz zum Zustand (seit 0.43.2
   nur Beta-Bonus). Block „Konto“: E-Mail, Benutzername (Eingabe rechts wie
   „Kürzel“, gespeichert in `user_metadata.username`, gleich auf jedem Mac),
-  Angemeldet, Studio („Aktiv“ oder „Bald dazubuchbar“).
+  Angemeldet, Studio („Aktiv“; in der Beta seit 0.45.0 für jedes Konto, sonst „Bald
+  dazubuchbar“).
 - **Abgleich (0.43.2):** Beim Start und stündlich tauscht die App den
   Refresh-Token beim Server. Lehnt er ab (4xx), ist das Konto abgemeldet und
   die Sperre steht da. Ohne Netz bleibt alles, wie es ist.

@@ -12,6 +12,7 @@
   „Noch ein Schritt.“; Abmelden geht immer.
 - Browser-Schritt zeigt Extension (verbunden mit Version) und gefundene
   Browser. Der Download-Link führt auf archery-visual.com.
+- Studio mit geteilter Bibliothek ist in der Beta wieder für jedes Konto an.
 
 ## App 0.44.0 · Extension 3.32.0
 

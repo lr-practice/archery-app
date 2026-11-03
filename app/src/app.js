@@ -114,10 +114,10 @@
     return studioOn() && pref("feat." + id, true) !== false;
   }
 
-  // Studio (0.43.2) ist ein eigenes Abo. Freigegeben über app_metadata.studio im
-  // Konto, das nur der Server setzen kann. In der Beta prüft das nur die
-  // Oberfläche, fest wird es mit der signierten Lizenz (H1).
-  const studioOn = () => !!account()?.studio;
+  // Studio (0.43.2) wird ein eigenes Abo, freigegeben über app_metadata.studio im
+  // Konto. In der Beta ist es seit 0.45.0 für jedes Konto an (Lukas 03.11.),
+  // inklusive geteilter Bibliothek. Fürs Abo hier wieder account().studio prüfen.
+  const studioOn = () => isUnlocked();
   // Geteilte Bibliothek ohne Studio: Sperre statt Bibliothek (applyLock)
   const sharedBlocked = () => state.shared && !studioOn();
 
