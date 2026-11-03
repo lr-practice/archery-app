@@ -468,21 +468,26 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   (als `# Titel` gespeichert), beim Verlassen der Notiz auch Dateiname.
   Anlegen per Rechtsklick in den Hintergrund einer Zone („Neue Notiz“) oder
   ⌘⇧N; sie öffnet sich gleich in der Lightbox, der Titel ist markiert.
-- **Raster:** Ein Blatt wie die Textkarte (4.6): Kennung NOTIZ · Datum in Mono,
-  Titel fett (6,4 cqw, höchstens drei Zeilen), Text darunter normal, Fuß mit
-  „n verknüpft“. Grundton Weiß (`white`), keine Zufallsfarbe. In „Original“
-  steht das Blatt hochkant 3 : 4.
+- **Raster (0.45.2, Lukas 03.11.):** Die Kachel zeigt nur den Titel, groß
+  (13 cqw, 350, Zeilenabstand 1,02, −0.03em, höchstens fünf Zeilen), ohne
+  Kennung, Datum, Text und Fuß. Ohne Titel steht der Anfang des Texts; das
+  gilt auch für alte Textkarten (TEXT). Darunter unten links bis zu drei
+  verknüpfte Referenzen als Quadrate 22 cqw, Abstand 2 cqw (`.ts-figs`, als
+  Fläche, nicht als `<img>`). Liste und Lightbox wie bisher. Grundton Weiß
+  (`white`), keine Zufallsfarbe. In „Original“ steht das Blatt hochkant 3 : 4.
+  (Bis 0.45.1: Kennung NOTIZ · Datum, Titel 6,4 cqw, Text, Fuß „n verknüpft“.)
 - **Lightbox:** Papier max. 620 × 760 px, Innenrand 48/52 px. Kennung NOTIZ ·
   Zone · Datum (Mono 11 px), Titel 30 px/600, Text 17 px/1,45, Fuß mit Wörtern
   und „Gesichert“. Geschrieben wird direkt auf dem Blatt, gesichert nach 0,6 s
   Pause und beim Verlassen. Die Farbpunkte stehen in der Leiste: eine Reihe
   für Notizen und Textkarten (0.30) aus den bestehenden Farben Rot, Grün,
-  Violett, Cyan, Gelb, Weiß (`#ffffff`, kein Papierton mehr) und Schwarz. Die
+  Violett, Cyan, Gelb (`#f2e14b`, seit 0.45.2 statt `#ffff00`, Lukas 03.11.:
+  „etwas weniger grell“), Weiß (`#ffffff`, kein Papierton mehr) und Schwarz. Die
   Extension wählt beim Markieren zufällig aus den fünf Buntfarben. Schwarzes Blatt bekommt eine feine helle Kante.
 - **Verknüpfungen (0.42.6):** Die Verknüpften stehen in voller Höhe 24 px
   rechts neben dem Blatt in einer Reihe, jedes im eigenen Seitenverhältnis
   (Text 3 : 4), wie die Doppelseite beim Bildtext; am Ende „+“ als Rahmen
-  44 px. `noteFit` setzt die gemeinsame Höhe `--nh` (max. 760 px, Blatt
+  44 px; ohne Verknüpfung steht das Blatt mit „+“ in der Mitte (0.45.2). `noteFit` setzt die gemeinsame Höhe `--nh` (max. 760 px, Blatt
   620 : 760, Innenrand mitskaliert), mindestens 320 px; passt es dann nicht,
   läuft die Reihe waagerecht weiter. Fuß: Wörter · n verknüpft links, Quelle
   und „Gesichert“ rechts. × oben rechts auf der Kachel löst die Verknüpfung.

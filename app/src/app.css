@@ -7992,7 +7992,7 @@ html:not(.light) .p-card:not(.p-new):not(:hover):not(.drop-target) { background:
   gap: 24px;
   width: auto;
   height: var(--nh);
-  margin: 0;
+  margin: 0 auto 0 0; /* 0.45.2: rechts auto, sonst saß das Blatt ohne Verknüpfung rechts */
 }
 .lb-note .note-links:empty {
   display: none;
@@ -8057,6 +8057,46 @@ html:root .lb-note-card .np-body {
 }
 .lb-note .np-count {
   margin-right: auto;
+}
+
+/* ---- 0.45.2: Notes und Textkarten im Raster ----
+   Die Kachel zeigt nur den Titel groß (Note) bzw. den Anfang des Texts
+   (Textkarte), ohne Kennung und Fuß. Darunter stehen bis zu drei verknüpfte
+   Referenzen klein. Liste und Lightbox bleiben, wie sie sind. */
+.zones-grid:not(.listview) .card-text :is(.ts-label, .ts-foot),
+.zones-grid:not(.listview) .card-text .note-sheet .ts-body {
+  display: none;
+}
+.zones-grid:not(.listview) .card-text .note-sheet .ts-title,
+.zones-grid:not(.listview) .card-text .text-sheet:not(.note-sheet) .ts-body {
+  flex: none;
+  padding: 6cqw 6cqw 0;
+  font-size: 13cqw;
+  font-weight: 350;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+.zones-grid:not(.listview) .card-text .ts-figs {
+  display: flex;
+  gap: 2cqw;
+  height: 22cqw;
+  margin-top: auto;
+  padding: 0 6cqw 6cqw;
+}
+.zones-grid:not(.listview) .card-text .ts-figs span {
+  flex: none;
+  aspect-ratio: 1;
+  height: 100%;
+  background: center / cover no-repeat;
+}
+.ts-figs {
+  display: none;
 }
 
 /* Schriftzug „Archery“: das y steht 35/1000 em weiter weg (Brand Guideline, Logo) */

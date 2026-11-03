@@ -278,7 +278,7 @@
     green: ["#00b050", "#003d1c", 0.7],
     violet: ["#7030a0", "#e2c8f5", 0.75],
     cyan: ["#00b0f0", "#003d54", 0.7],
-    yellow: ["#ffff00", "#5c5c00", 0.75],
+    yellow: ["#f2e14b", "#4d4500", 0.75],
   };
   // Die Farbe wird zu Beginn jeder Markierung zufällig bestimmt (nie zweimal
   // dieselbe hintereinander) und gilt, bis neu markiert wird
