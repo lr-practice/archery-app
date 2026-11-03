@@ -1,5 +1,18 @@
 # Changelog
 
+## App 0.45.0
+
+- Erster Start und Anmelden sehen aus wie „Sign in“ auf der Webseite: eine
+  Spalte, echte Felder, ein Knopf. Reihenfolge Konto → Bibliothek → Browser,
+  oben rechts „(1 / 3) Konto · Bibliothek · Browser“.
+- „Anmelden“ legt kein Konto mehr an. Ohne Konto geht es zu „Konto anlegen“
+  mit Name, Firma, Website (freiwillig) und dem Haken für die
+  Beta-Bedingungen, gespeichert wie auf der Webseite.
+- Konten ohne angenommene Beta-Bedingungen sehen beim nächsten Start einmal
+  „Noch ein Schritt.“; Abmelden geht immer.
+- Browser-Schritt zeigt Extension (verbunden mit Version) und gefundene
+  Browser. Der Download-Link führt auf archery-visual.com.
+
 ## App 0.44.0 · Extension 3.32.0
 
 - Erste mit Apple Developer ID signierte und notarisierte Version. Beim ersten
