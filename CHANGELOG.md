@@ -1,5 +1,11 @@
 # Changelog
 
+## App 0.45.3
+
+- Bilder und Ordner aus dem Finder landen in der offenen Zone bzw. ihrem
+  geöffneten Ordner, auch auf der leeren Fläche unter dem Raster. Bisher
+  gingen sie in die Standard-Zone oder als neue Zone auf die oberste Ebene.
+
 ## App 0.45.2 · Extension 3.32.1
 
 - Notes und Textkarten zeigen im Raster nur noch den Titel, groß. Ohne Titel
