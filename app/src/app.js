@@ -4548,9 +4548,14 @@
       .catch(fail);
   }
 
+  // Offene Zone bzw. ihr geöffneter Ordner, auf der Startseite "" (Unsorted)
+  function openDropZone() {
+    return isZone(state.focus) ? (state.level ? state.focus + "/" + state.level : state.focus) : "";
+  }
+
   // ⌘V (0.32): in die offene Zone bzw. ihren Ordner, auf der Startseite nach Unsorted
   function pasteIntoZone() {
-    const zone = isZone(state.focus) ? (state.level ? state.focus + "/" + state.level : state.focus) : "";
+    const zone = openDropZone();
     invoke("paste_into", { zone })
       .then((r) => {
         if (r.imported) toast(t("pasted", { zone: zoneLabel(zone || state.defaultZone) }));
@@ -6510,9 +6515,10 @@
       if (!target) {
         // 0.27: Ordner (und Dateien) von außen ohne Ziel: Ordner werden zu Zonen,
         // lose Dateien landen in der Standard-Zone
+        // 0.45.3: in einer offenen Zone landet es dort (bzw. im geöffneten Ordner)
         const outside = paths.filter((path) => !insideLibrary(path));
         if (outside.length && state.focus !== DELETED)
-          invoke("import_files", { paths: outside, zone: "" })
+          invoke("import_files", { paths: outside, zone: openDropZone() })
             .then((r) => {
               toast(t("importDone", { imported: r.imported, duplicates: r.duplicates, sources: r.withSource }));
               return refresh();
@@ -6536,7 +6542,9 @@
         moveSelection(zone, exact);
       }
       if (foreign.length) {
-        invoke("import_files", { paths: foreign, zone })
+        // Von außen auf die Fläche der offenen Zone: in den geöffneten Ordner, nicht auf ihre oberste Ebene
+        const into = !target.dataset.section && zone === state.focus ? openDropZone() : zone;
+        invoke("import_files", { paths: foreign, zone: into })
           .then((r) => {
             toast(t("importDone", { imported: r.imported, duplicates: r.duplicates, sources: r.withSource }));
             return refresh();
