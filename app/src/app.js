@@ -2,7 +2,7 @@
 //
 // Aufbau: Startseite mit allen Zonen (Index, Vorschau oder Karten), darunter
 // die Zonenansicht, „Alle Bilder“, Suche, Einstellungen und Info. Unten
-// schwebt die Navigation mit dem Pfad; „Archiver“ ganz links ist Home.
+// schwebt die Navigation mit dem Pfad; „Overview“ ganz links ist Home.
 //
 // Daten kommen aus Rust (lib.rs): snapshot() liefert Zonen und Einträge, die
 // Ereignisse "library-changed" und "thumbs-ready" halten die Ansicht aktuell.
@@ -1193,7 +1193,7 @@
     const main = $("navMain");
     const btns = [];
     const inZone = isZone(state.focus) && !state.query;
-    // Zur Übersicht führt „Archiver“ links; in einer Zone folgt hier der Pfad.
+    // Zur Übersicht führt „Overview“ links; in einer Zone folgt hier der Pfad.
     if (inZone) {
       const parts = state.focus.split("/");
       parts.forEach((part, i) => {
@@ -1225,7 +1225,7 @@
   }
 
   // Hover in der Navigation: eine Fläche gleitet unter den Button unter der Maus.
-  // „Archiver“ hat keinen Hover, nur den Aktiv-Zustand auf der Startseite.
+  // „Overview“ gleitet mit wie die anderen Reiter.
   function setupNavGlide() {
     const nav = $("nav");
     const glide = el("span", "p-nav-glide");
@@ -1250,7 +1250,7 @@
     };
     nav.addEventListener("pointerover", (e) => {
       const target = e.target.closest(".p-nav-btn, .p-nav-search");
-      if (!target || !nav.contains(target) || target.classList.contains("p-nav-brand") || target.tabIndex === -1) {
+      if (!target || !nav.contains(target) || target.tabIndex === -1) {
         if (!e.target.closest(".p-more-menu")) hide();
         return;
       }
@@ -8048,7 +8048,8 @@
     $("search").addEventListener("focus", renderToolbar);
     $("search").addEventListener("blur", () => setTimeout(renderToolbar, 0));
     setupNavGlide();
-    // „Archiver“ in der Leiste führt immer zum Start: Zonen als Karten.
+    // „Overview“ vorn in der Leiste führt immer zum Start: Zonen als Karten.
+    $("navBrand").textContent = t("headHomeTitle");
     $("navBrand").addEventListener("click", () => {
       closePage();
       state.home = "cards";

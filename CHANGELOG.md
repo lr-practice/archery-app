@@ -1,5 +1,11 @@
 # Changelog
 
+## App 0.45.4
+
+- Der erste Knopf in der Leiste heißt jetzt „Overview“ (DE „Übersicht“) statt
+  „Archery“ und sieht aus wie die anderen Reiter. Er führt wie bisher zu den
+  Zonen als Karten. Der Name der Bibliothek bleibt oben rechts.
+
 ## App 0.45.3
 
 - Bilder und Ordner aus dem Finder landen in der offenen Zone bzw. ihrem
