@@ -3069,17 +3069,12 @@ html.fullscreen .p-top {
   padding-left: var(--p-pad);
 }
 
-.p-nav-brand {
-  font-weight: 600;
-  letter-spacing: 0;
-}
-
-/* Steht hinter „Archiver“ kein Pfad: auch keine Trennlinie */
+/* Steht hinter „Overview“ kein Pfad: auch keine Trennlinie */
 .p-nav-rule:has(+ .p-nav-main:empty) {
   display: none;
 }
 
-/* Trennlinie zwischen „Archiver“ und den Reitern */
+/* Trennlinie zwischen „Overview“ und den Reitern */
 .p-nav-rule {
   width: 1px;
   height: 16px;

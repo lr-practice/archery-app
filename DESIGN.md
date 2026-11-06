@@ -130,7 +130,7 @@ Für die Typografie gilt:
   gezogen und nicht neu eingeführt.
 
 ### 2.2a Schriftzug
-- „Archery“ als Schriftzug (Navigation, Startbild, Kopf unter Information): das y steht in `<span class="wm-y">` mit `margin-left:
+- „Archery“ als Schriftzug (Startbild, Kopf unter Information): das y steht in `<span class="wm-y">` mit `margin-left:
   0.035em` (+35/1000 em, Brand Guideline › Logo). Gilt für jede Größe und
   für Melange wie Geist. Fenstertitel und Fließtext bleiben ohne.
 
@@ -222,8 +222,13 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
 - **Nicht:** Keine `outline`, keine Akzentfarbe und kein zweiter Rahmen.
 
 ### 4.2 Navigation (`.p-nav`)
-- **Zweck:** Wechsel zwischen Archery (Start), Zonen, Alle Objekte und Suche,
+- **Zweck:** Wechsel zwischen Overview (Start), Zonen, Alle Objekte und Suche,
   dazu das Menü ≡.
+- **Start:** Der erste Knopf heißt „Overview“ (DE „Übersicht“, wie der Kopf
+  der Startseite) und führt immer zu den Zonen als Karten. Er sieht aus wie
+  die anderen Reiter, ohne Schriftzug und ohne eigenes Gewicht, denn in
+  Programmen steht dort kein Name (Lukas 06.11.). Der Name der Bibliothek
+  bleibt oben rechts im Reiter `#libTab`.
 - **Form:** Eine Glas-Pille oben, auf der Mittellinie der Fensterknöpfe.
   Aktive Knöpfe sind gefüllt.
 - **Nicht:** Keine Icons neben Wörtern und keine zweite Leiste.
