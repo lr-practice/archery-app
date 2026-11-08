@@ -6,3 +6,5 @@ dist/
 app/src/fonts/melange/
 extension/fonts/melange/
 /build/
+# Wortmarke in Record Laser (Trial, Sharp Type) liegt nur im privaten Repo, siehe DESIGN.md 2.2a
+app/src/brand/

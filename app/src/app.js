@@ -1620,6 +1620,20 @@
     return img;
   }
 
+  // Wortmarke in Record Laser (DESIGN 2.2a). Liegt wie Melange nicht im Repo
+  // (Trial-Schrift, Lizenz offen). Fehlt die Datei, bleibt der Schriftzug Text.
+  const wordmarkSvg = fetch("brand/archery-wordmark.svg")
+    .then((r) => (r.ok ? r.text() : null))
+    .catch(() => null);
+  function useWordmark(node) {
+    wordmarkSvg.then((svg) => {
+      if (!svg || !node) return;
+      node.innerHTML = svg;
+      node.setAttribute("role", "img");
+      node.setAttribute("aria-label", "Archery");
+    });
+  }
+
   function headline(title, sentence) {
     const h = el("h1", "p-head");
     if (title) h.appendChild(el("span", "p-head-title", title));
@@ -3356,6 +3370,7 @@
     const wrap = el("div", "p-sheet-inner p-about");
     const head = headline("Archer", t("aboutClaim"));
     head.firstChild.appendChild(el("span", "wm-y", "y")); // Schriftzug: Abstand vor dem y (DESIGN 2.2a)
+    useWordmark(head.firstChild);
     wrap.appendChild(head);
 
     const how = block(t("aboutHow"));
@@ -8694,6 +8709,7 @@
   // und erst dann gibt die schwarze Fläche die Oberfläche frei.
   const SPLASH_MS = matchMedia("(prefers-reduced-motion: reduce)").matches ? 300 : 2500;
   const SOUND_DELAY_MS = 350;
+  useWordmark(document.querySelector(".splash-word"));
   const splashPlayed = new Promise((resolve) => {
     const win = TAURI.window && TAURI.window.getCurrentWindow && TAURI.window.getCurrentWindow();
     const started = Date.now();

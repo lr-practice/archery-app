@@ -130,9 +130,22 @@ Für die Typografie gilt:
   gezogen und nicht neu eingeführt.
 
 ### 2.2a Schriftzug
-- „Archery“ als Schriftzug (Startbild, Kopf unter Information): das y steht in `<span class="wm-y">` mit `margin-left:
-  0.035em` (+35/1000 em, Brand Guideline › Logo). Gilt für jede Größe und
-  für Melange wie Geist. Fenstertitel und Fließtext bleiben ohne.
+- Seit 08.11.2026 ist die Wortmarke in Record Laser (Sharp Type) gesetzt und
+  liegt als Pfad in `app/src/brand/archery-wordmark.svg` (viewBox
+  `-3 -700 4538 870`, Versalhöhe 700, Unterlänge 170). `useWordmark()` in
+  `app.js` setzt sie im Startbild und im Kopf unter Information ein. `.wmk`
+  hat `height: .87em` und `vertical-align: -.17em`, so sitzt die Grundlinie
+  auf der Textzeile und die Versalhöhe bei .7em. Die Farbe folgt
+  `currentColor`.
+- Record Laser ist noch eine Trial-Schrift. Die Datei liegt deshalb wie
+  Melange nicht in diesem Repo (`.gitignore`), sondern im privaten Repo
+  `lr-practice/archery-website` unter `website/static/brand/`. Vor dem
+  Release braucht es die Lizenz von Sharp Type und einen Build-Schritt, der
+  die Datei holt.
+- Fehlt die Datei, bleibt der Schriftzug Text: „Archery“, das y in
+  `<span class="wm-y">` mit `margin-left: 0.035em` (+35/1000 em, Brand
+  Guideline › Logo). Gilt für jede Größe und für Melange wie Geist.
+  Fenstertitel und Fließtext bleiben ohne.
 
 ### 2.3 Form und Raum
 

@@ -8098,3 +8098,11 @@ html:root .lb-note-card .np-body {
 .wm-y {
   margin-left: 0.035em;
 }
+
+/* Wortmarke in Record Laser als Pfad: Versalhöhe .7em, Unterlänge .17em, sitzt auf der Grundlinie */
+.wmk {
+  height: 0.87em;
+  width: auto;
+  vertical-align: -0.17em;
+  fill: currentColor;
+}
