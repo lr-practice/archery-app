@@ -1,5 +1,11 @@
 # Changelog
 
+## App 0.45.5
+
+- Neues App-Icon: das kalligrafische A in Grau auf Dunkel.
+- Startbild und Information können die Wortmarke in Record Laser zeigen,
+  sobald die Datei im Build liegt. Bis dahin bleibt der Schriftzug Text.
+
 ## App 0.45.4
 
 - Der erste Knopf in der Leiste heißt jetzt „Overview“ (DE „Übersicht“) statt
