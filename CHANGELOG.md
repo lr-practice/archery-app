@@ -1,5 +1,12 @@
 # Changelog
 
+## App 0.45.6
+
+- Behebt: 0.45.5 blieb nach dem Start grau. Fehlte die Wortmarke im Build,
+  lieferte Tauri statt der SVG die ganze Seite aus, und die App setzte sie
+  ins Startbild ein. Jetzt wird nur echtes SVG übernommen, sonst bleibt der
+  Schriftzug Text.
+
 ## App 0.45.5
 
 - Neues App-Icon: das kalligrafische A in Grau auf Dunkel.

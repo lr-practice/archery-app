@@ -1622,8 +1622,10 @@
 
   // Wortmarke in Record Laser (DESIGN 2.2a). Liegt wie Melange nicht im Repo
   // (Trial-Schrift, Lizenz offen). Fehlt die Datei, bleibt der Schriftzug Text.
+  // Tauri liefert für fehlende Dateien index.html aus, daher nur echtes SVG nehmen.
   const wordmarkSvg = fetch("brand/archery-wordmark.svg")
     .then((r) => (r.ok ? r.text() : null))
+    .then((t) => (t && t.trim().startsWith("<svg") ? t : null))
     .catch(() => null);
   function useWordmark(node) {
     wordmarkSvg.then((svg) => {
