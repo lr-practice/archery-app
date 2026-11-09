@@ -8099,10 +8099,10 @@ html:root .lb-note-card .np-body {
   margin-left: 0.035em;
 }
 
-/* Wortmarke in Record Laser als Pfad: Versalhöhe .7em, Unterlänge .17em, sitzt auf der Grundlinie */
+/* Wortmarke in Record Laser als Pfad, 90 % (Lukas 09.11.): Versalhöhe .63em, Unterlänge .153em, sitzt auf der Grundlinie */
 .wmk {
-  height: 0.87em;
+  height: 0.783em;
   width: auto;
-  vertical-align: -0.17em;
+  vertical-align: -0.153em;
   fill: currentColor;
 }

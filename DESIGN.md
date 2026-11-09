@@ -134,8 +134,10 @@ Für die Typografie gilt:
   liegt als Pfad in `app/src/brand/archery-wordmark.svg` (viewBox
   `-3 -700 4538 870`, Versalhöhe 700, Unterlänge 170). `useWordmark()` in
   `app.js` setzt sie im Startbild und im Kopf unter Information ein. `.wmk`
-  hat `height: .87em` und `vertical-align: -.17em`, so sitzt die Grundlinie
-  auf der Textzeile und die Versalhöhe bei .7em. Die Farbe folgt
+  hat `height: .783em` und `vertical-align: -.153em`, so sitzt die Grundlinie
+  auf der Textzeile. Die Wortmarke steht bei 90 % der Melange-Versalhöhe
+  (.63em statt .7em), weil Record Laser breiter und kräftiger ist und bei
+  gleicher Höhe größer wirkt (Lukas, 09.11.). Die Farbe folgt
   `currentColor`.
 - Record Laser ist noch eine Trial-Schrift. Die Datei liegt deshalb wie
   Melange nicht in diesem Repo (`.gitignore`), sondern im privaten Repo

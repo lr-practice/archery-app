@@ -1,6 +1,6 @@
 [package]
 name = "archiver-app"
-version = "0.45.7"
+version = "0.45.8"
 description = "Archiver: Referenzbibliothek für den Mac"
 edition = "2021"
 publish = false
