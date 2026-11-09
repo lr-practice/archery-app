@@ -1,5 +1,10 @@
 # Changelog
 
+## App 0.45.7
+
+- Startbild und Information zeigen die Wortmarke in Record Laser. Der
+  Mac-Build holt sie aus dem privaten Website-Repo, wie Melange.
+
 ## App 0.45.6
 
 - Behebt: 0.45.5 blieb nach dem Start grau. Fehlte die Wortmarke im Build,

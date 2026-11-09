@@ -139,9 +139,11 @@ Für die Typografie gilt:
   `currentColor`.
 - Record Laser ist noch eine Trial-Schrift. Die Datei liegt deshalb wie
   Melange nicht in diesem Repo (`.gitignore`), sondern im privaten Repo
-  `lr-practice/archery-website` unter `website/static/brand/`. Vor dem
-  Release braucht es die Lizenz von Sharp Type und einen Build-Schritt, der
-  die Datei holt.
+  `lr-practice/archery-website` unter `website/static/brand/`. Der Mac-Build
+  holt sie von dort (Schritt „Wortmarke holen“, seit 0.45.7). Die Lizenz von
+  Sharp Type ist noch offen.
+- Tauri liefert für fehlende Dateien `index.html` aus. `useWordmark()` nimmt
+  deshalb nur Text, der mit `<svg` beginnt (0.45.6).
 - Fehlt die Datei, bleibt der Schriftzug Text: „Archery“, das y in
   `<span class="wm-y">` mit `margin-left: 0.035em` (+35/1000 em, Brand
   Guideline › Logo). Gilt für jede Größe und für Melange wie Geist.
