@@ -1,5 +1,10 @@
 # Changelog
 
+## App 0.45.8
+
+- Wortmarke im Startbild und unter Information auf 90 %, damit sie neben
+  Melange nicht zu groß wirkt.
+
 ## App 0.45.7
 
 - Startbild und Information zeigen die Wortmarke in Record Laser. Der
