@@ -1,5 +1,13 @@
 # Changelog
 
+## App 0.46.0
+
+- Studio: In „Alle Objekte“ und in der Suche filtern „Ohne Urheber“ und „Nur
+  intern“ die Rechte. Die Liste zeigt Urheber, Lizenz und in geteilten
+  Bibliotheken „Von“ als sortierbare Spalten.
+- Geteilte Bibliothek: Das Kürzel der Person, die abgelegt hat, steht fest
+  oben rechts am Bild statt nur beim Darüberfahren.
+
 ## App 0.45.8
 
 - Wortmarke im Startbild und unter Information auf 90 %, damit sie neben

@@ -6903,6 +6903,30 @@ html.light {
   font-size: 11px;
   letter-spacing: 0.02em;
 }
+/* 0.46.0 Studio › Rechte (Variante A): Urheber, Lizenz und Von als Spalten,
+   nur in der Liste. Im Raster bleibt das Bild ohne Unterschrift (4.6). */
+.card-m-credit,
+.card-m-license,
+.card-m-by {
+  display: none;
+}
+.listview.p-rights :is(.card-m-credit, .card-m-license),
+.listview.p-rights-by .card-m-by {
+  display: block;
+}
+.listview.p-rights .card-m-by {
+  font-family: "Geist Mono", ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+}
+.listview.p-rights .p-list-head,
+.zones-grid.listview.p-rights .card {
+  grid-template-columns: var(--lt) minmax(0, 3fr) 56px 104px 72px minmax(0, 1.4fr) 104px minmax(0, 1.2fr) minmax(0, 1fr);
+}
+.listview.p-rights-by .p-list-head,
+.zones-grid.listview.p-rights-by .card {
+  grid-template-columns: var(--lt) minmax(0, 3fr) 56px 104px 72px minmax(0, 1.4fr) 104px minmax(0, 1.2fr) minmax(0, 1fr) 40px;
+}
 
 /* ---- 0.34.2: Liste – Textkarten klein links, Spalten sortierbar ----
    Text- und Notizkarten stehen als Blatt in der Bildspalte, im Format wie im

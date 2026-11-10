@@ -347,6 +347,15 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   wieder nach der Reihenfolge der Zone. Maße, Größe und Datum beginnen mit dem
   Größten bzw. Neuesten, leere Werte stehen immer unten. Sortiert ist Ziehen
   zum Umstellen aus.
+- **Rechte in der Liste (0.46.0, Studio):** Mit Studio › Rechte kommen
+  „Urheber“ und „Lizenz“ als Spalten hinter „Gesichert“ dazu, in einer
+  geteilten Bibliothek auch „Von“ (Kürzel in Mono, 40 px). Sortierbar wie die
+  übrigen Spalten, leere Werte unten. Im Raster bleiben die Angaben weg
+  (Lukas 10.11.: „In der Liste, Raster bleibt frei“).
+- **Kürzel (0.46.0):** In einer geteilten Bibliothek steht das Kürzel der
+  Person, die abgelegt hat, fest in der Marke oben rechts (`.card-media`,
+  hinter Dauer oder Seitenzahl mit „ · “), nur bei Objekten anderer. Vorher
+  stand es im Hover-Etikett unten links.
 - **Nicht:** Keine Rundung, kein Schatten und keine Bildunterschrift im Raster.
   Die Info gibt es per `I` oder im Seitenblatt.
 
@@ -1010,6 +1019,11 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   aus (`feat()`).
 - **Mit Studio:** wie bisher, das Feld „Dein Name“ heißt „Kürzel“; leer gilt
   das Monogramm des Benutzernamens (Platzhalter zeigt es).
+- **Rechte finden (0.46.0, Variante A „Kein eigener Ort“, Lukas 10.11.):**
+  Studio hat keine eigene Seite. In „Alle Objekte“ und in der Suche stehen
+  mit Rechte zwei Filter in der ersten Zeile hinter „Neu von anderen“:
+  „(Ohne Urheber N)“ (ohne Notizen) und „(Nur intern N)“, die Zahl über die
+  ganze Bibliothek. Dazu Kürzel und Spalten wie in 4.6.
 - **Geteilte Bibliothek ohne Studio:** Die Sperre (4.26) zeigt „Geteilte
   Bibliothek. Geteilte Bibliotheken gehören zu Studio. Wähle eine andere
   Bibliothek.“ und nur „(Bibliothek wählen)“, ohne Linie und Feld.
