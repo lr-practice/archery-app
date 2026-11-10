@@ -7865,31 +7865,40 @@ html:not(.light) {
   padding-bottom: clamp(24px, 4vh, 44px);
 }
 
-/* Hell */
+/* Hell „Grauwert“ (Lukas 10.11.2026, nach et-al.online): exakt farblose
+   Grautöne, eine Fläche für Karten, Blöcke, Listen und Seitenblatt, Text in
+   Grau statt Schwarz, Glas ohne Kante. --ink bleibt #111 für alle Alpha-Flächen. */
 html.light {
   --ink: #111111;
   --ink-rgb: 17, 17, 17;
-  --ink-inverse: #f4f5f7;
-  --bg-solid: #fafafa;
-  --bg: #fafafa;
-  --panel: #fafafa;
-  --card-bg: #f2f2f2;
-  --thumb-bg: #e3e5e8;
-  --sheet-bg: #eef0f2;
-  --lightbox-bg: rgba(244, 245, 247, 0.97);
-  --p-text: #111111;
-  --p-dim: #5e6064;
-  --p-faint: #b2b2b2;
-  --p-rule: rgba(17, 17, 17, 0.1);
-  --p-pill: #ebebeb;
-  --menu-bg: rgba(247, 248, 250, 0.98);
-  --splash-bg: #fafafa;
+  --ink-inverse: #fcfcfc;
+  --bg-solid: #fcfcfc;
+  --bg: #fcfcfc;
+  --panel: #fcfcfc;
+  --card-bg: #f0f0f0;
+  --thumb-bg: #e1e1e1;
+  --sheet-bg: #f0f0f0;
+  --lightbox-bg: rgba(252, 252, 252, 0.97);
+  --p-text: #4a4a4a;
+  --p-dim: #7b7b7b;
+  --p-faint: #bfbfbf;
+  --p-rule: rgba(123, 123, 123, 0.14);
+  --p-pill: #f0f0f0;
+  --menu-bg: rgba(236, 236, 236, 0.97);
+  --menu-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  --splash-bg: #fcfcfc;
 }
-html.light :is(.p-card, .p-block, .p-list) { background: #e9ebee; }
+html.light :is(.p-card, .p-block, .p-list) { background: #f0f0f0; }
+html.light .p-card:hover { background: #e8e8e8; }
 html.light .p-card:not(.p-new):not(:hover) { background: var(--card-bg); }
-/* Seitenblatt auf dem Mac im selben Ton statt neutral grau (html.mac.light weiter oben) */
-html.mac.light { --sheet-bg: #eef0f2; }
-html.light .p-nav { box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06); }
+/* Seitenblatt auf dem Mac im selben Ton (html.mac.light weiter oben) */
+html.mac.light { --sheet-bg: #f0f0f0; }
+html.light .p-nav {
+  background: rgba(240, 240, 240, 0.7);
+  -webkit-backdrop-filter: blur(50px) saturate(0);
+  backdrop-filter: blur(50px) saturate(0);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
 
 /* ---- 0.42.5: Farben aus Figma (Lukas 27.10.) ----
    Dunkel etwas tiefer, Karten neutral statt weiß getönt. Hell siehe html.light oben. */

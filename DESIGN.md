@@ -57,24 +57,24 @@ Bei neuen Regeln gilt:
 
 ### 2.1 Farbe
 
-| Token | Dunkel | Hell (0.25.0) | Zweck |
+| Token | Dunkel | Hell (Grauwert, 10.11.2026) | Zweck |
 |---|---|---|---|
-| `--bg-solid` | `#1a1a1a` (0.42.5, vorher `#1c1c1c`) | `#fafafa` (0.42.5, vorher `#f4f5f7`) | Grundfarbe des Fensters, gleich dem Tray (0.28) |
+| `--bg-solid` | `#1a1a1a` (0.42.5, vorher `#1c1c1c`) | `#fcfcfc` (Grauwert, vorher `#fafafa`) | Grundfarbe des Fensters, gleich dem Tray (0.28) |
 | `--win-alpha` | 0.72 | 0.78 | Deckkraft über dem Mac-Glas, Standard wie im Tray. Regler „Glas“ (Einstellungen › Darstellung, 40–100 % in 5er-Schritten, `archiver.glass`, i18n.js `applyGlass`) für App, Tray und Observer |
 | `--bg` | aus `--bg-solid` × `--win-alpha` | dito | Fenster über dem Mac-Glas |
 | `--ink` / `--ink-rgb` | `#ffffff` / `255,255,255` | `#111111` / `17,17,17` | Text und Basis aller Alpha-Flächen |
-| `--ink-inverse` | `#0f0f0f` | `#f4f5f7` | Text auf `--ink`-Flächen (Primärknopf) |
-| `--p-text` | `#ededed`, mit Melange `#f0f0ee` | `#111111` | Haupttext |
-| `--p-dim` | `#8c8c8c`, mit Melange `#9d9d9b` | `#5e6064` | Sekundärtext, Meta |
-| `--p-faint` | `#5e5e5e`, mit Melange `#666664` (0.42.5, vorher `#6d6d6b`) | `#b2b2b2` (0.42.5, vorher `#8f9196`; etwa 2:1 auf dem Grund, nur Nebentext) | Tertiärtext, inaktive Chips |
-| `--p-rule` | ink × 0.10 | schwarz × 0.10 | Trennlinien |
+| `--ink-inverse` | `#0f0f0f` | `#fcfcfc` | Text auf `--ink`-Flächen (Primärknopf) |
+| `--p-text` | `#ededed`, mit Melange `#f0f0ee` | `#4a4a4a` (Grauwert, vorher `#111111`; 8,6:1 auf dem Grund). `--ink` bleibt `#111111` | Haupttext |
+| `--p-dim` | `#8c8c8c`, mit Melange `#9d9d9b` | `#7b7b7b` (Grauwert, vorher `#5e6064`; 4,1:1) | Sekundärtext, Meta |
+| `--p-faint` | `#5e5e5e`, mit Melange `#666664` (0.42.5, vorher `#6d6d6b`) | `#bfbfbf` (Grauwert, vorher `#b2b2b2`; 1,8:1, nur Nebentext und Satz im Seitenkopf) | Tertiärtext, inaktive Chips |
+| `--p-rule` | ink × 0.10 | `rgba(123,123,123,.14)` (Grauwert) | Trennlinien |
 | `--p-rule-strong` | ink × 0.55 | schwarz × 0.55 | betonte Linien |
-| `--p-pill` | `rgba(52,52,52,.82)` | `#ebebeb` deckend (0.42.5) | Pillen und Navigationsglas |
-| Karte | `rgba(150,150,150,.055)` (0.42.5, vorher ink × 0.055; Hover ink × 0.08) | `#f2f2f2` deckend (`--card-bg`, 0.42.5). Blöcke, Listen und Neu-Karte bleiben `#e9ebee` | Zonen- und Ordnerkarten, eine Stufe vom Grund abgesetzt |
-| `--thumb-bg` | `#262626` | `#e3e5e8` | Platzhalter hinter Bildern |
-| `--menu-bg` | `rgba(40,40,40,.97)` | `rgba(246,247,244,.98)` | Menüs, Zonenglas |
-| `--sheet-bg` | `#1c1c1c` | `#eef0f2` (auch auf dem Mac) | Seitenblatt (Details) |
-| `--lightbox-bg` | `rgba(0,0,0,.9)` | `rgba(243,244,241,.97)` | Lightbox |
+| `--p-pill` | `rgba(52,52,52,.82)` | `#f0f0f0` deckend; Navigation `#f0f0f0` × 0.7 mit `blur(50px) saturate(0)`, ohne Kante, Schatten `0 4px 12px` × 0.02 (Grauwert) | Pillen und Navigationsglas |
+| Karte | `rgba(150,150,150,.055)` (0.42.5, vorher ink × 0.055; Hover ink × 0.08) | `#f0f0f0` deckend (`--card-bg`, Grauwert). Blöcke, Listen und Neu-Karte dieselbe Fläche `#f0f0f0`, Hover `#e8e8e8` | Zonen- und Ordnerkarten, eine Stufe vom Grund abgesetzt |
+| `--thumb-bg` | `#262626` | `#e1e1e1` (Grauwert) | Platzhalter hinter Bildern |
+| `--menu-bg` | `rgba(40,40,40,.97)` | `rgba(236,236,236,.97)`, Schatten `--menu-shadow` `0 10px 30px` × 0.08 ohne Kante (Grauwert) | Menüs, Zonenglas |
+| `--sheet-bg` | `#1c1c1c` | `#f0f0f0` (auch auf dem Mac, Grauwert) | Seitenblatt (Details) |
+| `--lightbox-bg` | `rgba(0,0,0,.9)` | `rgba(252,252,252,.97)` (Grauwert) | Lightbox |
 | `--accent` / `--accent-rgb` | `#2d5aeb` | dito | Toast, aktive Systemzustände |
 | `--glow-rgb` | `91,124,255` | dito | Glühen der Zielkarte beim Ablegen |
 | `--danger` | `#e5484d` | dito | Fehler-Toast, Löschen |
@@ -84,10 +84,12 @@ Für die Farbe gilt:
 - **Akzent sparsam.** Blau zeigt nur Systemrückmeldung (Toast, Glühen beim
   Ablegen). Auswahl und Fokus sind nie blau, sondern Ring
   (Prinzip 5).
-- **Kein reines Weiß als Fläche.** Hell beginnt bei `#f4f5f7` (0.42.4, Lukas' Wahl „Kühl“:
-  ein Hauch Blau, Flächen `#e9ebee`, Schrift `#111`; das warme `#f3f4f1` aus 0.42.2
-  wirkte neben Bildern schmutzig). Tray, Viewer und Extension bleiben bei `#f4f4f4`. Reines Weiß
-  bleibt Glas (Navigation, Zonenleiste) und Bildern vorbehalten.
+- **Kein reines Weiß als Fläche.** Hell beginnt bei `#fcfcfc` (10.11.2026, Lukas' Wahl
+  „Grauwert“ nach et-al.online: exakt farblose Grautöne, eine Fläche `#f0f0f0`, Text
+  `#4a4a4a`, Hierarchie nur über Grau; vorher 0.42.4 „Kühl“ mit `#e9ebee`/`#eef0f2` und
+  Resten aus „Warm“ `#f3f4f1`, die übereinander zwischen grünlich und bläulich kippten).
+  Kein Farbstich in Hell-Grautönen. Tray, Viewer und Extension bleiben bei `#f4f4f4`. Reines Weiß
+  bleibt Zonenleiste und Bildern vorbehalten, die Navigation ist seit Grauwert graues Glas.
 
 ### 2.2 Typografie
 
@@ -173,9 +175,9 @@ Ebenen vor: Navigation, Active-Zones-Leiste, Menüs und Ladeplatzhalter.
 
 | | Dunkel | Hell |
 |---|---|---|
-| Unschärfe | `blur(24px) saturate(1.4)` | `blur(28px) saturate(0)` |
-| Schatten | `0 14px 44px rgba(0,0,0,.5)` | `0 14px 44px rgba(0,0,0,.16)` |
-| Kante | `inset 0 0 0 1px` ink × 0.07 | `inset 0 0 0 1px` weiß × 0.7 + schwarz × 0.08 auf 0.5 px |
+| Unschärfe | `blur(24px) saturate(1.4)` | `blur(28px) saturate(0)`, Navigation `blur(50px) saturate(0)` (Grauwert) |
+| Schatten | `0 14px 44px rgba(0,0,0,.5)` | `0 14px 44px rgba(0,0,0,.16)`; Navigation `0 4px 12px` × 0.02, Menüs `0 10px 30px` × 0.08 (Grauwert) |
+| Kante | `inset 0 0 0 1px` ink × 0.07 | Zonenglas `inset 0 0 0 1px` weiß × 0.7 + schwarz × 0.08 auf 0.5 px; Navigation und Menüs ohne Kante (Grauwert) |
 | Am ganzen Mac (0.40.24) | `NSVisualEffectView` hinter jeder Karte, Material HUD (13) | Material Seitenleiste (7) |
 | Deckkraft | `--zone-alpha`, eigener Regler „Zonen beim Ziehen“ (30–100 % in 5er-Schritten, `archiver.zoneGlass`, Standard 0.97). App, Zonenleiste und Extension (über `zones.json` „alpha“) | dito |
 
