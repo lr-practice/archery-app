@@ -557,7 +557,7 @@
     homeSizes: pref("homeSizes", null) || { index: pref("homeSize", 1), cards: pref("homeSize", 1) },
     // (Übersicht: Größe wie die Karten, solange nichts eigenes gespeichert ist)
     query: "",
-    filters: { kind: null, color: null, orient: null, format: null, period: null, dup: false, label: null, site: null, by: null, fresh: false },
+    filters: { kind: null, color: null, orient: null, format: null, period: null, dup: false, label: null, site: null, by: null, fresh: false, rights: null },
     found: null, // Seite „Finden“: Treffer nach Rangfolge, null ohne Suche und Filter
     view: ["grid", "original", "list"].includes(pref("view", "grid")) ? pref("view", "grid") : "grid", // „form“ (0.40.0) ist wieder raus
     size: pref("size", 120),
@@ -922,7 +922,7 @@
 
   function filtersActive() {
     const f = state.filters;
-    return filtersShown() && !!(f.kind || f.color || f.orient || f.format || f.period || f.dup || f.label || f.site || f.by || f.fresh);
+    return filtersShown() && !!(f.kind || f.color || f.orient || f.format || f.period || f.dup || f.label || f.site || f.by || f.fresh || f.rights);
   }
 
   function orientation(item) {
@@ -943,7 +943,13 @@
     if (f.dup && !dupes.has(item.hash)) return false;
     if (f.by && item.addedBy !== f.by) return false;
     if (f.fresh && !isFresh(item)) return false;
+    if (f.rights && !rightsMatch(item, f.rights)) return false;
     return true;
+  }
+
+  // Studio › Rechte (Variante A, Lukas 10.11.): ohne Urheber bzw. nur intern
+  function rightsMatch(item, key) {
+    return key === "internal" ? !!item.internal : !isNote(item) && !(item.credit || "").trim();
   }
 
   // ---- Geteilte Bibliothek: „neu von anderen“ bis zum ersten Ansehen ----
@@ -1001,7 +1007,7 @@
     renderZones();
   }
 
-  const NO_FILTERS = { kind: null, color: null, orient: null, format: null, period: null, dup: false, label: null, site: null, by: null, fresh: false };
+  const NO_FILTERS = { kind: null, color: null, orient: null, format: null, period: null, dup: false, label: null, site: null, by: null, fresh: false, rights: null };
 
   // 0.39.1 (Variante C): Art, Farbe und Zeit stehen immer in einer Zeile.
   // „(Mehr)“ öffnet darunter Form, Format, Doppelt, Motive, Quellen als Tabelle;
@@ -1031,6 +1037,13 @@
       if (fresh || f.fresh) {
         chips.appendChild(el("span", "p-filter-gap"));
         chips.appendChild(chip("(" + t("filterFresh") + " " + fresh + ")", f.fresh, () => setFilter("fresh", true)));
+      }
+    }
+    if (feat("rights")) {
+      chips.appendChild(el("span", "p-filter-gap"));
+      for (const [k, label] of [["nocredit", "filterNoCredit"], ["internal", "internal"]]) {
+        const n = state.items.filter((i) => rightsMatch(i, k)).length;
+        chips.appendChild(chip("(" + t(label) + " " + n + ")", f.rights === k, () => setFilter("rights", k)));
       }
     }
     chips.appendChild(el("span", "p-filter-gap"));
@@ -1753,6 +1766,10 @@
     document.body.classList.toggle("at-home", home);
     grid.classList.toggle("original", state.view === "original");
     grid.classList.toggle("listview", state.view === "list");
+    // Studio › Rechte: Urheber, Lizenz und Von als Spalten der Liste (Variante A, Lukas 10.11.)
+    const rights = feat("rights") && state.focus !== DELETED;
+    grid.classList.toggle("p-rights", rights);
+    grid.classList.toggle("p-rights-by", rights && state.shared);
     const key = home ? "home:" + state.home : words.length || filtering ? "search" : "zone:" + state.focus;
     const scroll = key === lastViewKey ? grid.scrollTop : 0;
     lastViewKey = key;
@@ -3728,12 +3745,14 @@
   // absteigend, dann wieder die Reihenfolge der Zone. Maße, Größe und Datum
   // beginnen mit dem Größten bzw. Neuesten.
   const LIST_COLS = [["name", "listName"], ["kind", "viewerFormat"], ["dims", "viewerSize"], ["bytes", "listBytes"], ["src", "source"], ["date", "listDate"]];
+  const listCols = () =>
+    feat("rights") ? [...LIST_COLS, ["credit", "credit"], ["license", "license"], ...(state.shared ? [["by", "facetBy"]] : [])] : LIST_COLS;
   const listSort = () => (state.view === "list" && pref("listSort", null)) || null;
 
   function listHead(sortable = true) {
     const head = el("div", "p-list-head");
     const s = listSort();
-    for (const [key, label] of LIST_COLS) {
+    for (const [key, label] of sortable ? listCols() : LIST_COLS) {
       if (!sortable) {
         head.appendChild(mono(t(label), "dim"));
         continue;
@@ -3767,6 +3786,8 @@
     if (key === "dims") return (item.width || 0) * (item.height || 0);
     if (key === "bytes") return item.bytes || 0;
     if (key === "src") return domainOf(item.pageUrl);
+    if (key === "credit" || key === "license") return (item[key] || "").trim();
+    if (key === "by") return item.addedBy ? byInitials(item.addedBy) : "";
     return item.capturedAt || item.addedAt || 0;
   }
 
@@ -4162,12 +4183,15 @@
       const info = el("div", "card-info");
       info.appendChild(el("span", "card-name"));
       const meta = el("span", "card-meta");
-      for (const k of ["kind", "dims", "bytes", "src", "date"]) meta.appendChild(el("span", "card-m card-m-" + k));
+      for (const k of ["kind", "dims", "bytes", "src", "date", "credit", "license", "by"]) meta.appendChild(el("span", "card-m card-m-" + k));
       info.appendChild(meta);
       card.appendChild(info);
       cardCache.set(item.path, card);
     }
-    const label = mediaLabel(item);
+    // Geteilte Bibliothek: Kürzel der Person, die abgelegt hat, nur bei Objekten anderer.
+    // Seit 0.46.0 immer sichtbar in der Marke oben rechts (Studio, Variante A)
+    const by = item.addedBy && item.addedBy !== state.user ? byInitials(item.addedBy) : "";
+    const label = [mediaLabel(item), by].filter(Boolean).join(" · ");
     const media = card.querySelector(".card-media");
     media.textContent = label;
     media.hidden = !label;
@@ -4197,10 +4221,8 @@
         if (img.complete && img.naturalWidth) card.classList.remove("loading");
       }
     }
-    // Geteilte Bibliothek: Kürzel der Person, die abgelegt hat, nur bei Objekten anderer
-    const by = item.addedBy && item.addedBy !== state.user ? byInitials(item.addedBy) + " · " : "";
     card.querySelector(".card-badge").textContent =
-      (feat("rights") && item.internal ? t("internalBadge") + " · " : "") + by + (domainOf(item.pageUrl) || item.filename);
+      (feat("rights") && item.internal ? t("internalBadge") + " · " : "") + (domainOf(item.pageUrl) || item.filename);
     card.classList.toggle("card-internal", feat("rights") && !!item.internal);
     // Seitenverhältnis fürs Bild, damit die Spalten vor dem Laden stehen
     if (state.view === "original" && item.width && item.height) card.style.setProperty("--ar", `${item.width} / ${item.height}`);
@@ -4214,6 +4236,7 @@
     info.querySelector(".card-m-bytes").textContent = item.bytes ? formatBytes(item.bytes) : "–";
     info.querySelector(".card-m-src").textContent = domainOf(item.pageUrl);
     info.querySelector(".card-m-date").textContent = shortDate(item.capturedAt || item.addedAt);
+    for (const k of ["credit", "license", "by"]) info.querySelector(".card-m-" + k).textContent = listValue(item, k);
     // 0.33.1: Bild mit Bildtext trägt einen Punkt in der Farbe seiner Textkarte,
     // 0.42.6 auch ein Bild mit Note (Farbe der Note)
     const dot = card.querySelector(".card-dot");
