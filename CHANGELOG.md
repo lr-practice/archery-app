@@ -1,5 +1,12 @@
 # Changelog
 
+## App 0.46.1
+
+- Hell „Grauwert“: exakt farblose Grautöne statt kühler und warmer Reste.
+  Grund #fcfcfc, eine Fläche #f0f0f0 für Karten, Blöcke, Listen und
+  Seitenblatt, Text in Grau (#4a4a4a, #7b7b7b, #bfbfbf), Navigation als
+  graues Glas, Menüs ohne Kante. Dunkel bleibt unverändert.
+
 ## App 0.46.0
 
 - Studio: In „Alle Objekte“ und in der Suche filtern „Ohne Urheber“ und „Nur
