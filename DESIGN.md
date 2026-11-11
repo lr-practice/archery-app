@@ -98,6 +98,7 @@ Für die Farbe gilt:
 | Zahl im Index | Melange | 12 px | 350 | 0 | `.p-num` (Ziffern tabellarisch) |
 | UI | Melange | 13–13.5 px | 400 | 0 | Navigation, Menüs |
 | Karten-Titel | Melange Semi-Light | 14 px | 350 | 0 | Zonenname auf der Karte |
+| Abschnittskopf | Melange Semi-Light | 14 px (Alle Objekte), 17 px (Segmente) | 350 | 0 | Zonenname über dem Raster in Alle Objekte (`.p-section-head`), Ordner in „(Segmente)“ (`.p-folder-head`), 0.47.3 vorher 400 bzw. 500 |
 | Index-Zeile | Melange Semi-Light | 19 px | 350 | −0.01em | Zonenname im Index |
 | Seitenkopf | Melange Semi-Light | 30 px / 1.16 | 350 | −0.02em | alle Seiten und Einstellungen, Titel voll, Satz hell (`--p-faint`) im selben Absatz |
 | Einstellungen | Melange Semi-Light | 20 px | 350 | −0.012em | Bereiche in der Vollbild-Liste |
@@ -124,7 +125,10 @@ Für die Typografie gilt:
   Notiz-Blätter in Systemschrift behalten ihre eigenen Werte.
 - Mono ist für Daten und Etiketten da, nicht für Fließtext.
 - Gewichte sind 350 (Inhalt, Köpfe), 400 (Bedienung, Etiketten in Geist Mono), 500 und 600
-  (Geist-Stand).
+  (Geist-Stand). Seit 0.47.3 (Lukas 11.11.) sind alle Köpfe und Namen im Inhalt
+  350: Abschnittsköpfe, Zonennamen auf Karten und im Blatt, Dateinamen in der
+  Liste. Die Leiste der Lightbox ist Bedienung und steht wie die Navigation auf
+  400 (vorher 500).
 - Neue Größen werden auf diese Stufen gerundet. Im Code stecken heute auch
   10, 14, 16 und 19 px. Diese Größen werden bei Gelegenheit auf die Stufen
   gezogen und nicht neu eingeführt.
