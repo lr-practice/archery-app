@@ -529,6 +529,7 @@
   const LIST_THUMBS = [24, 32, 40, 56, 72, 96]; // Liste: Bildhöhe je Stufe
   const ALL = "\u0000all";
   const DELETED = "\u0000deleted"; // „Zuletzt gelöscht“ (0.27)
+  const SHOTS = "Screenshots"; // Ordner für Bildschirmfotos (0.47.0, library.rs SHOTS)
   const isZone = (f) => f != null && !String(f).startsWith("\u0000");
   // Startseite: Vorschaubilder im Index, Spalten im Mosaik, Titelbild der Karten
   const HOME_SIZES = [
@@ -826,6 +827,7 @@
       syncedOrder = JSON.stringify(state.zoneOrder);
       if (JSON.stringify(pref("zoneOrder", [])) !== syncedOrder) setPref("zoneOrder", state.zoneOrder);
     }
+    if (snap.root !== state.root) state.shots = undefined; // andere Bibliothek, anderer Ordner
     state.root = snap.root;
     state.name = snap.name;
     state.defaultZone = snap.defaultZone || "Unsorted";
@@ -838,6 +840,8 @@
     applyLock();
     state.inboxSeen = snap.inboxSeen || {};
     state.expireZone = snap.expireZone === undefined ? "Unsorted" : snap.expireZone;
+    state.shotsExpire = !!snap.shotsExpire;
+    state.shotsSeen = snap.shotsSeen || {};
     state.structure = snap.structure || { depth: 2, skip: [], subzones: false };
     state.user = snap.user || "";
     state.folders = snap.folders || [];
@@ -1205,7 +1209,9 @@
     document.documentElement.style.setProperty("--lt", LIST_THUMBS[Math.max(0, SIZES.indexOf(state.size))] + "px");
     const main = $("navMain");
     const btns = [];
-    const inZone = isZone(state.focus) && !state.query;
+    // 0.47.0: Screenshots hat einen eigenen Reiter, solange der Ordner da ist
+    const inShots = hasShots() && state.focus === SHOTS && !state.query;
+    const inZone = isZone(state.focus) && !state.query && !inShots;
     // Zur Übersicht führt „Overview“ links; in einer Zone folgt hier der Pfad.
     if (inZone) {
       const parts = state.focus.split("/");
@@ -1226,6 +1232,7 @@
     } else {
       btns.push(navButton(t("navAll"), state.focus === ALL || !!state.query.trim(), () => setFocus(ALL)));
     }
+    if (hasShots() && !inZone && state.focus !== DELETED) btns.push(navButton(SHOTS, inShots, () => setFocus(SHOTS)));
     if (state.page) {
       btns.push(el("span", "p-nav-sep", "›"));
       btns.push(navButton(t(state.page), true, closePage));
@@ -2569,6 +2576,47 @@
     return b;
   }
 
+  // Screenshots (0.47.0, Lukas 11.11.): macOS legt Bildschirmfotos in den Ordner
+  // Screenshots der Bibliothek statt auf den Schreibtisch (lib.rs
+  // set_screenshot_target), Aus stellt den Ort von vorher her. Er räumt nach
+  // 7 Tagen auf wie Unsorted, mit eigenem Schalter.
+  function renderShotSettings() {
+    const b = block(SHOTS);
+    if (isMac && state.shots === undefined)
+      invoke("screenshot_target")
+        .then((on) => {
+          state.shots = on;
+          if (state.settingsSub === "library") renderPage(true);
+        })
+        .catch(() => (state.shots = null));
+    if (typeof state.shots === "boolean") {
+      const shots = choice([["on", t("setOn")], ["off", t("setOff")]], state.shots ? "on" : "off", async (id) => {
+        try {
+          state.shots = await invoke("set_screenshot_target", { on: id === "on" });
+          await refresh();
+          renderPage(true);
+        } catch (e) {
+          fail(e);
+        }
+      });
+      b.appendChild(blockRow(t("setShotsLabel"), shots));
+      b.appendChild(el("p", "p-block-hint", t("setShotsHint")));
+    }
+    if (hasShots()) {
+      const expire = choice([["on", t("setOn")], ["off", t("setOff")]], state.shotsExpire ? "on" : "off", async (id) => {
+        try {
+          await invoke("set_shots_expire", { on: id === "on" });
+          await refresh();
+          renderPage(true);
+        } catch (e) {
+          fail(e);
+        }
+      });
+      b.appendChild(blockRow(t("setShotsExpire"), expire));
+    }
+    return b.children.length > 1 ? b : document.createDocumentFragment();
+  }
+
   // Zonen: umbenennen, neu anlegen (die ersten vier sind die Hot Zones, Tasten 1–4)
   // Einstellungen › Zonen: Zeile greifen und an neuen Platz schieben, die anderen rücken nach.
   // Die ersten vier sind die Active Zones.
@@ -2858,6 +2906,7 @@
       wrap.appendChild(renderLibrarySlots());
       wrap.appendChild(renderExternalZones());
       wrap.appendChild(renderDefaultZone());
+      wrap.appendChild(renderShotSettings());
       wrap.appendChild(renderStructure());
       wrap.appendChild(renderZoneSettings());
       wrap.appendChild(renderNamingSettings());
@@ -4137,13 +4186,20 @@
       .split("/")
       .some((seg) => seg.trim().replace(/^[\d_.\- ]+/, "").toLowerCase() === "unsorted");
   }
+  // 0.47.0: Screenshots räumt ebenso auf, wenn der Schalter an ist (library.rs expire_shots)
+  function isShots(zonePath) {
+    return String(zonePath || "").split("/")[0] === SHOTS;
+  }
+  function hasShots() {
+    return state.zones.some((z) => z.path === SHOTS);
+  }
   function isInbox(zonePath) {
-    return !!state.expireZone && isUnsortedPath(zonePath);
+    return (!!state.expireZone && isUnsortedPath(zonePath)) || (state.shotsExpire && isShots(zonePath));
   }
   // Resttage eines Objekts in Unsorted, gezählt ab dem ersten Sehen (library.rs inbox_seen)
   function inboxDaysLeft(item) {
     if (!isInbox(item.zone)) return Infinity;
-    const since = (state.inboxSeen || {})[item.hash];
+    const since = ((isShots(item.zone) ? state.shotsSeen : state.inboxSeen) || {})[item.hash];
     if (!since) return DELETED_DAYS;
     return Math.max(1, Math.ceil(DELETED_DAYS - (Date.now() - since) / 86400000));
   }

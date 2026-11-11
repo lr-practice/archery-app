@@ -30,6 +30,8 @@ pub fn migrate_meta_dir(root: &Path) {
     }
 }
 pub const INBOX: &str = "Unsorted";
+/// Ordner für Bildschirmfotos des Macs (0.47.0, Einstellungen › Bibliothek)
+pub const SHOTS: &str = "Screenshots";
 /// Frühere Standard-Zone (bis 0.23); wird beim Öffnen zu „Unsorted“ umbenannt.
 pub const LEGACY_INBOX: &str = "Inbox";
 /// Zwischenordner der Extension in den Downloads (wird nach der Übernahme geleert).
@@ -491,6 +493,8 @@ impl Structure {
 pub const DELETED_DAYS: i64 = 7;
 /// .archiver/unsorted-seen.json: seit wann ein Objekt in Unsorted liegt (expire_inbox)
 const INBOX_SEEN: &str = "unsorted-seen.json";
+/// .archiver/screenshots-seen.json: dasselbe für Screenshots (expire_shots, 0.47.0)
+const SHOTS_SEEN: &str = "screenshots-seen.json";
 const DELETED_HASHES: &str = ".hashes.json";
 
 /// Eintrag unter „Zuletzt gelöscht“: alter Pfad in der Bibliothek, Ort unter
@@ -1100,6 +1104,38 @@ impl Library {
         let mut v = self.zone_file();
         v["expire"] = serde_json::json!(zone);
         self.write_zone_file(&v)
+    }
+
+    /// Screenshots räumt nach 7 Tagen auf (0.47.0). Erst an, wenn die
+    /// Bildschirmfotos einmal hierher gelenkt wurden (set_shots_expire), damit
+    /// ein eigener Ordner gleichen Namens nicht plötzlich geleert wird.
+    pub fn shots_expire(&self) -> bool {
+        self.zone_file().get("shotsExpire").and_then(|v| v.as_bool()).unwrap_or(false)
+    }
+
+    pub fn set_shots_expire(&self, on: bool) -> Result<()> {
+        // Wieder an: Fristen beginnen neu (wie set_expire_zone)
+        if on && !self.shots_expire() {
+            let _ = fs::remove_file(self.root.join(META_DIR).join(SHOTS_SEEN));
+        }
+        let mut v = self.zone_file();
+        v["shotsExpire"] = serde_json::json!(on);
+        self.write_zone_file(&v)
+    }
+
+    /// Wurde Aufräumen hier noch nie gewählt, gilt es ab dem ersten Einschalten
+    pub fn shots_expire_default(&self) -> Result<()> {
+        if self.zone_file().get("shotsExpire").is_none() {
+            self.set_shots_expire(true)?;
+        }
+        Ok(())
+    }
+
+    /// Ordner für Bildschirmfotos, bei Bedarf angelegt
+    pub fn shots_dir(&self) -> Result<PathBuf> {
+        let dir = self.root.join(SHOTS);
+        fs::create_dir_all(&dir).map_err(err)?;
+        Ok(dir)
     }
 
     pub fn set_default_zone(&self, zone: &str) -> Result<()> {
@@ -2428,20 +2464,40 @@ impl Library {
     /// „An“ gewählt wurde (0.36.1): sonst räumt niemand für andere auf.
     /// Seit wann jedes Objekt in Unsorted liegt (Hash → ms), für „noch n T.“ im Raster (0.33)
     pub fn inbox_seen(&self) -> HashMap<String, i64> {
-        fs::read(self.root.join(META_DIR).join(INBOX_SEEN)).ok().and_then(|b| serde_json::from_slice(&b).ok()).unwrap_or_default()
+        self.seen(INBOX_SEEN)
+    }
+
+    pub fn shots_seen(&self) -> HashMap<String, i64> {
+        self.seen(SHOTS_SEEN)
+    }
+
+    fn seen(&self, file: &str) -> HashMap<String, i64> {
+        fs::read(self.root.join(META_DIR).join(file)).ok().and_then(|b| serde_json::from_slice(&b).ok()).unwrap_or_default()
     }
 
     pub fn expire_inbox(&self, days: i64) -> Result<usize> {
         if self.expire_zone().is_none() {
             return Ok(0);
         }
-        let seen_path = self.root.join(META_DIR).join(INBOX_SEEN);
+        self.expire_where(INBOX_SEEN, is_unsorted, days)
+    }
+
+    /// Screenshots nach 7 Tagen nach „Zuletzt gelöscht“ (0.47.0), wie Unsorted
+    pub fn expire_shots(&self, days: i64) -> Result<usize> {
+        if !self.shots_expire() {
+            return Ok(0);
+        }
+        self.expire_where(SHOTS_SEEN, |z| z.split('/').next() == Some(SHOTS), days)
+    }
+
+    fn expire_where(&self, file: &str, in_zone: fn(&str) -> bool, days: i64) -> Result<usize> {
+        let seen_path = self.root.join(META_DIR).join(file);
         let seen: HashMap<String, i64> = fs::read(&seen_path).ok().and_then(|b| serde_json::from_slice(&b).ok()).unwrap_or_default();
         let now = now_ms();
         let limit = days * 24 * 3600 * 1000;
         let mut keep = HashMap::new();
         let mut old = Vec::new();
-        for item in self.items()?.into_iter().filter(|i| is_unsorted(&i.zone)) {
+        for item in self.items()?.into_iter().filter(|i| in_zone(&i.zone)) {
             let since = seen.get(&item.hash).copied().unwrap_or(now);
             if now - since > limit {
                 old.push(item.path);
@@ -3316,6 +3372,40 @@ mod tests {
         assert_eq!(lib.expire_zone(), None);
         assert_eq!(lib.expire_inbox(DELETED_DAYS).unwrap(), 0);
         assert!(lib.set_expire_zone("Gibtsnicht").is_err());
+    }
+
+    #[test]
+    fn screenshots_empty_after_seven_days_only_once_chosen() {
+        let tmp = tempfile::tempdir().unwrap();
+        let root = tmp.path().join("Bib");
+        let lib = Library::open(&root).unwrap();
+        let src = tmp.path().join("src");
+        write_png(&src.join("shot.png"), 4, 4, 10);
+        write_png(&src.join("typo.png"), 4, 4, 20);
+        lib.import_files(&[src.join("shot.png")], SHOTS).unwrap();
+        lib.import_files(&[src.join("typo.png")], "Typo").unwrap();
+        // eigener Ordner gleichen Namens: ab Werk unberührt
+        assert!(!lib.shots_expire());
+        assert_eq!(lib.expire_shots(DELETED_DAYS).unwrap(), 0);
+        assert!(!root.join(META_DIR).join(SHOTS_SEEN).exists());
+        // erstes Einschalten der Bildschirmfotos: Aufräumen an, Frist beginnt
+        lib.shots_expire_default().unwrap();
+        assert!(lib.shots_expire());
+        assert_eq!(lib.expire_shots(DELETED_DAYS).unwrap(), 0);
+        let seen_path = root.join(META_DIR).join(SHOTS_SEEN);
+        let mut seen = lib.shots_seen();
+        assert_eq!(seen.len(), 1, "nur Screenshots zählt");
+        let h = lib.hash_of(&format!("{SHOTS}/shot.png")).unwrap();
+        seen.insert(h, now_ms() - 8 * 24 * 3600 * 1000);
+        fs::write(&seen_path, serde_json::to_vec(&seen).unwrap()).unwrap();
+        assert_eq!(lib.expire_shots(DELETED_DAYS).unwrap(), 1);
+        assert!(!root.join(SHOTS).join("shot.png").exists());
+        assert!(root.join("Typo/typo.png").is_file());
+        // aus bleibt aus, auch beim nächsten Einschalten der Bildschirmfotos
+        lib.set_shots_expire(false).unwrap();
+        lib.shots_expire_default().unwrap();
+        assert!(!lib.shots_expire());
+        assert!(lib.shots_dir().unwrap().is_dir());
     }
 
     #[test]

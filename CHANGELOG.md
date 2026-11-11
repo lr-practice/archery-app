@@ -1,5 +1,16 @@
 # Changelog
 
+## App 0.47.0
+
+- Bildschirmfotos in Archery: Einstellungen › Bibliothek › Screenshots lenkt
+  neue Bildschirmfotos des Macs in den Ordner Screenshots der Bibliothek
+  statt auf den Schreibtisch. Aus stellt den Ort von vorher wieder her.
+- Screenshots hat einen eigenen Reiter in der Navigation und einen Knopf
+  neben dem Suchfeld im Tray.
+- Screenshots räumt nach 7 Tagen auf wie Unsorted, mit eigenem Schalter.
+- Hell: Die Gruppen in den Einstellungen sind wieder als Karten zu sehen
+  (fast weiß auf neutral grauem Blatt statt bläulich in bläulich).
+
 ## App 0.46.0
 
 - Studio: In „Alle Objekte“ und in der Suche filtern „Ohne Urheber“ und „Nur
