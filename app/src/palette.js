@@ -18,6 +18,7 @@
   document.documentElement.lang = lang;
 
   const HOT = 4;
+  const SHOTS = "Screenshots"; // Ordner für Bildschirmfotos (0.47.0, library.rs SHOTS)
   const state = {
     snap: null,
     dirty: true,
@@ -283,6 +284,11 @@
     state.objects = [];
     $("crumb").hidden = state.view !== "zone";
     $("hits").textContent = "";
+    // 0.47.0: Knopf „Screenshots“, solange es den Ordner gibt (app.js hasShots)
+    const shots = state.zones.find((z) => z.path === SHOTS);
+    $("shots").hidden = !shots;
+    $("shots").classList.toggle("on", state.view === "zone" && state.zone === SHOTS);
+    if (shots) $("shots").lastElementChild.textContent = shots.count;
 
     if (!state.snap) {
       body.appendChild(el("div", "pal-empty", t("palNoLibrary")));
@@ -821,6 +827,7 @@
   $("q").placeholder = t("palSearch");
   $("q").addEventListener("input", onInput);
   document.addEventListener("keydown", onKey);
+  $("shots").addEventListener("click", () => (state.view === "zone" && state.zone === SHOTS ? goStart() : openZone(SHOTS)));
 
   TAURI.event.listen("library-changed", () => (state.dirty = true));
   TAURI.event.listen("library-switched", () => (state.dirty = true));

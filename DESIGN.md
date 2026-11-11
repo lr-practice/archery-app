@@ -248,6 +248,12 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   bleibt oben rechts im Reiter `#libTab`.
 - **Form:** Eine Glas-Pille oben, auf der Mittellinie der Fensterknöpfe.
   Aktive Knöpfe sind gefüllt.
+- **Screenshots (0.47.0, Lukas 11.11.):** Gibt es den Ordner Screenshots
+  oben in der Bibliothek, steht nach „Alle Objekte“ der Reiter „Screenshots“
+  (auch auf Deutsch so, wie der Ordner). Er öffnet die Zone; dort ist er
+  gefüllt und an Stelle des Pfads steht „Alle Objekte“. In anderen Zonen und
+  unter „Zuletzt gelöscht“ fehlt er. Woher die Bilder kommen und wie sie
+  aufräumen: 4.6 „Screenshots“.
 - **Nicht:** Keine Icons neben Wörtern und keine zweite Leiste.
 
 ### 4.3 Active-Zones-Leiste (`.p-dropbar`, `.p-hot`)
@@ -319,7 +325,8 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   `prefers-reduced-motion` bleibt das Standbild.
 - **Unsorted (0.33):** Die letzten zwei Tage vor „Zuletzt gelöscht“ steht oben
   links „noch n T.“ (`.card-days`, Marke wie `.card-media`, Schrift `--danger`).
-  Gezählt ab dem ersten Sehen (`inboxSeen` im Snapshot). Die Kopfzeile von
+  Gezählt ab dem ersten Sehen (`inboxSeen` im Snapshot). Dasselbe gilt für
+  Screenshots, wenn dort aufgeräumt wird (`shotsSeen`, `isInbox` in app.js). Die Kopfzeile von
   Unsorted sagt nur „Nach 7 Tagen gelöscht.“, ohne Anzahl, Datum und Quellen.
   Dieselben Worte stehen im Index hinter dem Namen (dim) und auf der Zonenkarte
   hinter der Anzahl statt des Datums (0.33.1). Es ist immer Unsorted (0.35, vorher
@@ -333,6 +340,17 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   Bibliotheken räumen ab Werk nicht auf und zeigen nichts davon; wer dort in den
   Einstellungen „An“ wählt (0.36.1), bekommt dieselben Hinweise und dasselbe
   Aufräumen wie in einer eigenen Bibliothek.
+- **Screenshots (0.47.0, Lukas 11.11.):** Einstellungen › Bibliothek ›
+  Screenshots „Bildschirmfotos in Archery“ (nur Mac) stellt den macOS-Ort
+  (`com.apple.screencapture location`) auf den Ordner Screenshots der
+  Bibliothek; der Watcher nimmt neue Bilder dort auf wie jede Datei. „Aus“
+  stellt den Ort von vorher wieder her (`shots_prev` in den App-Einstellungen,
+  leer = Schreibtisch). Ein eigener Ordner statt Unsorted, damit die
+  Bildschirmfotos einen festen Ort haben (Reiter 4.2, Knopf im Tray 4.12).
+  „Screenshots nach 7 Tagen gelöscht“ räumt wie Unsorted auf und hat einen
+  eigenen Schalter. Er geht erst beim ersten Einschalten der Bildschirmfotos
+  an (`shotsExpire` in zones.json), damit ein eigener Ordner gleichen Namens
+  nicht geleert wird.
 - **Liste (0.34):** dritte Ansicht neben Raster und Original, Chip
   „(Liste)“. Zeilen wie im Finder: Bild, Name, Format, Maße, Größe, Quelle,
   Gesichert. Dateiname in Geist 13 px/500 (`--p-text`), Angaben in 12 px
@@ -555,6 +573,13 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   Inhalt blendet in 0.12 s aus. Nach dem Ziehen geht der Tray auf den
   gemerkten Rahmen zurück. Mit „Bewegung reduzieren“ ohne Animation. Klick in ein anderes Programm
   blendet sie aus.
+- **Screenshots (0.47.0, Lukas 11.11.):** Gibt es den Ordner Screenshots,
+  steht rechts neben dem Suchfeld ein eigener Knopf in derselben Höhe (44 px)
+  und Fläche (`--pal-field`): „Screenshots“ 15 px, dahinter die Anzahl in Mono
+  gedimmt. Er öffnet die Zone; offen ist er gefüllt (`--chip-on`) wie ein
+  aktiver Reiter, ein zweiter Klick führt zurück zum Start. Das Suchfeld wird
+  dafür kürzer, „⌥ SPACE“ bleibt darin. Beim Herausziehen fällt der Knopf
+  weg, damit die Leiste die ganze Breite hat (`.pal-top`, `.pal-shots`).
 - **Textkarten (0.27):** wie in der App in ihrer Grundfarbe (`.pal-text`).
 - **Leertaste (0.27):** zeigt das gewählte Objekt groß, innerhalb der Palette
   (`.pal-preview` ersetzt den Inhalt, Suchfeld und Fußzeile bleiben). ←→
