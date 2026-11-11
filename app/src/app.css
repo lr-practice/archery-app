@@ -7875,7 +7875,7 @@ html.light {
   --panel: #fafafa;
   --card-bg: #f2f2f2;
   --thumb-bg: #e3e5e8;
-  --sheet-bg: #eef0f2;
+  --sheet-bg: #ededed; /* 0.47.0: neutral statt bläulich (Lukas 11.11.) */
   --lightbox-bg: rgba(244, 245, 247, 0.97);
   --p-text: #111111;
   --p-dim: #5e6064;
@@ -7885,10 +7885,13 @@ html.light {
   --menu-bg: rgba(247, 248, 250, 0.98);
   --splash-bg: #fafafa;
 }
-html.light :is(.p-card, .p-block, .p-list) { background: #e9ebee; }
+html.light .p-card { background: #e9ebee; }
+/* 0.47.0: Gruppen in den Einstellungen fast weiß auf dem Blatt, Variante B
+   (Lukas 11.11.); vorher #e9ebee auf #eef0f2, kaum zu sehen */
+html.light :is(.p-block, .p-list) { background: #fafafa; }
 html.light .p-card:not(.p-new):not(:hover) { background: var(--card-bg); }
 /* Seitenblatt auf dem Mac im selben Ton statt neutral grau (html.mac.light weiter oben) */
-html.mac.light { --sheet-bg: #eef0f2; }
+html.mac.light { --sheet-bg: #ededed; }
 html.light .p-nav { box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06); }
 
 /* ---- 0.42.5: Farben aus Figma (Lukas 27.10.) ----

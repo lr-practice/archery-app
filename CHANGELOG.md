@@ -8,6 +8,8 @@
 - Screenshots hat einen eigenen Reiter in der Navigation und einen Knopf
   neben dem Suchfeld im Tray.
 - Screenshots räumt nach 7 Tagen auf wie Unsorted, mit eigenem Schalter.
+- Hell: Die Gruppen in den Einstellungen sind wieder als Karten zu sehen
+  (fast weiß auf neutral grauem Blatt statt bläulich in bläulich).
 
 ## App 0.46.0
 

@@ -70,10 +70,10 @@ Bei neuen Regeln gilt:
 | `--p-rule` | ink × 0.10 | schwarz × 0.10 | Trennlinien |
 | `--p-rule-strong` | ink × 0.55 | schwarz × 0.55 | betonte Linien |
 | `--p-pill` | `rgba(52,52,52,.82)` | `#ebebeb` deckend (0.42.5) | Pillen und Navigationsglas |
-| Karte | `rgba(150,150,150,.055)` (0.42.5, vorher ink × 0.055; Hover ink × 0.08) | `#f2f2f2` deckend (`--card-bg`, 0.42.5). Blöcke, Listen und Neu-Karte bleiben `#e9ebee` | Zonen- und Ordnerkarten, eine Stufe vom Grund abgesetzt |
+| Karte | `rgba(150,150,150,.055)` (0.42.5, vorher ink × 0.055; Hover ink × 0.08) | `#f2f2f2` deckend (`--card-bg`, 0.42.5). Neu-Karte bleibt `#e9ebee`; Blöcke und Listen der Einstellungen `#fafafa` auf dem Blatt (0.47.0, vorher `#e9ebee` und kaum vom Blatt zu unterscheiden) | Zonen- und Ordnerkarten, eine Stufe vom Grund abgesetzt |
 | `--thumb-bg` | `#262626` | `#e3e5e8` | Platzhalter hinter Bildern |
 | `--menu-bg` | `rgba(40,40,40,.97)` | `rgba(246,247,244,.98)` | Menüs, Zonenglas |
-| `--sheet-bg` | `#1c1c1c` | `#eef0f2` (auch auf dem Mac) | Seitenblatt (Details) |
+| `--sheet-bg` | `#1c1c1c` | `#ededed` neutral (0.47.0, vorher `#eef0f2` bläulich; auch auf dem Mac) | Seitenblatt (Details, Einstellungen) |
 | `--lightbox-bg` | `rgba(0,0,0,.9)` | `rgba(243,244,241,.97)` | Lightbox |
 | `--accent` / `--accent-rgb` | `#2d5aeb` | dito | Toast, aktive Systemzustände |
 | `--glow-rgb` | `91,124,255` | dito | Glühen der Zielkarte beim Ablegen |
