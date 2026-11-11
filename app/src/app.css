@@ -7827,6 +7827,11 @@ html:root .p-mono { font-weight: 400; font-size: 11px; letter-spacing: 0.02em; }
 html:root .p-chip { font-family: var(--p-mono); font-weight: 400; }
 html:root .p-index .p-row.p-zone .zone-card-name { font-size: 19px; font-weight: 350; letter-spacing: -0.01em; }
 html:root .p-say { font-weight: 350; }
+/* Köpfe und Namen im Inhalt einheitlich Semi-Light (Lukas 11.11.):
+   Abschnittsköpfe in Alle Objekte und Segmente, Zonennamen auf Karten,
+   Dateinamen in der Liste. Bedienung (Navigation, Leiste der Lightbox) 400. */
+html:root :is(.p-folder-head, .p-section-head .zone-card-name, .p-card .zone-card-name, .p-sheet-zone .zone-card-name, .listview .card-name) { font-weight: 350; }
+html:root .lb-btn { font-weight: 400; }
 
 /* Köpfe: 30 px Semi-Light */
 html:root :is(.p-page > .p-home-hero > .p-head, .p-page > .p-head, .p-page > .p-head-row > .p-head),
