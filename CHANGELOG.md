@@ -1,5 +1,11 @@
 # Changelog
 
+## App 0.47.2
+
+- „Bildschirmfotos in Archery“ wirkt jetzt auch auf neueren macOS. Dort gilt
+  für Bildschirmfotos ein eigener Ort, der bisher nicht umgestellt wurde. Die
+  Bilder landeten deshalb weiter im alten Ordner.
+
 ## App 0.47.0
 
 - Bildschirmfotos in Archery: Einstellungen › Bibliothek › Screenshots lenkt

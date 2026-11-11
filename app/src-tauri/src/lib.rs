@@ -62,6 +62,9 @@ struct Settings {
     /// "" = macOS-Standard (Schreibtisch). Aus stellt ihn wieder her.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     shots_prev: Option<String>,
+    /// Dasselbe für `location-screenshot`, das neuere macOS zuerst lesen (0.47.2)
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    shots_prev_screenshot: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Default, Clone)]
@@ -914,6 +917,20 @@ async fn set_expire_zone(app: AppHandle, state: State<'_, AppState>, zone: Strin
 // macOS legt Bildschirmfotos dort ab, wo `com.apple.screencapture location`
 // hinzeigt. „An“ zeigt auf <Bibliothek>/Screenshots, der Watcher nimmt sie
 // dort auf wie jede andere Datei. „Aus“ stellt den Ort von vorher her.
+// Neuere macOS haben für Bildschirmfotos einen eigenen Wert
+// `location-screenshot`, der vor `location` gilt (0.47.2, Lukas' Mac). Beide
+// werden gesetzt und zurückgestellt.
+#[cfg(target_os = "macos")]
+const SHOT_KEYS: [&str; 2] = ["location", "location-screenshot"];
+
+#[cfg(target_os = "macos")]
+fn shots_prev_of<'a>(s: &'a mut Settings, key: &str) -> &'a mut Option<String> {
+    if key == "location" {
+        &mut s.shots_prev
+    } else {
+        &mut s.shots_prev_screenshot
+    }
+}
 
 #[cfg(target_os = "macos")]
 fn screencapture(verb: &str, rest: &[&str]) -> Option<String> {
@@ -927,7 +944,7 @@ async fn screenshot_target(state: State<'_, AppState>) -> Result<bool, String> {
     #[cfg(target_os = "macos")]
     {
         let lib = current(&state)?;
-        let Some(loc) = screencapture("read", &["location"]) else { return Ok(false) };
+        let Some(loc) = screencapture("read", &["location-screenshot"]).or_else(|| screencapture("read", &["location"])) else { return Ok(false) };
         let home = std::env::var("HOME").unwrap_or_default();
         let loc = loc.strip_prefix('~').map(|r| format!("{home}{r}")).unwrap_or(loc);
         Ok(Path::new(loc.trim_end_matches('/')) == lib.root.join(library::SHOTS).as_path())
@@ -947,25 +964,33 @@ async fn set_screenshot_target(app: AppHandle, state: State<'_, AppState>, on: b
         if on {
             let dir = lib.shots_dir()?;
             lib.shots_expire_default()?;
-            // Nur den ersten Ort merken: beim Wechsel der Bibliothek bleibt
-            // der von vor Archery stehen, nicht der Screenshots-Ordner davor
-            let prev = screencapture("read", &["location"]).unwrap_or_default();
-            update_settings(&app, |s| {
-                if s.shots_prev.is_none() {
-                    s.shots_prev = Some(prev);
-                }
-            })?;
-            screencapture("write", &["location", dir.to_string_lossy().as_ref()]).ok_or("Speicherort ließ sich nicht setzen")?;
+            for key in SHOT_KEYS {
+                // Nur den ersten Ort merken: beim Wechsel der Bibliothek bleibt
+                // der von vor Archery stehen, nicht der Screenshots-Ordner davor
+                let prev = screencapture("read", &[key]).unwrap_or_default();
+                update_settings(&app, |s| {
+                    let slot = shots_prev_of(s, key);
+                    if slot.is_none() {
+                        *slot = Some(prev);
+                    }
+                })?;
+                screencapture("write", &[key, dir.to_string_lossy().as_ref()]).ok_or("Speicherort ließ sich nicht setzen")?;
+            }
         } else {
-            let prev = update_settings(&app, |s| s.shots_prev.take())?.unwrap_or_default();
-            if prev.is_empty() {
-                let _ = screencapture("delete", &["location"]);
-            } else {
-                screencapture("write", &["location", prev.as_str()]).ok_or("Speicherort ließ sich nicht zurücksetzen")?;
+            for key in SHOT_KEYS {
+                let prev = update_settings(&app, |s| shots_prev_of(s, key).take())?.unwrap_or_default();
+                if prev.is_empty() {
+                    let _ = screencapture("delete", &[key]);
+                } else {
+                    screencapture("write", &[key, prev.as_str()]).ok_or("Speicherort ließ sich nicht zurücksetzen")?;
+                }
             }
         }
-        // Ältere macOS-Versionen lesen den Ort erst nach einem Neustart der Menüleiste
-        let _ = std::process::Command::new("/usr/bin/killall").arg("SystemUIServer").output();
+        // Den Ort liest macOS erst nach einem Neustart dieser Dienste neu
+        // (SystemUIServer bis macOS 13, screencaptureui danach); beide starten von selbst wieder
+        for proc in ["SystemUIServer", "screencaptureui"] {
+            let _ = std::process::Command::new("/usr/bin/killall").arg(proc).output();
+        }
         let _ = app.emit("library-changed", ());
         Ok(on)
     }

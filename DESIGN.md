@@ -342,7 +342,8 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   Aufräumen wie in einer eigenen Bibliothek.
 - **Screenshots (0.47.0, Lukas 11.11.):** Einstellungen › Bibliothek ›
   Screenshots „Bildschirmfotos in Archery“ (nur Mac) stellt den macOS-Ort
-  (`com.apple.screencapture location`) auf den Ordner Screenshots der
+  (`com.apple.screencapture location` und, seit 0.47.2, `location-screenshot`,
+  das neuere macOS zuerst lesen) auf den Ordner Screenshots der
   Bibliothek; der Watcher nimmt neue Bilder dort auf wie jede Datei. „Aus“
   stellt den Ort von vorher wieder her (`shots_prev` in den App-Einstellungen,
   leer = Schreibtisch). Ein eigener Ordner statt Unsorted, damit die
