@@ -1,6 +1,6 @@
 # Changelog
 
-## App 0.47.1
+## App 0.47.3
 
 - Typografie: Die Köpfe der Abschnitte in Alle Objekte und in „Segmente“,
   die Zonennamen auf den Karten und die Dateinamen in der Liste stehen jetzt

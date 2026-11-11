@@ -70,7 +70,7 @@ dependencies = [
 
 [[package]]
 name = "archiver-app"
-version = "0.47.1"
+version = "0.47.3"
 dependencies = [
  "base64 0.22.1",
  "blake3",
