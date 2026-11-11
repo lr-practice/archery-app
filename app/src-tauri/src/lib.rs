@@ -58,6 +58,10 @@ struct Settings {
     /// geschaltet mit ⌥-Klick auf die Version unter ☰ › Information.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     prerelease: bool,
+    /// Speicherort der Bildschirmfotos vor „Bildschirmfotos in Archery“ (0.47.0),
+    /// "" = macOS-Standard (Schreibtisch). Aus stellt ihn wieder her.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    shots_prev: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Default, Clone)]
@@ -361,7 +365,8 @@ fn activate(app: &AppHandle, root: &Path) -> Result<(), String> {
     let inbox_app = app.clone();
     std::thread::spawn(move || {
         while let Some(lib) = inbox.upgrade() {
-            if lib.expire_inbox(library::DELETED_DAYS).unwrap_or(0) > 0 {
+            let shots = lib.expire_shots(library::DELETED_DAYS).unwrap_or(0);
+            if lib.expire_inbox(library::DELETED_DAYS).unwrap_or(0) + shots > 0 {
                 let _ = inbox_app.emit("library-changed", ());
             }
             drop(lib);
@@ -877,6 +882,9 @@ struct Snapshot {
     inbox_seen: std::collections::HashMap<String, i64>,
     /// Zone, die sich nach 7 Tagen leert; None = aus (0.33.1)
     expire_zone: Option<String>,
+    /// Screenshots räumt nach 7 Tagen auf, und seit wann ein Objekt dort liegt (0.47.0)
+    shots_expire: bool,
+    shots_seen: std::collections::HashMap<String, i64>,
 }
 
 #[tauri::command]
@@ -902,6 +910,79 @@ async fn set_expire_zone(app: AppHandle, state: State<'_, AppState>, zone: Strin
     Ok(())
 }
 
+// ---- Bildschirmfotos in Archery (0.47.0) ----
+// macOS legt Bildschirmfotos dort ab, wo `com.apple.screencapture location`
+// hinzeigt. „An“ zeigt auf <Bibliothek>/Screenshots, der Watcher nimmt sie
+// dort auf wie jede andere Datei. „Aus“ stellt den Ort von vorher her.
+
+#[cfg(target_os = "macos")]
+fn screencapture(verb: &str, rest: &[&str]) -> Option<String> {
+    let out = std::process::Command::new("/usr/bin/defaults").arg(verb).arg("com.apple.screencapture").args(rest).output().ok()?;
+    out.status.success().then(|| String::from_utf8_lossy(&out.stdout).trim().to_string())
+}
+
+/// Zeigt der Speicherort der Bildschirmfotos auf Screenshots dieser Bibliothek?
+#[tauri::command]
+async fn screenshot_target(state: State<'_, AppState>) -> Result<bool, String> {
+    #[cfg(target_os = "macos")]
+    {
+        let lib = current(&state)?;
+        let Some(loc) = screencapture("read", &["location"]) else { return Ok(false) };
+        let home = std::env::var("HOME").unwrap_or_default();
+        let loc = loc.strip_prefix('~').map(|r| format!("{home}{r}")).unwrap_or(loc);
+        Ok(Path::new(loc.trim_end_matches('/')) == lib.root.join(library::SHOTS).as_path())
+    }
+    #[cfg(not(target_os = "macos"))]
+    {
+        let _ = state;
+        Ok(false)
+    }
+}
+
+#[tauri::command]
+async fn set_screenshot_target(app: AppHandle, state: State<'_, AppState>, on: bool) -> Result<bool, String> {
+    #[cfg(target_os = "macos")]
+    {
+        let lib = current(&state)?;
+        if on {
+            let dir = lib.shots_dir()?;
+            lib.shots_expire_default()?;
+            // Nur den ersten Ort merken: beim Wechsel der Bibliothek bleibt
+            // der von vor Archery stehen, nicht der Screenshots-Ordner davor
+            let prev = screencapture("read", &["location"]).unwrap_or_default();
+            update_settings(&app, |s| {
+                if s.shots_prev.is_none() {
+                    s.shots_prev = Some(prev);
+                }
+            })?;
+            screencapture("write", &["location", dir.to_string_lossy().as_ref()]).ok_or("Speicherort ließ sich nicht setzen")?;
+        } else {
+            let prev = update_settings(&app, |s| s.shots_prev.take())?.unwrap_or_default();
+            if prev.is_empty() {
+                let _ = screencapture("delete", &["location"]);
+            } else {
+                screencapture("write", &["location", prev.as_str()]).ok_or("Speicherort ließ sich nicht zurücksetzen")?;
+            }
+        }
+        // Ältere macOS-Versionen lesen den Ort erst nach einem Neustart der Menüleiste
+        let _ = std::process::Command::new("/usr/bin/killall").arg("SystemUIServer").output();
+        let _ = app.emit("library-changed", ());
+        Ok(on)
+    }
+    #[cfg(not(target_os = "macos"))]
+    {
+        let _ = (app, state, on);
+        Err("Nur auf dem Mac".into())
+    }
+}
+
+#[tauri::command]
+async fn set_shots_expire(app: AppHandle, state: State<'_, AppState>, on: bool) -> Result<(), String> {
+    current(&state)?.set_shots_expire(on)?;
+    let _ = app.emit("library-changed", ());
+    Ok(())
+}
+
 #[tauri::command]
 async fn snapshot(state: State<'_, AppState>) -> Result<Snapshot, String> {
     let lib = current(&state)?;
@@ -923,6 +1004,8 @@ async fn snapshot(state: State<'_, AppState>) -> Result<Snapshot, String> {
             zone_order: lib.zone_order().0,
             inbox_seen: lib.inbox_seen(),
             expire_zone: lib.expire_zone(),
+            shots_expire: lib.shots_expire(),
+            shots_seen: lib.shots_seen(),
         })
     })
     .await
@@ -1765,6 +1848,9 @@ pub fn run() {
             set_zone_order,
             set_default_zone,
             set_expire_zone,
+            screenshot_target,
+            set_screenshot_target,
+            set_shots_expire,
             set_structure,
             set_look,
             trash_zone,

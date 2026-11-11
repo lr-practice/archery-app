@@ -8,10 +8,13 @@
   </head>
   <body>
     <div class="pal">
-      <label class="pal-search">
-        <input id="q" type="text" spellcheck="false" autocomplete="off" />
-        <span id="hits" class="pal-mono pal-dim"></span>
-      </label>
+      <div class="pal-top">
+        <label class="pal-search">
+          <input id="q" type="text" spellcheck="false" autocomplete="off" />
+          <span id="hits" class="pal-mono pal-dim"></span>
+        </label>
+        <button type="button" id="shots" class="pal-shots" hidden>Screenshots <span class="pal-mono"></span></button>
+      </div>
       <div id="crumb" class="pal-crumb" hidden></div>
       <main id="body" class="pal-body"></main>
       <footer id="keys" class="pal-keys"></footer>

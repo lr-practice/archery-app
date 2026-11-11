@@ -1,11 +1,23 @@
 # Changelog
 
-## App 0.46.1
+## App 0.47.1
 
 - Hell „Grauwert“: exakt farblose Grautöne statt kühler und warmer Reste.
-  Grund #fcfcfc, eine Fläche #f0f0f0 für Karten, Blöcke, Listen und
-  Seitenblatt, Text in Grau (#4a4a4a, #7b7b7b, #bfbfbf), Navigation als
-  graues Glas, Menüs ohne Kante. Dunkel bleibt unverändert.
+  Grund #fcfcfc, Karten und Seitenblatt #f0f0f0, Gruppen in den
+  Einstellungen und Listen heller (#fcfcfc) als das Blatt, Text in Grau
+  (#4a4a4a, #7b7b7b, #bfbfbf), Navigation als graues Glas, Menüs ohne Kante.
+  Dunkel bleibt unverändert.
+
+## App 0.47.0
+
+- Bildschirmfotos in Archery: Einstellungen › Bibliothek › Screenshots lenkt
+  neue Bildschirmfotos des Macs in den Ordner Screenshots der Bibliothek
+  statt auf den Schreibtisch. Aus stellt den Ort von vorher wieder her.
+- Screenshots hat einen eigenen Reiter in der Navigation und einen Knopf
+  neben dem Suchfeld im Tray.
+- Screenshots räumt nach 7 Tagen auf wie Unsorted, mit eigenem Schalter.
+- Hell: Die Gruppen in den Einstellungen sind wieder als Karten zu sehen
+  (fast weiß auf neutral grauem Blatt statt bläulich in bläulich).
 
 ## App 0.46.0
 

@@ -7866,7 +7866,7 @@ html:not(.light) {
 }
 
 /* Hell „Grauwert“ (Lukas 10.11.2026, nach et-al.online): exakt farblose
-   Grautöne, eine Fläche für Karten, Blöcke, Listen und Seitenblatt, Text in
+   Grautöne, Karten und Seitenblatt #f0f0f0, Blöcke und Listen heller, Text in
    Grau statt Schwarz, Glas ohne Kante. --ink bleibt #111 für alle Alpha-Flächen. */
 html.light {
   --ink: #111111;
@@ -7888,7 +7888,9 @@ html.light {
   --menu-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   --splash-bg: #fcfcfc;
 }
-html.light :is(.p-card, .p-block, .p-list) { background: #f0f0f0; }
+html.light .p-card { background: #f0f0f0; }
+/* 0.47.1: Blöcke und Listen heller als das Blatt, neutral (Lukas 11.11.) */
+html.light :is(.p-block, .p-list) { background: #fcfcfc; }
 html.light .p-card:hover { background: #e8e8e8; }
 html.light .p-card:not(.p-new):not(:hover) { background: var(--card-bg); }
 /* Seitenblatt auf dem Mac im selben Ton (html.mac.light weiter oben) */

@@ -446,6 +446,59 @@ body.dragging .pal-search > #hits {
   visibility: hidden;
 }
 
+/* ---- Screenshots (0.47.0, Lukas 11.11.): eigener Knopf neben dem Suchfeld,
+   gleiche Höhe und Fläche; offen gefüllt wie ein aktiver Reiter ---- */
+
+.pal-top {
+  display: flex;
+  flex: none;
+  gap: 8px;
+  margin: 14px 14px 12px;
+}
+
+.pal-top .pal-search {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+}
+
+.pal-shots {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: var(--r-md);
+  background: var(--pal-field);
+  color: var(--p-text);
+  font: 400 15px "Geist", sans-serif;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.pal-shots[hidden] {
+  display: none;
+}
+
+.pal-shots .pal-mono {
+  color: var(--p-dim);
+}
+
+.pal-shots:hover {
+  background: var(--card-hover);
+}
+
+.pal-shots.on {
+  background: var(--chip-on);
+}
+
+/* Beim Herausziehen braucht die Leiste die ganze Breite */
+body.dragging .pal-shots {
+  display: none;
+}
+
 .pal-dragbar {
   position: absolute;
   inset: 0;
