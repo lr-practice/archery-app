@@ -7832,6 +7832,12 @@ html:root .p-say { font-weight: 350; }
    Dateinamen in der Liste. Bedienung (Navigation, Leiste der Lightbox) 400. */
 html:root :is(.p-folder-head, .p-section-head .zone-card-name, .p-card .zone-card-name, .p-sheet-zone .zone-card-name, .listview .card-name) { font-weight: 350; }
 html:root .lb-btn { font-weight: 400; }
+/* 0.47.3 (Lukas 17.11.): Abschnittsköpfe in Alle Objekte so groß wie in Segmente,
+   Quelle auf der Kachel und Feldnamen der Info als Etikett in Geist Mono,
+   Bilderkennung als leise Zeile unter dem Kopfsatz */
+html:root .p-section-head { font-size: 17px; }
+html:root :is(.card-badge, .lb-row-label) { font-family: var(--p-mono); font-weight: 400; font-size: 11px; letter-spacing: 0.02em; text-transform: uppercase; }
+html:root .p-page > .p-analysis { display: block; margin-top: 14px; }
 
 /* Köpfe: 30 px Semi-Light */
 html:root :is(.p-page > .p-home-hero > .p-head, .p-page > .p-head, .p-page > .p-head-row > .p-head),

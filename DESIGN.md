@@ -94,11 +94,11 @@ Für die Farbe gilt:
 | Rolle | Schrift | Größe | Gewicht | Laufweite | Beispiel |
 |---|---|---|---|---|---|
 | Label, Chip | Geist Mono, Versalien | 11 px / 1.4 | 400 | +0.02em | Filter-Chips, Zähler, `.p-mono`, `.p-chip` (0.42.5, vorher Melange Medium 10 px) |
-| Meta | Geist Mono, Versalien | 11 px | 400 | +0.02em | Anzahl · Datum unter Karten (`.p-card-meta`), Quelle und Datum auf Text-Karten, Notiz-Kennung und Fuß (0.42.5) |
+| Meta | Geist Mono, Versalien | 11 px | 400 | +0.02em | Anzahl · Datum unter Karten (`.p-card-meta`), Quelle und Datum auf Text-Karten, Notiz-Kennung und Fuß (0.42.5), Quelle auf der Kachel (`.card-badge`) und Feldnamen der Info (`.lb-row-label`) seit 0.47.3, vorher Melange 10 px bzw. 13 px |
 | Zahl im Index | Melange | 12 px | 350 | 0 | `.p-num` (Ziffern tabellarisch) |
 | UI | Melange | 13–13.5 px | 400 | 0 | Navigation, Menüs |
 | Karten-Titel | Melange Semi-Light | 14 px | 350 | 0 | Zonenname auf der Karte |
-| Abschnittskopf | Melange Semi-Light | 14 px (Alle Objekte), 17 px (Segmente) | 350 | 0 | Zonenname über dem Raster in Alle Objekte (`.p-section-head`), Ordner in „(Segmente)“ (`.p-folder-head`), 0.47.3 vorher 400 bzw. 500 |
+| Abschnittskopf | Melange Semi-Light | 17 px | 350 | 0 | Zonenname über dem Raster in Alle Objekte (`.p-section-head`), Ordner in „(Segmente)“ (`.p-folder-head`), 0.47.3 vorher 14 px/400 bzw. 17 px/500 |
 | Index-Zeile | Melange Semi-Light | 19 px | 350 | −0.01em | Zonenname im Index |
 | Seitenkopf | Melange Semi-Light | 30 px / 1.16 | 350 | −0.02em | alle Seiten und Einstellungen, Titel voll, Satz hell (`--p-faint`) im selben Absatz |
 | Einstellungen | Melange Semi-Light | 20 px | 350 | −0.012em | Bereiche in der Vollbild-Liste |
@@ -403,9 +403,11 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
 - **Zweck:** Filter und Ansichtswahl.
 - **Form:** Geist Mono, 11 px, Versalien, ohne Fläche. Die Zustände laufen nur
   über die Textfarbe: faint → dim (Hover) → text (aktiv).
-- **Hinweis in der Filterzeile (0.31.2):** Solange die Bilderkennung läuft,
-  steht am Ende der Filterzeile „(Bilderkennung: noch n von m)“ als Mono-Text in
-  dim, ohne Klick. Er zählt mit und verschwindet, wenn alles erkannt ist.
+- **Hinweis zur Bilderkennung (0.31.2, seit 0.47.3 unter dem Kopf):** Solange
+  die Bilderkennung läuft, steht in Alle Objekte und in der Suche unter dem
+  Kopfsatz „Bilderkennung: noch n von m“ als Mono-Text in dim (`.p-analysis`,
+  14 px Abstand), ohne Klick. Er zählt mit und verschwindet, wenn alles erkannt
+  ist. Die Filterzeile bleibt damit nur Filter.
 - **Filter in Alle Objekte (0.39.1, Variante C):** Eine Zeile mit Art, Farbe
   und Zeit, dahinter „(Mehr)“. Das öffnet darunter eine Tabelle (Label 96 px
   in Mono dim, Chips rechts) mit Form, Format, Doppelt, Motive, Quellen und
@@ -559,7 +561,7 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   (Dunkel rgb 28 × `--win-alpha` 0.72, Hell rgb 244 × 0.78) ist seit 0.28 auch
   der Standard des App-Fensters und folgt seit 0.30 dem Glas-Regler (2.1). Hell/Dunkel und Ecken folgen Einstellungen › Darstellung;
   die Fensterecke ist eckig 0, klein 6, mittel 12 (Standard), groß 18 px.
-  Start: Active Zones als Zonenkarten (4.4) mit 01–04 und „Active Zone“,
+  Start: Active Zones als Zonenkarten (4.4) mit 01–04 (seit 0.47.3 ohne das Etikett „Active Zone“),
   darunter der Index; seit 0.32 haben alle Karten dieselbe Höhe (Cover 8:3).
   Zone: Active Zones als Reiter, darüber ihre Unterordner als Karten
   („(Ordner)“, Klick oder ↵ öffnet, ⌫ eine Ebene hoch, Kopf „Zone / Ordner“),
@@ -975,8 +977,8 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   Kartenbreite, sonst 2 × 2). Darunter „Index (N)“ und die übrigen Zonen als
   Kontaktbogen.
 - **Index (0.42.6):** besteht nur aus Kontaktbogen-Zeilen über die volle
-  Breite, die Active Zones zuerst (Nummer und „Active Zone“ in Mono über dem
-  Namen). Die frühere Tabelle (Nr., Zone, Bilder, Zuletzt, Vorschau) ist weg;
+  Breite, die Active Zones zuerst (Nummer in Mono über dem Namen, seit 0.47.3
+  ohne „Active Zone“, Lukas 17.11.). Die frühere Tabelle (Nr., Zone, Bilder, Zuletzt, Vorschau) ist weg;
   „Neue Zone“ und „Zuletzt gelöscht“ stehen im Menü.
 - **Karten-Fläche (0.42.5, seit 0.42.6 einzige Form, `.p-thumb-cover`):**
   Active Zones, Zonenkarten und Gruppenkarten zeigen seit 0.45.1 immer ein
