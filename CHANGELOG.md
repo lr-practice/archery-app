@@ -1,5 +1,19 @@
 # Changelog
 
+## App 0.47.3
+
+- Typografie: Die Köpfe der Abschnitte in Alle Objekte und in „Segmente“,
+  die Zonennamen auf den Karten und die Dateinamen in der Liste stehen jetzt
+  wie alle Köpfe in Melange Semi-Light statt Regular oder Medium.
+- Die Leiste der Lightbox steht wie die Navigation in Regular statt Medium.
+- Abschnittsköpfe in Alle Objekte sind so groß wie in Segmente (17 px).
+- Übersicht: Die Active Zones tragen nur noch ihre Nummer 01–04, das Etikett
+  „Active Zone“ entfällt.
+- Die Quelle auf der Kachel und die Feldnamen in der Info stehen als Etikett in
+  Geist Mono wie alle anderen Etiketten.
+- Alle Objekte: Der Kopfsatz beschreibt nur noch, was da ist. Der Hinweis zur
+  Bilderkennung steht als leise Zeile darunter statt in der Filterleiste.
+
 ## App 0.47.0
 
 - Bildschirmfotos in Archery: Einstellungen › Bibliothek › Screenshots lenkt

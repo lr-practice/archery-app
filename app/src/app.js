@@ -1064,11 +1064,6 @@
       pill.title = t("filterRemove");
       chips.appendChild(pill);
     }
-    // Bilderkennung läuft im Hintergrund; bis sie durch ist, finden Motive weniger (0.31.2)
-    if (analysisLeft()) {
-      chips.appendChild(el("span", "p-filter-gap"));
-      chips.appendChild(mono(analysisText(), "dim p-analysis"));
-    }
     if (filtersActive()) {
       chips.appendChild(el("span", "p-flex"));
       chips.appendChild(
@@ -1156,9 +1151,15 @@
     return left ? { left, total } : null;
   }
 
+  // Bilderkennung läuft im Hintergrund; bis sie durch ist, finden Motive weniger (0.31.2).
+  // Seit 0.47.3 leise unter dem Kopfsatz statt in der Filterleiste.
+  function analysisLine(wrap) {
+    if (analysisLeft()) wrap.appendChild(mono(analysisText(), "dim p-analysis"));
+  }
+
   function analysisText() {
     const a = analysisLeft();
-    return a ? "(" + t("analysisLeft", { n: a.left, total: a.total }) + ")" : "";
+    return a ? t("analysisLeft", { n: a.left, total: a.total }) : "";
   }
 
   // Analyse-Ergebnisse (Inhalt, Text, Farben) kommen nach und nach
@@ -1990,7 +1991,7 @@
       row.dataset.swap = zone.path;
       const head = el("div", "p-sheet-zone");
       const name = zoneNameEl(zone);
-      if (hotIndex >= 0) head.appendChild(mono(String(hotIndex + 1).padStart(2, "0") + " · " + t("hotZone"), "dim"));
+      if (hotIndex >= 0) head.appendChild(mono(String(hotIndex + 1).padStart(2, "0"), "dim"));
       head.appendChild(name);
       head.appendChild(mono(cardMeta(zone), "dim"));
       if (canEdit(zone.path))
@@ -2019,7 +2020,6 @@
   function hotKey(i) {
     const key = el("div", "p-hot-key");
     key.appendChild(mono(String(i + 1).padStart(2, "0")));
-    key.appendChild(mono(t("hotZone"), "dim"));
     return key;
   }
 
@@ -3689,11 +3689,13 @@
       const n = state.found ? state.found.length : 0;
       const q = state.query.trim();
       wrap.appendChild(headline(t("navAll"), q ? t("headSearch", { q, n }) : t("headFilter", { n: countText(n) })));
+      analysisLine(wrap);
     } else {
       wrap.classList.add("p-find");
       wrap.appendChild(
         headline(t("navAll"), t("headAll", { images: countText(state.items.length), zones: zonesText(state.zones.length) }))
       );
+      analysisLine(wrap);
     }
 
     const bar = el("div", "p-bar");
