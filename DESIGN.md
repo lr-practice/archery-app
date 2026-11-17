@@ -260,6 +260,36 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   aufräumen: 4.6 „Screenshots“.
 - **Nicht:** Keine Icons neben Wörtern und keine zweite Leiste.
 
+### 4.2a Labor › Navigation (App 0.47.4, Lukas 17.11.)
+- **Zweck:** Lukas testet zehn Varianten der Navigation im echten Fenster.
+  Schalter in Einstellungen › Darstellung, Block „Navigation (Labor)“, drei
+  Reihen (4 + 3 + 3) und ein Satz zur Wahl. Gespeichert nur lokal in
+  `archiver.lab`, Schlüssel `nav`. Ab Werk „Heute“, dann fehlt das Attribut.
+- **Technik:** `html[data-navlab="<id>"]`, nur CSS am Ende von `app.css`.
+  Markup, Pfad-Logik (4.2) und Gleitfläche bleiben gleich.
+- **Varianten:**
+  - `now` Heute: Glas-Pille wie in 4.2.
+  - `liquid` Liquid: jeder Eintrag eine Kapsel (36 px, Radius 4, Fläche Grund
+    + ink 9 %), Abstand 16 px, verbunden über eine Taille (10 px tief, Maske
+    als SVG im `::after`). Aktiv: innere Fläche ink × 0.14 mit 3 px Einzug.
+  - `title` Titelzeile: kein Glas, nur Schrift; inaktiv ink × 0.5, aktiv Text.
+  - `head` Kopf: wie Titelzeile, Einträge 17 px Semi-Light; der Titel im
+    Seitenkopf (`.p-head-title`) entfällt.
+  - `tabs` Reiter: Band über die ganze Breite (Grund + ink 4 %), Reiter oben
+    5 px gerundet, der aktive in `--bg-solid` geht ins Fenster über.
+  - `segment` Segmente: Feld mit 1 px Rand ink × 0.18, Trennlinien ink × 0.14,
+    30 px hoch, aktiv ink × 0.12.
+  - `pathbar` Pfadleiste: Glas über die ganze Breite an der unteren Kante,
+    32 px, Haarlinie oben, 12,5 px; Suche und Menü rechts.
+  - `under` Unterstrich: Haarlinie `--p-rule` quer durchs Fenster am Fuß der
+    Titelzeile, aktiv mit 1,5 px Strich in Textfarbe.
+  - `hang` Hängend: Glas mittig an der oberen Kante, nur unten 6 px gerundet.
+  - `well` Eingelassen: Mulde (Grund + Schwarz 32 %, hell 7 %) mit innerem
+    Schatten, der aktive Eintrag erhaben.
+- **Ausnahme:** Die Radien 5 und 6 px und die Schatten in `well` liegen
+  außerhalb der Stufen. Das gilt nur, solange die Varianten Labor sind; die
+  gewählte wird in 4.2 übernommen und an die Stufen angepasst.
+
 ### 4.3 Active-Zones-Leiste (`.p-dropbar`, `.p-hot`)
 - **Zweck:** Beim Ziehen fahren die vier ersten Zonen (01–04) als Glas ein.
 - **Zustände:**

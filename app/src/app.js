@@ -97,9 +97,19 @@
   // Drop-Feedback (Einstellungen › Darstellung, bis 0.43.1 im Labor): nur auf
   // diesem Mac, dropfx.js liest archiver.lab selbst (DESIGN 4.24b).
   const LAB_DROPS = ["mini", "check", "ring", "count", "name", "after", "glow"];
+  // Navigation zum Testen (Einstellungen › Darstellung, 0.47.4, DESIGN 4.2a)
+  const LAB_NAVS = ["now", "liquid", "title", "head", "tabs", "segment", "pathbar", "under", "hang", "well"];
   function lab() {
     const v = pref("lab", null) || {};
-    return { drop: LAB_DROPS.includes(v.drop) ? v.drop : "mini" };
+    return {
+      drop: LAB_DROPS.includes(v.drop) ? v.drop : "mini",
+      nav: LAB_NAVS.includes(v.nav) ? v.nav : "now",
+    };
+  }
+  function applyNavLab() {
+    const id = lab().nav;
+    if (id !== "now") document.documentElement.dataset.navlab = id;
+    else delete document.documentElement.dataset.navlab;
   }
   function setLab(patch) {
     setPref("lab", { ...lab(), ...patch });
@@ -543,6 +553,7 @@
   applyTopFade(pref("topFade", "fade"));
   applyFocusAnim(pref("focusAnim", false));
   applyWinAlpha();
+  applyNavLab();
 
   const state = {
     root: "",
@@ -3044,6 +3055,20 @@
       }
       drops.appendChild(blockRow(el("div", "p-block-text", t("labDropText_" + cur.drop))));
       wrap.appendChild(drops);
+      // Navigation zum Testen: zehn Varianten in drei Reihen (4 + 3 + 3)
+      const navs = block(t("labNav"));
+      navs.appendChild(blockRow(el("div", "p-block-text", t("labNavText"))));
+      for (const [i, part] of [LAB_NAVS.slice(0, 4), LAB_NAVS.slice(4, 7), LAB_NAVS.slice(7)].entries()) {
+        navs.appendChild(
+          blockRow(i ? "" : t("labNavPick"), choice(part.map((id) => [id, t("labNav_" + id)]), cur.nav, (id) => {
+            setLab({ nav: id });
+            applyNavLab();
+            rerender();
+          }))
+        );
+      }
+      navs.appendChild(blockRow(el("div", "p-block-text", t("labNavText_" + cur.nav))));
+      wrap.appendChild(navs);
 
     // Start: Öffnung und Startton gehören zum selben Moment
       const open = block(t("setSecStart"));

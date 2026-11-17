@@ -1,5 +1,12 @@
 # Changelog
 
+## App 0.47.4
+
+- Labor: In Einstellungen › Darstellung lässt sich die Navigation in zehn
+  Varianten testen: Heute, Liquid, Titelzeile, Kopf, Reiter, Segmente,
+  Pfadleiste, Unterstrich, Hängend, Eingelassen. Die Wahl gilt nur auf diesem
+  Mac, ab Werk bleibt alles wie bisher.
+
 ## App 0.47.3
 
 - Typografie: Die Köpfe der Abschnitte in Alle Objekte und in „Segmente“,
