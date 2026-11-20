@@ -29,7 +29,8 @@ use std::time::{Duration, Instant};
 
 pub const HOST_NAME: &str = "app.archery.bridge";
 pub const APP_IDENTIFIER: &str = "app.archery.desktop";
-// Bis 0.43: alte Kennung und alter Hostname, werden beim Start übernommen bzw. entfernt.
+// Bis 0.43: alte Kennung und alter Hostname. Die Kennung wird beim Start übernommen,
+// der Hostname bleibt für alte Extensions angemeldet (0.47.5).
 const OLD_HOST_NAME: &str = "app.archiver.bridge";
 const OLD_APP_IDENTIFIER: &str = "app.archiver.desktop";
 
@@ -54,7 +55,7 @@ const EXTENSION_IDS: &[&str] = &["gddcmkfpdfkpnieegdplpilmoodghgdd"];
 
 /// Version der Extension, die diese App mindestens braucht. Meldet sich eine
 /// ältere (oder eine ohne Versionsangabe, vor 3.22.0), zeigt die App einen Hinweis.
-pub const EXTENSION_MIN: &str = "3.24.0";
+pub const EXTENSION_MIN: &str = "3.32.0"; // ab hier app.archery.bridge
 
 /// Wurde das Programm von Chrome als Native-Messaging-Host gestartet?
 pub fn is_host_invocation() -> bool {
@@ -116,24 +117,28 @@ pub fn connected_browsers() -> Vec<String> {
 /// App-Start, damit der Pfad auch nach dem Verschieben der App stimmt.
 pub fn install_manifests() -> Vec<PathBuf> {
     let Ok(exe) = std::env::current_exe() else { return Vec::new() };
-    let manifest = json!({
-        "name": HOST_NAME,
-        "description": "Archery",
-        "path": exe.to_string_lossy(),
-        "type": "stdio",
-        "allowed_origins": EXTENSION_IDS.iter().map(|id| format!("chrome-extension://{id}/")).collect::<Vec<_>>(),
-    });
-    let text = serde_json::to_vec_pretty(&manifest).unwrap();
     let mut written = Vec::new();
-    for (_, dir) in host_dirs() {
-        let _ = std::fs::remove_file(dir.join(format!("{OLD_HOST_NAME}.json")));
-        let file = dir.join(format!("{HOST_NAME}.json"));
-        if std::fs::read(&file).ok().as_deref() == Some(text.as_slice()) {
-            written.push(file);
-            continue;
-        }
-        if std::fs::create_dir_all(&dir).is_ok() && std::fs::write(&file, &text).is_ok() {
-            written.push(file);
+    // 0.47.5: auch unter dem alten Namen, damit Extensions bis 3.31.x die App
+    // weiter finden und ihr den Hinweis „Extension veraltet“ zeigen können
+    // (die Download-Seite verteilte bis 20.11. noch 3.31.3).
+    for name in [HOST_NAME, OLD_HOST_NAME] {
+        let manifest = json!({
+            "name": name,
+            "description": "Archery",
+            "path": exe.to_string_lossy(),
+            "type": "stdio",
+            "allowed_origins": EXTENSION_IDS.iter().map(|id| format!("chrome-extension://{id}/")).collect::<Vec<_>>(),
+        });
+        let text = serde_json::to_vec_pretty(&manifest).unwrap();
+        for (_, dir) in host_dirs() {
+            let file = dir.join(format!("{name}.json"));
+            if std::fs::read(&file).ok().as_deref() == Some(text.as_slice()) {
+                written.push(file);
+                continue;
+            }
+            if std::fs::create_dir_all(&dir).is_ok() && std::fs::write(&file, &text).is_ok() {
+                written.push(file);
+            }
         }
     }
     written
