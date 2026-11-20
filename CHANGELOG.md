@@ -1,5 +1,12 @@
 # Changelog
 
+## App 0.47.5
+
+- Extensions bis 3.31.x finden die App wieder. Die App meldet sich bei den
+  Browsern zusätzlich unter dem alten Namen an und zeigt dann den Hinweis
+  „Extension 3.32.0 ist da“ mit Link zum Update. Bisher blieben sie still
+  getrennt und zeigten ihre eigenen Zonen („Projekt 1–3, Downloads“).
+
 ## App 0.47.4
 
 - Labor: In Einstellungen › Darstellung lässt sich die Navigation in zehn
