@@ -1,5 +1,12 @@
 # Changelog
 
+## App 0.47.6 · Extension 3.32.2
+
+- Extension: Eingebettete Karten (Google Maps, Mapbox, MapLibre, Leaflet,
+  OpenLayers) lassen sich wieder verschieben. Deckte eine Kartenkachel die
+  gedrückte Fläche, machte die Extension sie ziehbar, und die ganze Karte
+  wurde als Bild gezogen.
+
 ## App 0.47.5
 
 - Extensions bis 3.31.x finden die App wieder. Die App meldet sich bei den
