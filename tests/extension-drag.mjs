@@ -33,11 +33,13 @@ lnk.addEventListener("pointerdown", () => hits.lnk++);</script></body>`;
 const tiles = Array.from({ length: 8 }, (_, i) => `<img draggable=false src="data:image/png;base64,${png}" style="position:absolute;width:200px;height:200px;left:${(i % 4) * 200}px;top:${Math.floor(i / 4) * 200}px">`).join("");
 const html2 = `<!doctype html><meta charset=utf-8><title>Test 2</title><body style="margin:0">
 <div style="position:relative;width:800px;height:400px">${tiles}<div id=pan style="position:absolute;inset:0"></div></div>
+<div class=gm-style style="position:relative;width:400px;height:300px"><img draggable=false src="data:image/png;base64,${png}" style="position:absolute;inset:0;width:400px;height:300px"><div id=gmap style="position:absolute;inset:0"></div></div>
 <div style="background:url(data:image/png;base64,${png}) center/cover;padding:20px"><div id=txt style="height:100px;font-size:20px">Text auf einem Hintergrundbild, der markierbar bleiben soll.</div></div>
 <div id=card draggable=true style="width:200px;height:60px;background:#eee">Kanban-Karte</div>
 <img id=pic src="data:image/png;base64,${png}" style="width:200px;height:120px">
-<script>window.hits = { pan: 0 };
+<script>window.hits = { pan: 0, gmap: 0 };
 pan.addEventListener("pointerdown", () => hits.pan++);
+gmap.addEventListener("pointerdown", () => hits.gmap++);
 card.addEventListener("dragstart", (e) => e.dataTransfer.setData("text/plain", "karte"));</script></body>`;
 const server = http.createServer((req, res) => res.end(req.url === "/2" ? html2 : html)).listen(0);
 const url = `http://127.0.0.1:${server.address().port}/`;
@@ -96,6 +98,11 @@ try {
   await check("Karte aus Kacheln: Verschieben bleibt bei der Seite", async () => {
     assert.equal(await press(page2, "#pan"), null);
     assert.equal(await page2.evaluate(() => hits.pan), 1);
+  });
+
+  await check("Google-Karte mit großer Kachel: Verschieben bleibt bei der Seite", async () => {
+    assert.equal(await press(page2, "#gmap"), null);
+    assert.equal(await page2.evaluate(() => hits.gmap), 1);
   });
 
   await check("Text auf einem Hintergrundbild bleibt markierbar", async () => {

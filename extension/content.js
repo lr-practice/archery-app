@@ -1456,6 +1456,9 @@
   const SLIDER_ROLES = "[role='slider'], [role='scrollbar'], [role='progressbar'], [role='spinbutton']";
   const CONTROL_ROLES =
     "a[href], label, summary, [role='button'], [role='link'], [role='menuitem'], [role='tab'], [role='checkbox'], [role='switch'], [role='option']";
+  // Eingebettete Karten (Google Maps, Mapbox, MapLibre, Leaflet, OpenLayers):
+  // Ziehen heißt dort Verschieben, auch wenn eine Kachel die Fläche deckt (3.32.2)
+  const MAP_SURFACES = ".gm-style, .mapboxgl-map, .maplibregl-map, .leaflet-container, .ol-viewport, [aria-roledescription='map']";
 
   // Bild unter der gedrückten Fläche, wenn es sie wirklich deckt (3.31.3). Nein
   // bei Karten aus vielen Kacheln (Google Maps, OpenStreetMap), bei Text und
@@ -1504,6 +1507,7 @@
     // Instagram, wo ein Link über dem Video liegt.
     if (t.closest(SLIDER_ROLES)) return;
     if (!IG && t.closest(CONTROL_ROLES)) return;
+    if (t.closest(MAP_SURFACES)) return;
     // Kleine Flächen (Reglerknopf, Symbol) sind keine Hülle über einem Bild
     const tr = t.getBoundingClientRect();
     if (tr.width < 80 || tr.height < 80) return;
