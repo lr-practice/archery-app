@@ -134,20 +134,19 @@ Für die Typografie gilt:
   gezogen und nicht neu eingeführt.
 
 ### 2.2a Schriftzug
-- Seit 08.11.2026 ist die Wortmarke in Record Laser (Sharp Type) gesetzt und
-  liegt als Pfad in `app/src/brand/archery-wordmark.svg` (viewBox
-  `-3 -700 4538 870`, Versalhöhe 700, Unterlänge 170). `useWordmark()` in
-  `app.js` setzt sie im Startbild und im Kopf unter Information ein. `.wmk`
-  hat `height: .783em` und `vertical-align: -.153em`, so sitzt die Grundlinie
-  auf der Textzeile. Die Wortmarke steht bei 90 % der Melange-Versalhöhe
-  (.63em statt .7em), weil Record Laser breiter und kräftiger ist und bei
-  gleicher Höhe größer wirkt (Lukas, 09.11.). Die Farbe folgt
-  `currentColor`.
-- Record Laser ist noch eine Trial-Schrift. Die Datei liegt deshalb wie
-  Melange nicht in diesem Repo (`.gitignore`), sondern im privaten Repo
-  `lr-practice/archery-website` unter `website/static/brand/`. Der Mac-Build
-  holt sie von dort (Schritt „Wortmarke holen“, seit 0.45.7). Die Lizenz von
-  Sharp Type ist noch offen.
+- Seit 23.11.2026 ist die Wortmarke die Serif „Archery“ aus den
+  Markenregeln (`02-marke/identitaet-2026-11-23/markenregeln-2026-11-23.md`),
+  dieselbe wie auf der Webseite. Record Laser fällt ganz weg. Sie liegt als
+  Pfad in `app/src/brand/archery-wordmark.svg` (viewBox `0 0 271.04 72.8`,
+  Oberlänge bei 0, Versalhöhe 56, Grundlinie 56.8, Unterlänge 16).
+  `useWordmark()` in `app.js` setzt sie im Startbild und im Kopf unter
+  Information ein. `.wmk` hat `height: .91em` und `vertical-align: -.2em`:
+  Die Versalhöhe entspricht der von Melange (.7em), die Grundlinie sitzt auf
+  der Textzeile. Die Farbe folgt `currentColor`.
+- Das kalligrafische A bleibt App-Icon und steht nie neben der Wortmarke.
+- Die Datei liegt nicht in diesem Repo (`.gitignore`), sondern im privaten
+  Repo `lr-practice/archery-website` unter `website/static/brand/`. Der
+  Mac-Build holt sie von dort (Schritt „Wortmarke holen“, seit 0.45.7).
 - Tauri liefert für fehlende Dateien `index.html` aus. `useWordmark()` nimmt
   deshalb nur Text, der mit `<svg` beginnt (0.45.6).
 - Fehlt die Datei, bleibt der Schriftzug Text: „Archery“, das y in

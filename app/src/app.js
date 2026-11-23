@@ -1652,8 +1652,8 @@
     return img;
   }
 
-  // Wortmarke in Record Laser (DESIGN 2.2a). Liegt wie Melange nicht im Repo
-  // (Trial-Schrift, Lizenz offen). Fehlt die Datei, bleibt der Schriftzug Text.
+  // Wortmarke Serif (DESIGN 2.2a). Liegt wie Melange nicht in diesem Repo,
+  // der Build holt sie von archery-website. Fehlt die Datei, bleibt der Schriftzug Text.
   // Tauri liefert für fehlende Dateien index.html aus, daher nur echtes SVG nehmen.
   const wordmarkSvg = fetch("brand/archery-wordmark.svg")
     .then((r) => (r.ok ? r.text() : null))
