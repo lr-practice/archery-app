@@ -1,5 +1,12 @@
 # Changelog
 
+## App 0.47.7
+
+- Wortmarke: Die Serif „Archery“ steht auf der Info-Seite und im Startbild
+  in der Versalhöhe von Melange, die Unterlänge vom y sitzt auf der
+  Grundlinie. Bisher stand sie mit den Maßen der alten Record-Laser-Marke
+  etwas zu klein.
+
 ## App 0.47.6 · Extension 3.32.2
 
 - Extension: Eingebettete Karten (Google Maps, Mapbox, MapLibre, Leaflet,
