@@ -73,8 +73,9 @@ jobs:
           cp _melange/fonts/melange/*.woff2 extension/fonts/melange/
           rm -rf _melange
 
-      # Wortmarke in Record Laser (Sharp Type) als Pfad, liegt nur im privaten
-      # Website-Repo. Ohne sie zeigt die App den Schriftzug als Text (DESIGN.md 2.2a).
+      # Wortmarke Serif „Archery“ als Pfad (Markenregeln 23.11.), dieselbe Datei wie auf
+      # der Webseite, liegt nur im privaten Website-Repo. Ohne sie zeigt die App den
+      # Schriftzug als Text (DESIGN.md 2.2a).
       - name: Wortmarke holen
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:

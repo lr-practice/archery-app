@@ -8137,11 +8137,12 @@ html:root .lb-note-card .np-body {
   margin-left: 0.035em;
 }
 
-/* Wortmarke in Record Laser als Pfad, 90 % (Lukas 09.11.): Versalhöhe .63em, Unterlänge .153em, sitzt auf der Grundlinie */
+/* Wortmarke Serif als Pfad (Markenregeln 23.11.), viewBox 0 0 271.04 72.8: Versalhöhe 56, Unterlänge 16.
+   Versalhöhe wie Melange (.7em), Unterlänge .2em, sitzt auf der Grundlinie */
 .wmk {
-  height: 0.783em;
+  height: 0.91em;
   width: auto;
-  vertical-align: -0.153em;
+  vertical-align: -0.2em;
   fill: currentColor;
 }
 
