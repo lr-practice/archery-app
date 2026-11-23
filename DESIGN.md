@@ -144,6 +144,9 @@ Für die Typografie gilt:
   Die Versalhöhe entspricht der von Melange (.7em), die Grundlinie sitzt auf
   der Textzeile. Die Farbe folgt `currentColor`.
 - Das kalligrafische A bleibt App-Icon und steht nie neben der Wortmarke.
+  Seit 0.47.8 ist das Icon hell: A `#141414` auf `#ededed`, A in 100 %
+  (Markenregeln §3). In der Oberfläche steht das A nirgends, dort ist der
+  Absender immer die Wortmarke (Lukas 23.11.).
 - Die Datei liegt nicht in diesem Repo (`.gitignore`), sondern im privaten
   Repo `lr-practice/archery-website` unter `website/static/brand/`. Der
   Mac-Build holt sie von dort (Schritt „Wortmarke holen“, seit 0.45.7).

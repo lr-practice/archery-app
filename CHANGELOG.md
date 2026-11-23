@@ -1,5 +1,10 @@
 # Changelog
 
+## App 0.47.8
+
+- Neues App-Icon: das kalligrafische A in Schwarz auf Hellgrau (#141414 auf
+  #ededed) statt Grau auf Schwarz.
+
 ## App 0.47.7
 
 - Wortmarke: Die Serif „Archery“ steht auf der Info-Seite und im Startbild
