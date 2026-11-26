@@ -495,6 +495,8 @@ pub const DELETED_DAYS: i64 = 7;
 const INBOX_SEEN: &str = "unsorted-seen.json";
 /// .archiver/screenshots-seen.json: dasselbe für Screenshots (expire_shots, 0.47.0)
 const SHOTS_SEEN: &str = "screenshots-seen.json";
+/// Fristen, die Screenshots zur Wahl hat (0.48.0); „nie“ ist None
+pub const SHOTS_DAYS: [i64; 2] = [7, 30];
 const DELETED_HASHES: &str = ".hashes.json";
 
 /// Eintrag unter „Zuletzt gelöscht“: alter Pfad in der Bibliothek, Ort unter
@@ -1106,27 +1108,41 @@ impl Library {
         self.write_zone_file(&v)
     }
 
-    /// Screenshots räumt nach 7 Tagen auf (0.47.0). Erst an, wenn die
-    /// Bildschirmfotos einmal hierher gelenkt wurden (set_shots_expire), damit
-    /// ein eigener Ordner gleichen Namens nicht plötzlich geleert wird.
-    pub fn shots_expire(&self) -> bool {
-        self.zone_file().get("shotsExpire").and_then(|v| v.as_bool()).unwrap_or(false)
+    /// Nach wie vielen Tagen Screenshots aufräumt: 7, 30 oder None = nie
+    /// (0.48.0, Lukas 26.11.). Erst gesetzt, wenn die Bildschirmfotos einmal
+    /// hierher gelenkt wurden (shots_expire_default), damit ein eigener Ordner
+    /// gleichen Namens nicht plötzlich geleert wird. Bis 0.47 stand dort
+    /// „shotsExpire“ als An/Aus, An gilt als 7 Tage.
+    pub fn shots_days(&self) -> Option<i64> {
+        let v = self.zone_file();
+        match v.get("shotsDays").and_then(|d| d.as_i64()) {
+            Some(d) if SHOTS_DAYS.contains(&d) => Some(d),
+            Some(_) => None,
+            None => v.get("shotsExpire").and_then(|e| e.as_bool()).filter(|on| *on).map(|_| 7),
+        }
     }
 
-    pub fn set_shots_expire(&self, on: bool) -> Result<()> {
+    pub fn set_shots_days(&self, days: Option<i64>) -> Result<()> {
+        if days.is_some_and(|d| !SHOTS_DAYS.contains(&d)) {
+            return Err(format!("Frist nicht erlaubt: {days:?}"));
+        }
         // Wieder an: Fristen beginnen neu (wie set_expire_zone)
-        if on && !self.shots_expire() {
+        if days.is_some() && self.shots_days().is_none() {
             let _ = fs::remove_file(self.root.join(META_DIR).join(SHOTS_SEEN));
         }
         let mut v = self.zone_file();
-        v["shotsExpire"] = serde_json::json!(on);
+        if let Some(o) = v.as_object_mut() {
+            o.remove("shotsExpire");
+        }
+        v["shotsDays"] = serde_json::json!(days.unwrap_or(0));
         self.write_zone_file(&v)
     }
 
     /// Wurde Aufräumen hier noch nie gewählt, gilt es ab dem ersten Einschalten
     pub fn shots_expire_default(&self) -> Result<()> {
-        if self.zone_file().get("shotsExpire").is_none() {
-            self.set_shots_expire(true)?;
+        let v = self.zone_file();
+        if v.get("shotsDays").is_none() && v.get("shotsExpire").is_none() {
+            self.set_shots_days(Some(7))?;
         }
         Ok(())
     }
@@ -2482,11 +2498,9 @@ impl Library {
         self.expire_where(INBOX_SEEN, is_unsorted, days)
     }
 
-    /// Screenshots nach 7 Tagen nach „Zuletzt gelöscht“ (0.47.0), wie Unsorted
-    pub fn expire_shots(&self, days: i64) -> Result<usize> {
-        if !self.shots_expire() {
-            return Ok(0);
-        }
+    /// Screenshots nach ihrer Frist (7 oder 30 Tage) nach „Zuletzt gelöscht“, wie Unsorted
+    pub fn expire_shots(&self) -> Result<usize> {
+        let Some(days) = self.shots_days() else { return Ok(0) };
         self.expire_where(SHOTS_SEEN, |z| z.split('/').next() == Some(SHOTS), days)
     }
 
@@ -3375,37 +3389,65 @@ mod tests {
     }
 
     #[test]
-    fn screenshots_empty_after_seven_days_only_once_chosen() {
+    fn screenshots_empty_after_chosen_days_only_once_chosen() {
         let tmp = tempfile::tempdir().unwrap();
         let root = tmp.path().join("Bib");
         let lib = Library::open(&root).unwrap();
         let src = tmp.path().join("src");
         write_png(&src.join("shot.png"), 4, 4, 10);
+        write_png(&src.join("late.png"), 4, 4, 30);
         write_png(&src.join("typo.png"), 4, 4, 20);
-        lib.import_files(&[src.join("shot.png")], SHOTS).unwrap();
+        lib.import_files(&[src.join("shot.png"), src.join("late.png")], SHOTS).unwrap();
         lib.import_files(&[src.join("typo.png")], "Typo").unwrap();
         // eigener Ordner gleichen Namens: ab Werk unberührt
-        assert!(!lib.shots_expire());
-        assert_eq!(lib.expire_shots(DELETED_DAYS).unwrap(), 0);
+        assert_eq!(lib.shots_days(), None);
+        assert_eq!(lib.expire_shots().unwrap(), 0);
         assert!(!root.join(META_DIR).join(SHOTS_SEEN).exists());
-        // erstes Einschalten der Bildschirmfotos: Aufräumen an, Frist beginnt
+        // erstes Einschalten der Bildschirmfotos: 7 Tage, Frist beginnt
         lib.shots_expire_default().unwrap();
-        assert!(lib.shots_expire());
-        assert_eq!(lib.expire_shots(DELETED_DAYS).unwrap(), 0);
+        assert_eq!(lib.shots_days(), Some(7));
+        assert_eq!(lib.expire_shots().unwrap(), 0);
         let seen_path = root.join(META_DIR).join(SHOTS_SEEN);
         let mut seen = lib.shots_seen();
-        assert_eq!(seen.len(), 1, "nur Screenshots zählt");
-        let h = lib.hash_of(&format!("{SHOTS}/shot.png")).unwrap();
-        seen.insert(h, now_ms() - 8 * 24 * 3600 * 1000);
+        assert_eq!(seen.len(), 2, "nur Screenshots zählt");
+        let day = 24 * 3600 * 1000;
+        let shot = lib.hash_of(&format!("{SHOTS}/shot.png")).unwrap();
+        let late = lib.hash_of(&format!("{SHOTS}/late.png")).unwrap();
+        seen.insert(shot.clone(), now_ms() - 8 * day);
+        seen.insert(late.clone(), now_ms() - 31 * day);
         fs::write(&seen_path, serde_json::to_vec(&seen).unwrap()).unwrap();
-        assert_eq!(lib.expire_shots(DELETED_DAYS).unwrap(), 1);
+        // 30 Tage: nur das über 30 Tage alte geht, die Fristen bleiben beim Wechsel
+        lib.set_shots_days(Some(30)).unwrap();
+        assert_eq!(lib.expire_shots().unwrap(), 1);
+        assert!(root.join(SHOTS).join("shot.png").is_file());
+        assert!(!root.join(SHOTS).join("late.png").exists());
+        // 7 Tage: jetzt auch das acht Tage alte
+        lib.set_shots_days(Some(7)).unwrap();
+        assert_eq!(lib.expire_shots().unwrap(), 1);
         assert!(!root.join(SHOTS).join("shot.png").exists());
         assert!(root.join("Typo/typo.png").is_file());
-        // aus bleibt aus, auch beim nächsten Einschalten der Bildschirmfotos
-        lib.set_shots_expire(false).unwrap();
+        // andere Werte gibt es nicht
+        assert!(lib.set_shots_days(Some(14)).is_err());
+        // nie bleibt nie, auch beim nächsten Einschalten der Bildschirmfotos
+        lib.set_shots_days(None).unwrap();
         lib.shots_expire_default().unwrap();
-        assert!(!lib.shots_expire());
+        assert_eq!(lib.shots_days(), None);
         assert!(lib.shots_dir().unwrap().is_dir());
+    }
+
+    #[test]
+    fn screenshots_old_switch_counts_as_seven_days() {
+        let tmp = tempfile::tempdir().unwrap();
+        let lib = Library::open(&tmp.path().join("Bib")).unwrap();
+        let mut v = lib.zone_file();
+        v["shotsExpire"] = serde_json::json!(true);
+        lib.write_zone_file(&v).unwrap();
+        assert_eq!(lib.shots_days(), Some(7));
+        v["shotsExpire"] = serde_json::json!(false);
+        lib.write_zone_file(&v).unwrap();
+        assert_eq!(lib.shots_days(), None);
+        lib.shots_expire_default().unwrap();
+        assert_eq!(lib.shots_days(), None, "Aus von früher bleibt aus");
     }
 
     #[test]

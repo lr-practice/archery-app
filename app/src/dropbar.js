@@ -61,7 +61,8 @@
       state.snap = null;
     }
     state.dirty = false;
-    state.zones = state.snap ? orderZones(state.snap.zones).slice(0, HOT) : [];
+    // Screenshots ist keine Zone und kein Ziel (0.48.0)
+    state.zones = state.snap ? orderZones(state.snap.zones.filter((z) => z.path.split("/")[0] !== "Screenshots")).slice(0, HOT) : [];
   }
 
   function render() {
