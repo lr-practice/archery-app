@@ -1,5 +1,21 @@
 # Changelog
 
+## App 0.48.1
+
+- Navigation: Die Titelzeile ist jetzt fest die Navigation (aus dem Labor).
+  Beim Scrollen verschwimmt der Inhalt darunter und läuft aus (Glasverlauf),
+  so bleibt sie lesbar.
+- Glas im hellen Modus zum Testen: heute, weiß, Popover oder beides.
+- App-Glas zum Testen: heute, dünn, Material oder Licht.
+- Einstellungen aufgeräumt: Darstellung hat jetzt Ansicht, Aussehen, Glas und
+  Ziehen & Ablegen. Navigation (Labor), Start (Öffnung) und Startton sind
+  raus, ebenso „Ordner außerhalb der Bibliothek“ (steht nur noch, solange
+  schon Ordner verknüpft sind).
+- Screenshots: Der Reiter erscheint, sobald es den Ordner gibt. Bisher fehlte
+  er manchmal, bis man die Bildschirmfotos aus- und wieder anschaltete.
+- Dateinamen › Schema: Lange Beispielnamen werden gekürzt, statt die
+  Beschriftung senkrecht zusammenzudrücken.
+
 ## App 0.48.0
 
 - Screenshots ist ein eigener Bereich statt einer Zone. Der Reiter oben

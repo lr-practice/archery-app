@@ -5700,8 +5700,8 @@ html[data-nav="tr"] .p-top {
 }
 
 /* ---- 0.24.4: Inhalt läuft unter der Leiste weich aus ----
-   fade: der Inhalt selbst blendet oben nach transparent aus (weich gerechnet, ohne Knick)
-   glass: Unschärfe über dem Inhalt, die nach unten ausläuft, dazu ein leichtes Ausblenden */
+   glass: Unschärfe über dem Inhalt, die nach unten ausläuft, dazu ein leichtes
+   Ausblenden. Seit 0.48.1 fest (Lukas 26.11.), der reine Verlauf ist raus */
 html[data-topfade] #zones {
   height: 100%;
   margin-top: 0;
@@ -5709,11 +5709,6 @@ html[data-topfade] #zones {
 
 html[data-topfade] #zones > .p-page {
   padding-top: calc(var(--top-h) + 26px);
-}
-
-html[data-topfade="fade"] #zones {
-  -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0.000) calc(calc(var(--top-h) * 0.35) + (calc(var(--top-h) + 72px) - calc(var(--top-h) * 0.35)) * 0.000), rgba(0, 0, 0, 0.020) calc(calc(var(--top-h) * 0.35) + (calc(var(--top-h) + 72px) - calc(var(--top-h) * 0.35)) * 0.083), rgba(0, 0, 0, 0.074) calc(calc(var(--top-h) * 0.35) + (calc(var(--top-h) + 72px) - calc(var(--top-h) * 0.35)) * 0.167), rgba(0, 0, 0, 0.156) calc(calc(var(--top-h) * 0.35) + (calc(var(--top-h) + 72px) - calc(var(--top-h) * 0.35)) * 0.250), rgba(0, 0, 0, 0.259) calc(calc(var(--top-h) * 0.35) + (calc(var(--top-h) + 72px) - calc(var(--top-h) * 0.35)) * 0.333), rgba(0, 0, 0, 0.376) calc(calc(var(--top-h) * 0.35) + (calc(var(--top-h) + 72px) - calc(var(--top-h) * 0.35)) * 0.417), rgba(0, 0, 0, 0.500) calc(calc(var(--top-h) * 0.35) + (calc(var(--top-h) + 72px) - calc(var(--top-h) * 0.35)) * 0.500), rgba(0, 0, 0, 0.624) calc(calc(var(--top-h) * 0.35) + (calc(var(--top-h) + 72px) - calc(var(--top-h) * 0.35)) * 0.583), rgba(0, 0, 0, 0.741) calc(calc(var(--top-h) * 0.35) + (calc(var(--top-h) + 72px) - calc(var(--top-h) * 0.35)) * 0.667), rgba(0, 0, 0, 0.844) calc(calc(var(--top-h) * 0.35) + (calc(var(--top-h) + 72px) - calc(var(--top-h) * 0.35)) * 0.750), rgba(0, 0, 0, 0.926) calc(calc(var(--top-h) * 0.35) + (calc(var(--top-h) + 72px) - calc(var(--top-h) * 0.35)) * 0.833), rgba(0, 0, 0, 0.980) calc(calc(var(--top-h) * 0.35) + (calc(var(--top-h) + 72px) - calc(var(--top-h) * 0.35)) * 0.917), rgba(0, 0, 0, 1.000) calc(calc(var(--top-h) * 0.35) + (calc(var(--top-h) + 72px) - calc(var(--top-h) * 0.35)) * 1.000));
-  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0.000) calc(calc(var(--top-h) * 0.35) + (calc(var(--top-h) + 72px) - calc(var(--top-h) * 0.35)) * 0.000), rgba(0, 0, 0, 0.020) calc(calc(var(--top-h) * 0.35) + (calc(var(--top-h) + 72px) - calc(var(--top-h) * 0.35)) * 0.083), rgba(0, 0, 0, 0.074) calc(calc(var(--top-h) * 0.35) + (calc(var(--top-h) + 72px) - calc(var(--top-h) * 0.35)) * 0.167), rgba(0, 0, 0, 0.156) calc(calc(var(--top-h) * 0.35) + (calc(var(--top-h) + 72px) - calc(var(--top-h) * 0.35)) * 0.250), rgba(0, 0, 0, 0.259) calc(calc(var(--top-h) * 0.35) + (calc(var(--top-h) + 72px) - calc(var(--top-h) * 0.35)) * 0.333), rgba(0, 0, 0, 0.376) calc(calc(var(--top-h) * 0.35) + (calc(var(--top-h) + 72px) - calc(var(--top-h) * 0.35)) * 0.417), rgba(0, 0, 0, 0.500) calc(calc(var(--top-h) * 0.35) + (calc(var(--top-h) + 72px) - calc(var(--top-h) * 0.35)) * 0.500), rgba(0, 0, 0, 0.624) calc(calc(var(--top-h) * 0.35) + (calc(var(--top-h) + 72px) - calc(var(--top-h) * 0.35)) * 0.583), rgba(0, 0, 0, 0.741) calc(calc(var(--top-h) * 0.35) + (calc(var(--top-h) + 72px) - calc(var(--top-h) * 0.35)) * 0.667), rgba(0, 0, 0, 0.844) calc(calc(var(--top-h) * 0.35) + (calc(var(--top-h) + 72px) - calc(var(--top-h) * 0.35)) * 0.750), rgba(0, 0, 0, 0.926) calc(calc(var(--top-h) * 0.35) + (calc(var(--top-h) + 72px) - calc(var(--top-h) * 0.35)) * 0.833), rgba(0, 0, 0, 0.980) calc(calc(var(--top-h) * 0.35) + (calc(var(--top-h) + 72px) - calc(var(--top-h) * 0.35)) * 0.917), rgba(0, 0, 0, 1.000) calc(calc(var(--top-h) * 0.35) + (calc(var(--top-h) + 72px) - calc(var(--top-h) * 0.35)) * 1.000));
 }
 
 html[data-topfade="glass"] #zones {
@@ -7009,6 +7004,24 @@ html.light {
   font-size: 12px;
   color: var(--p-dim);
 }
+/* 0.48.1: Langer Beispielname drückte die Beschriftung zu einer Spalte
+   zusammen (Buchstaben untereinander). Die Beschriftung behält ihre Breite,
+   das Beispiel wird mit „…“ gekürzt. */
+.nm-row .p-block-main {
+  flex: 0 1 auto;
+  min-width: 12em;
+}
+.nm-row .p-block-side {
+  flex: 1 1 0;
+  min-width: 0;
+  justify-content: flex-end;
+}
+.nm-row .nm-ex {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .nm-bricks {
   display: flex;
   flex-wrap: wrap;
@@ -8146,243 +8159,55 @@ html:root .lb-note-card .np-body {
   fill: currentColor;
 }
 
-/* ---- 0.47.4: Labor › Navigation (DESIGN 4.2a) ----
-   html[data-navlab] schaltet die Leiste um; Logik und Markup bleiben gleich.
-   Nur zum Testen, Standard ist „Heute“ ohne Attribut. */
-
-html[data-navlab] {
-  --nl-seg: color-mix(in srgb, var(--bg-solid), var(--ink) 9%);
-  --nl-band: color-mix(in srgb, var(--bg-solid), var(--ink) 4%);
-}
-
-/* Ohne Glas: Titelzeile, Kopf, Reiter, Unterstrich, Liquid */
-html:is([data-navlab="title"], [data-navlab="head"], [data-navlab="tabs"], [data-navlab="under"], [data-navlab="liquid"]) .p-nav {
+/* ---- 0.47.4 Labor › Navigation, seit 0.48.1 fest die Titelzeile (DESIGN 4.2a) ----
+   Kein Glas, nur Schrift: inaktiv ink × 0.5, aktiv Text; Hover behält die
+   Gleitfläche. Die übrigen Labor-Varianten sind entfallen. */
+html[data-navlab="title"] .p-nav {
+  padding: 0;
   background: none;
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
   box-shadow: none;
 }
-html:is([data-navlab="title"], [data-navlab="head"], [data-navlab="tabs"], [data-navlab="under"]) .p-nav :is(.p-nav-btn, .p-nav-search, .p-nav-search span) {
+html[data-navlab="title"] .p-nav :is(.p-nav-btn, .p-nav-search, .p-nav-search span) {
   background: none;
   color: rgba(var(--ink-rgb), 0.5);
 }
-html:is([data-navlab="title"], [data-navlab="head"], [data-navlab="tabs"], [data-navlab="under"]) .p-nav .p-nav-btn.active {
+html[data-navlab="title"] .p-nav .p-nav-btn.active {
   background: none;
   color: var(--p-text);
 }
 
-/* Liquid: Kapseln mit Taille (Abstand 16, Taille 10, Radius 4) */
-html[data-navlab="liquid"] .p-nav,
-html[data-navlab="liquid"] .p-nav-main {
-  gap: 16px;
-  padding: 0;  overflow: visible;
+/* ---- 0.48.1: Glas im hellen Modus, Test (Lukas 26.11., DESIGN 2.4) ---- */
+/* Glas hell: weißer Schleier statt Hellgrau (white, both); Popover setzt
+   lib.rs set_appearance als Mac-Material */
+html.light:is([data-glasslight="white"], [data-glasslight="both"]) {
+  --bg-solid: #ffffff;
 }
-html[data-navlab="liquid"] :is(.p-nav-rule, .p-nav-sep, .p-nav-glide) {
-  display: none;
-}
-html[data-navlab="liquid"] .p-nav :is(.p-nav-btn, .p-nav-search) {
-  height: 36px;
-  overflow: visible;
-  border-radius: 4px;
-  background: var(--nl-seg);
-}
-html[data-navlab="liquid"] .p-nav .p-nav-btn.active {
+
+/* ---- 0.48.1: App-Glas, Test (Lukas 26.11., DESIGN 2.4) ----
+   thin: dünner Schleier; material: Under-Window-Material (lib.rs), etwas
+   dünner; light: Schleier oben heller, unten dichter, Lichtkante oben.
+   Ein gesetzter Glas-Regler (Inline --win-alpha) geht vor. */
+html.mac[data-glassmat="thin"] { --win-alpha: 0.48; }
+html.mac.light[data-glassmat="thin"] { --win-alpha: 0.52; }
+html.mac[data-glassmat="material"] { --win-alpha: 0.56; }
+html.mac.light[data-glassmat="material"] { --win-alpha: 0.62; }
+html.mac[data-winalpha][data-glassmat="light"] body {
   background:
-    linear-gradient(rgba(var(--ink-rgb), 0.14) 0 0) 3px 3px / calc(100% - 6px) calc(100% - 6px) no-repeat,
-    var(--nl-seg);
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0) 1px),
+    radial-gradient(120% 70% at 18% 0%, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0) 62%),
+    linear-gradient(172deg,
+      color-mix(in srgb, var(--bg-solid) calc(var(--win-alpha, 0.6) * 64%), transparent) 0%,
+      color-mix(in srgb, var(--bg-solid) calc(var(--win-alpha, 0.6) * 100%), transparent) 55%,
+      color-mix(in srgb, var(--bg-solid) calc(min(1, var(--win-alpha, 0.6) * 1.14) * 100%), transparent) 100%);
 }
-html[data-navlab="liquid"] .p-nav :is(.p-nav-btn, .p-nav-search)::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: calc(100% - 6px);
-  width: 28px;
-  height: 100%;
-  background: var(--nl-seg);
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 36' preserveAspectRatio='none'%3E%3Cpath d='M0 0C6 0 10 10 14 10S22 0 28 0V36C22 36 18 26 14 26S6 36 0 36Z'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 36' preserveAspectRatio='none'%3E%3Cpath d='M0 0C6 0 10 10 14 10S22 0 28 0V36C22 36 18 26 14 26S6 36 0 36Z'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
-  pointer-events: none;
-  z-index: -1;
-}
-html[data-navlab="liquid"] .p-nav-more .p-nav-btn::after {
-  display: none;
-}
-
-/* Titelzeile: Pfad wie ein Fenstertitel, Hover behält die Gleitfläche */
-html[data-navlab="title"] .p-nav {
-  padding: 0;
-}
-
-/* Kopf: Pfad in Kopfgröße, der Titel im Seitenkopf entfällt */
-html[data-navlab="head"] .p-nav {
-  padding: 0;
-}
-html[data-navlab="head"] .p-nav .p-nav-btn {
-  font-size: 17px;
-  font-weight: 350;
-  padding: 0 8px;
-  color: var(--p-faint);
-}
-html:is([data-navlab="head"], [data-navlab="tabs"]) .p-nav-rule {
-  display: none;
-}
-html[data-navlab="head"] .p-nav-sep {
-  font-size: 17px;
-  color: var(--p-faint);
-}
-html[data-navlab="head"] .p-head-title {
-  display: none;
-}
-
-/* Reiter: Band oben, der aktuelle Ort geht ins Fenster über */
-html[data-navlab="tabs"] .p-top {
-  align-items: flex-end;
-}
-html[data-navlab="tabs"] .p-top::before {
-  content: "";
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: var(--top-h);
-  background: var(--nl-band);
-  z-index: -1;
-  pointer-events: none;
-}
-html[data-navlab="tabs"] .p-nav {
-  padding: 0;
-  align-items: flex-end;
-}
-html[data-navlab="tabs"] .p-nav :is(.p-nav-btn, .p-nav-search) {
-  height: 32px;
-  border-radius: 5px 5px 0 0;
-}
-html[data-navlab="tabs"] .p-nav .p-nav-btn.active {
-  background: var(--bg-solid);
-}
-html[data-navlab="tabs"] .p-nav-glide {
-  border-radius: 5px 5px 0 0;
-}
-
-/* Segmente: schmales Feld mit Haarlinien */
-html[data-navlab="segment"] .p-nav {
-  padding: 0;
-  gap: 0;
-  border-radius: 4px;
-  overflow: hidden;
-  background: none;
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
-  box-shadow: inset 0 0 0 1px rgba(var(--ink-rgb), 0.18);
-}
-html[data-navlab="segment"] .p-nav-main {
-  gap: 0;
-}
-html[data-navlab="segment"] :is(.p-nav-rule, .p-nav-sep) {
-  display: none;
-}
-html[data-navlab="segment"] .p-nav :is(.p-nav-btn, .p-nav-search) {
-  height: 30px;
-  border-radius: 0;
-  font-size: 13px;
-  box-shadow: inset 1px 0 0 rgba(var(--ink-rgb), 0.14);
-}
-html[data-navlab="segment"] #navBrand {
-  box-shadow: none;
-}
-html[data-navlab="segment"] .p-nav .p-nav-btn.active {
-  background: rgba(var(--ink-rgb), 0.12);
-}
-html[data-navlab="segment"] .p-nav-glide {
-  border-radius: 0;
-}
-
-/* Pfadleiste: unten an der Fensterkante, über die ganze Breite */
-html[data-navlab="pathbar"] .p-nav {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  top: auto;
-  height: 32px;
-  padding: 0 12px;
-  border-radius: 0;
-  box-shadow: inset 0 1px 0 var(--p-rule);
-}
-html[data-navlab="pathbar"] .p-nav :is(.p-nav-btn, .p-nav-search) {
-  height: 24px;
-  padding: 0 8px;
-  font-size: 12.5px;
-  color: var(--p-dim);
-  background: none;
-}
-html[data-navlab="pathbar"] .p-nav .p-nav-btn.active {
-  color: var(--p-text);
-  background: none;
-}
-html[data-navlab="pathbar"] .p-nav-search {
-  margin-left: auto;
-}
-
-/* Unterstrich: Schrift auf einer Haarlinie quer durchs Fenster */
-html[data-navlab="under"] .p-top {
-  align-items: flex-end;
-}
-html[data-navlab="under"] .p-top::before {
-  content: "";
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: calc(var(--top-h) - 1px);
-  height: 1px;
-  background: var(--p-rule);
-  pointer-events: none;
-}
-html[data-navlab="under"] .p-nav {
-  padding: 0;
-  gap: 6px;
-}
-html[data-navlab="under"] .p-nav :is(.p-nav-btn, .p-nav-search) {
-  height: 44px;
-  padding: 0 8px;
-  border-radius: 0;
-}
-html[data-navlab="under"] .p-nav .p-nav-btn.active {
-  box-shadow: inset 0 -1.5px 0 var(--p-text);
-}
-html[data-navlab="under"] .p-nav-glide {
-  display: none;
-}
-html[data-navlab="under"] .p-nav .p-nav-btn:hover {
-  color: var(--p-text);
-}
-
-/* Hängend: mittig an der oberen Kante, nur unten gerundet */
-html[data-navlab="hang"] .p-nav {
-  position: fixed;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 4px 6px 6px;
-  border-radius: 0 0 6px 6px;
-}
-
-/* Eingelassen: Mulde im Fenster, der aktuelle Ort erhaben */
-html[data-navlab="well"] .p-nav {
-  background: color-mix(in srgb, var(--bg-solid), #000 32%);
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(0, 0, 0, 0.3);
-}
-html.light[data-navlab="well"] .p-nav {
-  background: color-mix(in srgb, var(--bg-solid), #000 7%);
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12), inset 0 0 0 1px rgba(0, 0, 0, 0.05);
-}
-html[data-navlab="well"] .p-nav .p-nav-btn.active {
-  background: var(--nl-seg);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06);
-}
-html.light[data-navlab="well"] .p-nav .p-nav-btn.active {
-  background: var(--bg-solid);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+html.mac.light[data-winalpha][data-glassmat="light"] body {
+  background:
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0) 1px),
+    radial-gradient(120% 70% at 18% 0%, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 62%),
+    linear-gradient(172deg,
+      color-mix(in srgb, var(--bg-solid) calc(var(--win-alpha, 0.6) * 64%), transparent) 0%,
+      color-mix(in srgb, var(--bg-solid) calc(var(--win-alpha, 0.6) * 100%), transparent) 55%,
+      color-mix(in srgb, var(--bg-solid) calc(min(1, var(--win-alpha, 0.6) * 1.14) * 100%), transparent) 100%);
 }

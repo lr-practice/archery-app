@@ -185,6 +185,25 @@ Ebenen vor: Navigation, Active-Zones-Leiste, Menüs und Ladeplatzhalter.
 | Am ganzen Mac (0.40.24) | `NSVisualEffectView` hinter jeder Karte, Material HUD (13) | Material Seitenleiste (7) |
 | Deckkraft | `--zone-alpha`, eigener Regler „Zonen beim Ziehen“ (30–100 % in 5er-Schritten, `archiver.zoneGlass`, Standard 0.97). App, Zonenleiste und Extension (über `zones.json` „alpha“) | dito |
 
+**Fensterglas hell (0.48.1, Test, Lukas 26.11.):** Über weißen Programmen
+wirkt das helle Fenster grau (Material Seitenleiste, Schleier `#fafafa`).
+Einstellungen › Darstellung › Test „Glas im hellen Modus“, `archiver.glassLight`
+(i18n.js, gilt für App, Tray und Observer): `now` wie bisher, `white`
+Schleier `#ffffff` (`html.light[data-glasslight]`), `popover` Material Popover
+statt Seitenleiste (lib.rs `set_appearance`, Parameter `glass`), `both`
+beides. Nach Lukas' Wahl bleibt eine, der Test entfällt.
+
+**App-Glas (0.48.1, Test, Lukas 26.11.):** Der Schleier deckt 72 / 78 %,
+deshalb kommt kaum Farbe von hinten durch und das Glas wirkt flach.
+Einstellungen › Darstellung › Test „App-Glas“, `archiver.glassMat`
+(`html[data-glassmat]`, Regler Glas auf Standard): `now` wie bisher; `thin`
+Schleier 0.48 (hell 0.52); `material` Material Under Window statt HUD bzw.
+Seitenleiste, nur Hauptfenster (lib.rs `set_appearance`, Parameter `mat`),
+Schleier 0.56 (hell 0.62); `light` Schleier im Verlauf 172°, oben × 0.64,
+Mitte × 1, unten × 1.14, dazu Lichtkante oben 1 px (weiß 0.14, hell 0.7) und
+weicher Lichtfleck links oben. Gilt vor „Glas im hellen Modus“. Echtes
+Liquid Glass (macOS 26) ist offen. Nach Lukas' Wahl bleibt eine.
+
 ### 2.5 Bewegung
 
 | Zweck | Dauer | Kurve |
@@ -252,8 +271,14 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   die anderen Reiter, ohne Schriftzug und ohne eigenes Gewicht, denn in
   Programmen steht dort kein Name (Lukas 06.11.). Der Name der Bibliothek
   bleibt oben rechts im Reiter `#libTab`.
-- **Form:** Eine Glas-Pille oben, auf der Mittellinie der Fensterknöpfe.
-  Aktive Knöpfe sind gefüllt.
+- **Form (seit 0.48.1, Lukas 26.11.):** Titelzeile, auf der Mittellinie der
+  Fensterknöpfe. Kein Glas, nur Schrift: inaktiv ink × 0.5, aktiv Text; die
+  Gleitfläche beim Hover bleibt (`html[data-navlab="title"]`, 4.2a). Bis
+  0.48.0 eine Glas-Pille mit gefüllten aktiven Knöpfen.
+- **Beim Scrollen (0.48.1, Lukas 26.11.):** Läuft Inhalt unter die
+  Titelzeile, verschwimmt er und läuft nach unten aus (Glasverlauf,
+  `html[data-topfade="glass"]`, fest). Verglichen mit Glasband und reinem
+  Verlauf; beide sind raus.
 - **Screenshots (0.47.0, Lukas 11.11.; eigener Bereich seit 0.48.0, Lukas
   26.11.):** Screenshots ist keine Zone, sondern ein eigener Bereich. Der
   Ordner Screenshots oben in der Bibliothek bleibt, fehlt aber in der
@@ -267,35 +292,11 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   kommen und wie sie aufräumen: 4.6 „Screenshots“.
 - **Nicht:** Keine Icons neben Wörtern und keine zweite Leiste.
 
-### 4.2a Labor › Navigation (App 0.47.4, Lukas 17.11.)
-- **Zweck:** Lukas testet zehn Varianten der Navigation im echten Fenster.
-  Schalter in Einstellungen › Darstellung, Block „Navigation (Labor)“, drei
-  Reihen (4 + 3 + 3) und ein Satz zur Wahl. Gespeichert nur lokal in
-  `archiver.lab`, Schlüssel `nav`. Ab Werk „Heute“, dann fehlt das Attribut.
-- **Technik:** `html[data-navlab="<id>"]`, nur CSS am Ende von `app.css`.
-  Markup, Pfad-Logik (4.2) und Gleitfläche bleiben gleich.
-- **Varianten:**
-  - `now` Heute: Glas-Pille wie in 4.2.
-  - `liquid` Liquid: jeder Eintrag eine Kapsel (36 px, Radius 4, Fläche Grund
-    + ink 9 %), Abstand 16 px, verbunden über eine Taille (10 px tief, Maske
-    als SVG im `::after`). Aktiv: innere Fläche ink × 0.14 mit 3 px Einzug.
-  - `title` Titelzeile: kein Glas, nur Schrift; inaktiv ink × 0.5, aktiv Text.
-  - `head` Kopf: wie Titelzeile, Einträge 17 px Semi-Light; der Titel im
-    Seitenkopf (`.p-head-title`) entfällt.
-  - `tabs` Reiter: Band über die ganze Breite (Grund + ink 4 %), Reiter oben
-    5 px gerundet, der aktive in `--bg-solid` geht ins Fenster über.
-  - `segment` Segmente: Feld mit 1 px Rand ink × 0.18, Trennlinien ink × 0.14,
-    30 px hoch, aktiv ink × 0.12.
-  - `pathbar` Pfadleiste: Glas über die ganze Breite an der unteren Kante,
-    32 px, Haarlinie oben, 12,5 px; Suche und Menü rechts.
-  - `under` Unterstrich: Haarlinie `--p-rule` quer durchs Fenster am Fuß der
-    Titelzeile, aktiv mit 1,5 px Strich in Textfarbe.
-  - `hang` Hängend: Glas mittig an der oberen Kante, nur unten 6 px gerundet.
-  - `well` Eingelassen: Mulde (Grund + Schwarz 32 %, hell 7 %) mit innerem
-    Schatten, der aktive Eintrag erhaben.
-- **Ausnahme:** Die Radien 5 und 6 px und die Schatten in `well` liegen
-  außerhalb der Stufen. Das gilt nur, solange die Varianten Labor sind; die
-  gewählte wird in 4.2 übernommen und an die Stufen angepasst.
+### 4.2a Labor › Navigation (App 0.47.4, Lukas 17.11.; entschieden 0.48.1)
+- Zehn Varianten standen in Einstellungen › Darstellung zur Wahl. Lukas hat
+  am 26.11. die Titelzeile (`title`) gewählt. Sie ist seit 0.48.1 fest
+  (`applyNavLab` setzt `html[data-navlab="title"]`), Block und übrige
+  Varianten sind entfernt.
 
 ### 4.3 Active-Zones-Leiste (`.p-dropbar`, `.p-hot`)
 - **Zweck:** Beim Ziehen fahren die vier ersten Zonen (01–04) als Glas ein.
@@ -327,7 +328,9 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   Ein leerer Platz bietet „Ordner wählen…“ und „Neue Bibliothek…“ (Ort und Name
   im Sichern-Dialog des Finders, der Ordner wird angelegt und gleich geöffnet).
 - **Externe Zone (0.30.1):** Ordner außerhalb der Bibliothek, angelegt nur in
-  Einstellungen › Bibliothek (Verknüpfung im Bibliotheksordner). Sieht aus wie
+  Einstellungen › Bibliothek (Verknüpfung im Bibliotheksordner). Seit 0.48.1
+  (Lukas 26.11.) lassen sich keine neuen anlegen; der Block steht nur noch,
+  solange es verknüpfte Ordner gibt, ganz unten in Bibliothek. Sieht aus wie
   jede Zone; ✕ löst nur die Verknüpfung. Seit 0.39.1 heißt das überall
   „Trennen“ (⋯-Menü, Einstellungen, Rückfrage mit `.btn primary` statt rot),
   und Ordner oder Unterzonen in einer externen Zone haben kein Löschen: Archery
@@ -1059,7 +1062,7 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
 - **Video-Vorschau:** fest Skim (Zeiger waagerecht = Zeit im Clip, ohne Ton,
   ohne Verzögerung). Daumenkino, Abspielen und Aus sind entfernt. Skim läuft
   auch bei `prefers-reduced-motion`, weil es der Hand folgt.
-- **Drop-Feedback (Einstellungen › Darstellung, nach Glas):** Rückmeldung der
+- **Drop-Feedback (Einstellungen › Darstellung › Ziehen & Ablegen):** Rückmeldung der
   Active-Zone-Karte in der App und am ganzen Mac (4.13): Miniatur (Standard),
   Haken, Ring, Zähler, Dateiname, Nachbild, Glühen, in zwei Reihen (4 + 3),
   darunter ein Satz zur gewählten Variante. Gespeichert nur lokal
@@ -1073,9 +1076,14 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   Bereiche als ruhige Liste: Bibliothek, Darstellung, Mac & Browser (ohne Mac
   nur „Extension“), App. Rechts je eine Zusammenfassung in `--p-dim` und ›.
   Darunter, als eigene Fläche abgesetzt (0.43.2): Studio (4.25b).
-- **Bereiche:** Bibliothek = Plätze, verknüpfte Ordner, Standardzone,
-  Struktur, Zonen, Dateinamen. Darstellung = Ansicht, Aussehen, Glas, Start,
-  Startton. Mac & Browser = Extension, Tray und Zonenleiste, Vorschau-Formate.
+- **Bereiche (neu sortiert 0.48.1, Lukas 26.11.):** Bibliothek = Plätze,
+  Standardzone, Screenshots, Zonen, Struktur, Dateinamen (verknüpfte Ordner
+  nur, solange es welche gibt). Darstellung = Ansicht, Aussehen (Thema,
+  Ecken, Bildtext, Auswahl), Glas, Ziehen & Ablegen (Active Zones beim
+  Ziehen, Drop-Feedback), Zonen beim Ziehen (Zonenglas), bis zur Wahl Test
+  (App-Glas, Glas im hellen Modus). Start (Öffnung) und
+  Startton sind entfallen; die Öffnung läuft wie gewählt, ein Startton
+  spielt nicht mehr. Mac & Browser = Extension, Tray und Zonenleiste, Vorschau-Formate.
   App = Version und Updates (4.22a), Sprache, Feedback, Tasten.
 - **Regel:** Ein neuer Schalter kommt in einen dieser Bereiche, nicht in
   einen neuen. Jeder Block trägt seinen Titel, auch wenn er allein steht.

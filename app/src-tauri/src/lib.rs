@@ -931,7 +931,9 @@ async fn screenshot_target(state: State<'_, AppState>) -> Result<bool, String> {
         let Some(loc) = screencapture("read", &["location"]) else { return Ok(false) };
         let home = std::env::var("HOME").unwrap_or_default();
         let loc = loc.strip_prefix('~').map(|r| format!("{home}{r}")).unwrap_or(loc);
-        Ok(Path::new(loc.trim_end_matches('/')) == lib.root.join(library::SHOTS).as_path())
+        // Beide Seiten auflösen: Symlinks, „/private“, Groß/klein (0.48.1)
+        let real = |p: &Path| p.canonicalize().unwrap_or_else(|_| p.to_path_buf());
+        Ok(real(Path::new(loc.trim_end_matches('/'))) == real(&lib.root.join(library::SHOTS)))
     }
     #[cfg(not(target_os = "macos"))]
     {
@@ -1500,14 +1502,18 @@ fn set_system_prefs(app: AppHandle, prefs: system::SystemPrefs) -> Result<(), St
 static TRAY_RADIUS: std::sync::atomic::AtomicU32 = std::sync::atomic::AtomicU32::new(12);
 
 #[tauri::command]
-fn set_appearance(window: tauri::WebviewWindow, light: bool, radius: Option<f64>) {
+fn set_appearance(window: tauri::WebviewWindow, light: bool, radius: Option<f64>, glass: Option<String>, mat: Option<String>) {
     let _ = window.set_theme(Some(if light { tauri::Theme::Light } else { tauri::Theme::Dark }));
     if let Some(r) = radius.filter(|_| window.label() == system::PALETTE) {
         TRAY_RADIUS.store(r.clamp(0.0, 24.0) as u32, std::sync::atomic::Ordering::Relaxed);
     }
     if window.label() == "main" || window.label() == system::PALETTE || window.label() == viewer::LABEL {
         use tauri::window::{Effect, EffectState, EffectsBuilder};
-        let effect = if light { Effect::Sidebar } else { Effect::HudWindow };
+        // Hell: Seitenleiste, zum Testen (0.48.1) das hellere Popover
+        let popover = matches!(glass.as_deref(), Some("popover") | Some("both"));
+        // App-Glas „Material“ (Test 0.48.1): kräftigeres Material, nur im Hauptfenster
+        let under = mat.as_deref() == Some("material") && window.label() == "main";
+        let effect = if under { Effect::UnderWindowBackground } else if !light { Effect::HudWindow } else if popover { Effect::Popover } else { Effect::Sidebar };
         let radius = if window.label() == system::PALETTE { TRAY_RADIUS.load(std::sync::atomic::Ordering::Relaxed) as f64 } else { 0.0 };
         let mut fx = EffectsBuilder::new().effect(effect).state(EffectState::Active);
         if radius > 0.0 {

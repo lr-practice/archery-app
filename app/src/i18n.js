@@ -186,13 +186,6 @@
       hotRelease: "Release to drop",
       copiedOne: "Object copied",
       feedbackText: "Something odd, or an idea? Opens an email with your Archery version.",
-      setSound: "Startup sound",
-      setSoundPlay: "Play at start",
-      setSoundVolume: "Volume",
-      setSoundGlass: "Archery (default)",
-      setSoundTest: "Play",
-      setSoundPick: "Choose file…",
-      setSoundReset: "Default",
       copiedText: "Text copied (image too)",
       copyText: "Copy text",
       quote: "Text",
@@ -261,10 +254,6 @@
       navPos_bl: "Bottom left",
       navPos_bc: "Bottom centre",
       navPos_br: "Bottom right",
-      setReveal: "Opening",
-      revealWave: "Wave",
-      revealLid: "Lid",
-      revealPlay: "Play",
       filterTitle: "Filter",
       headFilter: "{n} match.",
       filterDup: "Duplicates",
@@ -718,15 +707,7 @@
       libActiveLabel: "Active",
       libRename: "Click to rename",
       extZones: "Folders outside the library",
-      extZonesHint: "A folder elsewhere on the Mac, e.g. a project folder, becomes a zone. Files stay where they are. ✕ only removes the zone, never the folder.",
-      extZonesAdd: "Add folder",
-      extZonesAdded: "“{zone}” is now a zone",
       extZoneOffline: "offline",
-      zoneSystem: "This folder can't be a zone (home, drive or system folder). Please choose a project folder.",
-      zoneLarge: "This folder holds more than 20,000 files, too many for a zone. Please choose a smaller folder.",
-      zoneSlow: "This folder takes too long to read. Please choose a smaller folder.",
-      zoneOverlap: "This folder lies inside another external zone, or contains one.",
-      zoneMissing: "Folder not found.",
       libHint: "Switch with ⌘1 to ⌘4 or in the menu. Each library keeps its own zones and Hot Zones; the extension collects into the active one.",
       libSystem: "This folder can't be a library (home, drive or system folder). Please choose a folder of its own.",
       libLarge: "This folder holds more than 20,000 files, too many for a library. Please choose a smaller folder.",
@@ -763,39 +744,27 @@
       reveal: "Show in Finder",
       openFile: "Open",
       makeHot: "Make Active Zone",
-      setTopFade: "Top edge when scrolling",
-      setTopFadeFade: "Fade",
-      setTopFadeGlass: "Glass",
+      labTest: "Test",
+      labTestText: "Only until we have decided. Try it over bright and dark windows, then this block goes away again.",
+      setGlassMat: "App glass",
+      glassMat_now: "Today",
+      glassMat_thin: "Thin",
+      glassMat_material: "Material",
+      glassMat_light: "Light",
+      setGlassMatText: "Today: veil at 72 % (light 78 %). Thin: veil at 48 %, more colour from behind. Material: stronger Mac material that tints with the desktop, veil at 56 %. Light: veil brighter at the top and denser at the bottom, with a fine light edge. Set the Glass slider to Default first.",
+      setGlassLight: "Glass in light mode",
+      glassLight_now: "Today",
+      glassLight_white: "White",
+      glassLight_popover: "Popover",
+      glassLight_both: "Both",
+      setGlassLightText: "Today: grey veil on the sidebar material. White: white veil. Popover: brighter Mac material. Both: white veil on Popover. Only visible on the Mac in light mode.",
+      setDrag: "Drag & drop",
       setFolderStyle: "Folders in a zone",
       setSecDisplay: "Display",
       setSecMac: "Mac & browser",
       setSecApp: "App",
       ctxCover: "Use as zone cover",
       ctxCoverOff: "Reset zone cover",
-      labNav: "Navigation (lab)",
-      labNavText: "Ten ways to place and draw the navigation, to try out. The logic stays the same everywhere.",
-      labNavPick: "Variant",
-      labNav_now: "Current",
-      labNav_liquid: "Liquid",
-      labNav_title: "Title bar",
-      labNav_head: "Heading",
-      labNav_tabs: "Tabs",
-      labNav_segment: "Segmented",
-      labNav_pathbar: "Path bar",
-      labNav_under: "Underline",
-      labNav_hang: "Hanging",
-      labNav_well: "Inset",
-      labNavText_now: "Glass pill next to the window buttons.",
-      labNavText_liquid: "Every entry is its own capsule, joined by a narrow waist.",
-      labNavText_title: "No pill. The path sits in the title bar like a Mac window title; only the current place is bright.",
-      labNavText_head: "The path is set at heading size and replaces the title of the page head.",
-      labNavText_tabs: "The title bar is a band. The current place is a tab that runs into the window.",
-      labNavText_segment: "A slim segmented control with hairlines, like in Mac toolbars.",
-      labNavText_pathbar: "The path moves to a bar at the bottom edge of the window, the top stays free for images.",
-      labNavText_under: "Text only on a hairline across the window; the current place is underlined.",
-      labNavText_hang: "Centred, hanging from the top edge of the window, rounded only at the bottom.",
-      labNavText_well: "Sunk into the window instead of floating above it; the current place is raised.",
-      labDrops: "Drop feedback",
       labDropsText: "How an Active Zone card shows that something arrived, in the app and in the zone bar (⌥ while dragging files).",
       labDrop: "Feedback",
       labDrop_mini: "Thumbnail",
@@ -817,7 +786,6 @@
       updCheck: "Check for updates",
       updUpToDate: "You're up to date.",
       setSecView: "View",
-      setSecStart: "Startup",
       featTools: "Tools",
       setFolderCards: "Cards",
       setFolderList: "List",
@@ -1056,13 +1024,6 @@
       hotRelease: "Loslassen zum Ablegen",
       copiedOne: "Objekt kopiert",
       feedbackText: "Etwas hakt oder du hast eine Idee? Öffnet eine Mail mit deiner Archery-Version.",
-      setSound: "Startton",
-      setSoundPlay: "Beim Start abspielen",
-      setSoundVolume: "Lautstärke",
-      setSoundGlass: "Archery (Standard)",
-      setSoundTest: "Anhören",
-      setSoundPick: "Datei wählen …",
-      setSoundReset: "Standard",
       copiedText: "Text kopiert (Bild auch)",
       copyText: "Text kopieren",
       quote: "Text",
@@ -1131,10 +1092,6 @@
       navPos_bl: "Unten links",
       navPos_bc: "Unten Mitte",
       navPos_br: "Unten rechts",
-      setReveal: "Öffnung",
-      revealWave: "Welle",
-      revealLid: "Lid",
-      revealPlay: "Abspielen",
       filterTitle: "Filter",
       headFilter: "{n} passen.",
       filterDup: "Doppelt",
@@ -1588,15 +1545,7 @@
       libActiveLabel: "Aktiv",
       libRename: "Klicken zum Umbenennen",
       extZones: "Ordner außerhalb der Bibliothek",
-      extZonesHint: "Ein Ordner woanders auf dem Mac, etwa ein Projektordner, wird zur Zone. Die Dateien bleiben, wo sie sind. ✕ entfernt nur die Zone, nie den Ordner.",
-      extZonesAdd: "Ordner hinzufügen",
-      extZonesAdded: "„{zone}“ ist jetzt eine Zone",
       extZoneOffline: "offline",
-      zoneSystem: "Dieser Ordner kann keine Zone sein (Benutzerordner, Laufwerk oder Systemordner). Bitte einen Projektordner wählen.",
-      zoneLarge: "In diesem Ordner liegen mehr als 20.000 Dateien, zu viele für eine Zone. Bitte einen kleineren Ordner wählen.",
-      zoneSlow: "Dieser Ordner lässt sich nicht schnell genug lesen. Bitte einen kleineren Ordner wählen.",
-      zoneOverlap: "Dieser Ordner liegt in einer anderen externen Zone oder enthält eine.",
-      zoneMissing: "Ordner nicht gefunden.",
       libHint: "Umschalten mit ⌘1 bis ⌘4 oder im Menü. Jede Bibliothek hat eigene Zonen und Hot Zones, die Extension sammelt in die aktive.",
       libSystem: "Dieser Ordner kann keine Bibliothek sein (Benutzerordner, Laufwerk oder Systemordner). Bitte einen eigenen Ordner wählen.",
       libLarge: "In diesem Ordner liegen mehr als 20.000 Dateien, zu viele für eine Bibliothek. Bitte einen kleineren Ordner wählen.",
@@ -1633,39 +1582,27 @@
       reveal: "Im Finder zeigen",
       openFile: "Öffnen",
       makeHot: "Zur Active Zone machen",
-      setTopFade: "Oberkante beim Scrollen",
-      setTopFadeFade: "Verlauf",
-      setTopFadeGlass: "Glas",
+      labTest: "Test",
+      labTestText: "Nur bis wir entschieden haben. Am besten über hellen und dunklen Fenstern ausprobieren, danach fällt der Block wieder weg.",
+      setGlassMat: "App-Glas",
+      glassMat_now: "Heute",
+      glassMat_thin: "Dünn",
+      glassMat_material: "Material",
+      glassMat_light: "Licht",
+      setGlassMatText: "Heute: Schleier 72 % (hell 78 %). Dünn: Schleier 48 %, mehr Farbe von hinten. Material: kräftigeres Mac-Material, das sich mit dem Desktop färbt, Schleier 56 %. Licht: Schleier oben heller, unten dichter, dazu eine feine Lichtkante. Den Regler Glas vorher auf Standard stellen.",
+      setGlassLight: "Glas im hellen Modus",
+      glassLight_now: "Heute",
+      glassLight_white: "Weiß",
+      glassLight_popover: "Popover",
+      glassLight_both: "Beides",
+      setGlassLightText: "Heute: grauer Schleier auf dem Seitenleisten-Material. Weiß: weißer Schleier. Popover: helleres Mac-Material. Beides: weißer Schleier auf Popover. Nur auf dem Mac im hellen Modus zu sehen.",
+      setDrag: "Ziehen & Ablegen",
       setFolderStyle: "Ordner in einer Zone",
       setSecDisplay: "Darstellung",
       setSecMac: "Mac & Browser",
       setSecApp: "App",
       ctxCover: "Als Titelbild der Zone",
       ctxCoverOff: "Titelbild zurücksetzen",
-      labNav: "Navigation (Labor)",
-      labNavText: "Zehn Arten, die Navigation zu setzen und zu zeichnen, zum Ausprobieren. Die Logik bleibt überall gleich.",
-      labNavPick: "Variante",
-      labNav_now: "Heute",
-      labNav_liquid: "Liquid",
-      labNav_title: "Titelzeile",
-      labNav_head: "Kopf",
-      labNav_tabs: "Reiter",
-      labNav_segment: "Segmente",
-      labNav_pathbar: "Pfadleiste",
-      labNav_under: "Unterstrich",
-      labNav_hang: "Hängend",
-      labNav_well: "Eingelassen",
-      labNavText_now: "Glas-Pille neben den Fensterknöpfen.",
-      labNavText_liquid: "Jeder Eintrag ist eine eigene Kapsel, verbunden über eine schmale Taille.",
-      labNavText_title: "Keine Pille. Der Pfad steht in der Titelzeile wie der Titel eines Mac-Fensters, nur der aktuelle Ort ist hell.",
-      labNavText_head: "Der Pfad steht in Kopfgröße und ersetzt den Titel im Seitenkopf.",
-      labNavText_tabs: "Die Titelzeile ist ein Band. Der aktuelle Ort ist ein Reiter, der ins Fenster übergeht.",
-      labNavText_segment: "Ein schmales Segment-Feld mit Haarlinien wie in Mac-Werkzeugleisten.",
-      labNavText_pathbar: "Der Pfad wandert in eine Leiste an der unteren Fensterkante, oben bleibt frei für Bilder.",
-      labNavText_under: "Nur Schrift auf einer Haarlinie quer durchs Fenster, der aktuelle Ort ist unterstrichen.",
-      labNavText_hang: "Mittig, hängt an der oberen Fensterkante, nur unten gerundet.",
-      labNavText_well: "In das Fenster eingelassen statt darüber schwebend, der aktuelle Ort ist erhaben.",
-      labDrops: "Ablegen",
       labDropsText: "Wie eine Active-Zone-Karte zeigt, dass etwas angekommen ist, in der App und in der Zonenleiste (⌥ beim Ziehen von Dateien).",
       labDrop: "Rückmeldung",
       labDrop_mini: "Miniatur",
@@ -1687,7 +1624,6 @@
       updCheck: "Nach Updates suchen",
       updUpToDate: "Alles aktuell.",
       setSecView: "Ansicht",
-      setSecStart: "Start",
       featTools: "Werkzeuge",
       setFolderCards: "Karten",
       setFolderList: "Liste",
@@ -1774,8 +1710,55 @@
     document.documentElement.classList.toggle("light", light);
     // Fensterrahmen und Glas (lib.rs set_appearance); im Browser-Test fehlt Tauri
     const tauri = global.__TAURI__;
-    if (tauri && tauri.core) tauri.core.invoke("set_appearance", { light }).catch(() => {});
+    if (tauri && tauri.core) tauri.core.invoke("set_appearance", { light, glass: glassLight(), mat: glassMat() }).catch(() => {});
   }
+  // Glas im hellen Modus, Test 0.48.1 (app.js renderGlassLab): "now" Seitenleiste
+  // mit hellgrauem Schleier, "white" weißer Schleier, "popover" helleres
+  // Mac-Material, "both" beides. lib.rs set_appearance wählt das Material.
+  function glassLight() {
+    try {
+      const v = JSON.parse(localStorage.getItem("archiver.glassLight"));
+      if (["white", "popover", "both"].includes(v)) return v;
+    } catch (e) {}
+    return "now";
+  }
+  function applyGlassLight() {
+    const v = glassLight();
+    if (v === "now") delete document.documentElement.dataset.glasslight;
+    else document.documentElement.dataset.glasslight = v;
+  }
+  function setGlassLight(v) {
+    try {
+      localStorage.setItem("archiver.glassLight", JSON.stringify(v));
+    } catch (e) {}
+    applyGlassLight();
+    applyTheme();
+  }
+  applyGlassLight();
+  // App-Glas, Test 0.48.1 (Lukas 26.11.): "now" wie bisher, "thin" dünner
+  // Schleier, "material" kräftigeres Mac-Material (lib.rs), "light" Lichtführung
+  // im Schleier. Setzt html[data-glassmat], app.css malt.
+  const GLASS_MATS = ["thin", "material", "light"];
+  function glassMat() {
+    try {
+      const v = JSON.parse(localStorage.getItem("archiver.glassMat"));
+      if (GLASS_MATS.includes(v)) return v;
+    } catch (e) {}
+    return "now";
+  }
+  function applyGlassMat() {
+    const v = glassMat();
+    if (v === "now") delete document.documentElement.dataset.glassmat;
+    else document.documentElement.dataset.glassmat = v;
+  }
+  function setGlassMat(v) {
+    try {
+      localStorage.setItem("archiver.glassMat", JSON.stringify(v));
+    } catch (e) {}
+    applyGlassMat();
+    applyTheme();
+  }
+  applyGlassMat();
   // Farbschema: seit 0.27 nur noch "standard" (Salbei entfernt)
   function scheme() {
     return "standard";
@@ -1841,8 +1824,10 @@
   const setZoneGlass = (v) => setNum("zoneGlass", v);
   applyGlass();
   global.addEventListener("storage", (e) => {
+    if (e.key === "archiver.glassLight") (applyGlassLight(), applyTheme());
+    if (e.key === "archiver.glassMat") (applyGlassMat(), applyTheme());
     if (e.key === "archiver.glass" || e.key === "archiver.zoneGlass") applyGlass();
   });
 
-  global.ArchiverI18n = { t, lang, theme, setTheme, applyTheme, scheme, setScheme, glass, zoneGlass, setGlass, setZoneGlass };
+  global.ArchiverI18n = { t, lang, theme, setTheme, applyTheme, scheme, setScheme, glass, zoneGlass, setGlass, setZoneGlass, glassLight, setGlassLight, glassMat, setGlassMat };
 })(window);
