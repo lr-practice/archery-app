@@ -62,10 +62,15 @@
     else delete document.documentElement.dataset.radius;
   }
 
-  // Oben beim Scrollen: Inhalt läuft unter der Leiste aus, als Verlauf (Standard) oder Glas
+  // Oben beim Scrollen: Inhalt läuft unter der Titelzeile aus. Seit 0.48.1 zum
+  // Testen (Einstellungen › Darstellung › Test): Band (Standard), Verlauf oder Glas
+  const TOP_FADES = ["band", "fade", "glass"];
   function applyTopFade(id) {
-    document.documentElement.dataset.topfade = id === "glass" ? "glass" : "fade";
+    document.documentElement.dataset.topfade = TOP_FADES.includes(id) ? id : "band";
   }
+  // Glas im hellen Modus, zum Testen (0.48.1): heute, weiß, Popover oder beides.
+  // i18n.js liest archiver.glassLight für set_appearance und html[data-glasslight].
+  const GLASS_LIGHTS = ["now", "white", "popover", "both"];
 
   // Auswahl: ruhige gestrichelte Outline oder eine, die langsam um das Objekt läuft
   // Fensterhintergrund (Mac): --win-alpha deckt die macOS-Unschärfe. Den Wert setzt
@@ -97,19 +102,13 @@
   // Drop-Feedback (Einstellungen › Darstellung, bis 0.43.1 im Labor): nur auf
   // diesem Mac, dropfx.js liest archiver.lab selbst (DESIGN 4.24b).
   const LAB_DROPS = ["mini", "check", "ring", "count", "name", "after", "glow"];
-  // Navigation zum Testen (Einstellungen › Darstellung, 0.47.4, DESIGN 4.2a)
-  const LAB_NAVS = ["now", "liquid", "title", "head", "tabs", "segment", "pathbar", "under", "hang", "well"];
   function lab() {
     const v = pref("lab", null) || {};
-    return {
-      drop: LAB_DROPS.includes(v.drop) ? v.drop : "mini",
-      nav: LAB_NAVS.includes(v.nav) ? v.nav : "now",
-    };
+    return { drop: LAB_DROPS.includes(v.drop) ? v.drop : "mini" };
   }
+  // Navigation: seit 0.48.1 fest die Titelzeile aus dem Labor (Lukas 26.11., DESIGN 4.2a)
   function applyNavLab() {
-    const id = lab().nav;
-    if (id !== "now") document.documentElement.dataset.navlab = id;
-    else delete document.documentElement.dataset.navlab;
+    document.documentElement.dataset.navlab = "title";
   }
   function setLab(patch) {
     setPref("lab", { ...lab(), ...patch });
@@ -550,7 +549,7 @@
   ]; // state.focus für „Alle Bilder“
 
   applyRadius(pref("radius", "soft"));
-  applyTopFade(pref("topFade", "fade"));
+  applyTopFade(pref("topFade", "band"));
   applyFocusAnim(pref("focusAnim", false));
   applyWinAlpha();
   applyNavLab();
@@ -838,17 +837,7 @@
       syncedOrder = JSON.stringify(state.zoneOrder);
       if (JSON.stringify(pref("zoneOrder", [])) !== syncedOrder) setPref("zoneOrder", state.zoneOrder);
     }
-    if (snap.root !== state.root) {
-      state.shots = undefined; // andere Bibliothek, anderer Ordner
-      // Reiter Screenshots: wissen, ob die Bildschirmfotos hierher gehen (hasShots)
-      if (isMac)
-        invoke("screenshot_target")
-          .then((on) => {
-            state.shots = on;
-            renderToolbar();
-          })
-          .catch(() => (state.shots = null));
-    }
+    if (snap.root !== state.root) state.shots = undefined; // andere Bibliothek, anderer Ordner
     state.root = snap.root;
     state.name = snap.name;
     state.defaultZone = snap.defaultZone || "Unsorted";
@@ -2933,12 +2922,12 @@
 
     if (sub === "library") {
       wrap.appendChild(renderLibrarySlots());
-      wrap.appendChild(renderExternalZones());
       wrap.appendChild(renderDefaultZone());
       wrap.appendChild(renderShotSettings());
-      wrap.appendChild(renderStructure());
       wrap.appendChild(renderZoneSettings());
+      wrap.appendChild(renderStructure());
       wrap.appendChild(renderNamingSettings());
+      wrap.appendChild(renderExternalZones());
     }
 
     if (sub === "account") wrap.appendChild(renderAccount());
@@ -2981,16 +2970,6 @@
           t("setInfoPanel"),
           choice([["on", t("setOn")], ["off", t("setOff")]], state.infoOpen ? "on" : "off", (id) => {
             if ((id === "on") !== state.infoOpen) toggleInfo();
-            rerender();
-          })
-        )
-      );
-      // 0.35: Leiste beim Ziehen erst angeschnitten wie in der Extension (ab Werk ganz)
-      view.appendChild(
-        blockRow(
-          t("setDropStrip"),
-          choice([["full", t("dropStripFull")], ["strip", t("dropStripPeek")]], pref("dropStrip", false) ? "strip" : "full", (id) => {
-            setPref("dropStrip", id === "strip");
             rerender();
           })
         )
@@ -3038,16 +3017,6 @@
       look.appendChild(blockRow(el("div", "p-block-text", t("setLbTextText"))));
       look.appendChild(
         blockRow(
-          t("setTopFade"),
-          choice([["fade", t("setTopFadeFade")], ["glass", t("setTopFadeGlass")]], pref("topFade", "fade"), (id) => {
-            setPref("topFade", id);
-            applyTopFade(id);
-            rerender();
-          })
-        )
-      );
-      look.appendChild(
-        blockRow(
           t("setFocusAnim"),
           choice([["off", t("setFocusStill")], ["on", t("setFocusRun")]], pref("focusAnim", false) ? "on" : "off", (id) => {
             setPref("focusAnim", id === "on");
@@ -3058,8 +3027,19 @@
       );
       wrap.appendChild(look);
       wrap.appendChild(renderGlassSettings());
-      // Ablegen in der App und in der Zonenleiste am ganzen Mac (4.13); die Leiste liest archiver.lab
-      const drops = block(t("labDrops"));
+      // 0.48.1 (Lukas 26.11.): Ziehen und Ablegen in einem Block, Active Zones
+      // beim Ziehen, Zonenglas und Drop-Feedback; die Leiste liest archiver.lab
+      const drops = block(t("setDrag"));
+      // 0.35: Leiste beim Ziehen erst angeschnitten wie in der Extension (ab Werk ganz)
+      drops.appendChild(
+        blockRow(
+          t("setDropStrip"),
+          choice([["full", t("dropStripFull")], ["strip", t("dropStripPeek")]], pref("dropStrip", false) ? "strip" : "full", (id) => {
+            setPref("dropStrip", id === "strip");
+            rerender();
+          })
+        )
+      );
       drops.appendChild(blockRow(el("div", "p-block-text", t("labDropsText"))));
       const cur = lab();
       // sieben Varianten in zwei Reihen, sonst passt die Zeile nicht ins Blatt
@@ -3073,37 +3053,8 @@
       }
       drops.appendChild(blockRow(el("div", "p-block-text", t("labDropText_" + cur.drop))));
       wrap.appendChild(drops);
-      // Navigation zum Testen: zehn Varianten in drei Reihen (4 + 3 + 3)
-      const navs = block(t("labNav"));
-      navs.appendChild(blockRow(el("div", "p-block-text", t("labNavText"))));
-      for (const [i, part] of [LAB_NAVS.slice(0, 4), LAB_NAVS.slice(4, 7), LAB_NAVS.slice(7)].entries()) {
-        navs.appendChild(
-          blockRow(i ? "" : t("labNavPick"), choice(part.map((id) => [id, t("labNav_" + id)]), cur.nav, (id) => {
-            setLab({ nav: id });
-            applyNavLab();
-            rerender();
-          }))
-        );
-      }
-      navs.appendChild(blockRow(el("div", "p-block-text", t("labNavText_" + cur.nav))));
-      wrap.appendChild(navs);
-
-    // Start: Öffnung und Startton gehören zum selben Moment
-      const open = block(t("setSecStart"));
-      // Licht-Öffnung nach Getting Started: Welle oder Lid, zum Vergleich abspielbar
-      const reveal = choice([["wave", t("revealWave")], ["lid", t("revealLid")]], pref("revealForm", "wave"), (id) => {
-        setPref("revealForm", id);
-        rerender();
-      });
-      reveal.appendChild(
-        button("p-link", t("revealPlay"), () => {
-          closePage();
-          setTimeout(() => playReveal(null), 350);
-        })
-      );
-      open.appendChild(blockRow(t("setReveal"), reveal));
-      wrap.appendChild(open);
-      wrap.appendChild(renderSoundSettings());
+      wrap.appendChild(renderZoneGlass());
+      wrap.appendChild(renderGlassLab(rerender));
     }
 
     // Mac & Browser: Extension, Tray und Zonenleiste, Vorschau-Formate
@@ -3327,10 +3278,40 @@
 
   function renderGlassSettings() {
     const I = window.ArchiverI18n;
-    const frag = document.createDocumentFragment();
-    frag.appendChild(glassSlider("setGlass", "setGlassText", 40, I.glass, I.setGlass, () => (document.documentElement.classList.contains("light") ? 0.78 : 0.72)));
-    frag.appendChild(glassSlider("setZoneGlass", "setZoneGlassText", 30, I.zoneGlass, I.setZoneGlass, () => 0.97, previewDropbar));
-    return frag;
+    return glassSlider("setGlass", "setGlassText", 40, I.glass, I.setGlass, () => (document.documentElement.classList.contains("light") ? 0.78 : 0.72));
+  }
+  // Test (0.48.1, Lukas 26.11.): Titelzeile beim Scrollen und Glas im hellen
+  // Modus. Nur bis Lukas gewählt hat, dann fest und dieser Block entfällt.
+  function renderGlassLab(rerender) {
+    const b = block(t("labTest"));
+    b.appendChild(blockRow(el("div", "p-block-text", t("labTestText"))));
+    b.appendChild(
+      blockRow(
+        t("setTopFade"),
+        choice(TOP_FADES.map((id) => [id, t("topFade_" + id)]), document.documentElement.dataset.topfade, (id) => {
+          setPref("topFade", id);
+          applyTopFade(id);
+          rerender();
+        })
+      )
+    );
+    b.appendChild(
+      blockRow(
+        t("setGlassLight"),
+        choice(GLASS_LIGHTS.map((id) => [id, t("glassLight_" + id)]), window.ArchiverI18n.glassLight(), (id) => {
+          window.ArchiverI18n.setGlassLight(id);
+          rerender();
+        })
+      )
+    );
+    b.appendChild(blockRow(el("div", "p-block-text", t("setGlassLightText"))));
+    return b;
+  }
+
+  // Zonenglas steht seit 0.48.1 unter Ziehen & Ablegen
+  function renderZoneGlass() {
+    const I = window.ArchiverI18n;
+    return glassSlider("setZoneGlass", "setZoneGlassText", 30, I.zoneGlass, I.setZoneGlass, () => 0.97, previewDropbar);
   }
 
   // ---- Konto (0.40.4): Karte oben in den Einstellungen. Konten gibt es noch nicht,
@@ -3419,62 +3400,7 @@
     return frag;
   }
 
-  // Startton: Ein/Aus, Lautstärke mit Probehören, eigene Datei oder der Standard
-  function renderSoundSettings() {
-    const b = collapsible("sound", t("setSound"));
-    b.appendChild(
-      blockRow(
-        t("setSoundPlay"),
-        choice([["on", t("setOn")], ["off", t("setOff")]], pref("startSound", false) ? "on" : "off", (id) => {
-          setPref("startSound", id === "on");
-          renderPage(true);
-        })
-      )
-    );
-    const slider = el("input", "p-volume");
-    slider.type = "range";
-    slider.min = "0";
-    slider.max = "100";
-    slider.step = "5";
-    slider.value = String(Math.round(pref("startSoundVolume", 0.35) * 100));
-    slider.addEventListener("change", () => {
-      setPref("startSoundVolume", Number(slider.value) / 100);
-      playStartSound(true);
-    });
-    b.appendChild(blockRow(t("setSoundVolume"), [slider]));
-    const name = el("span", null, t("setSoundGlass"));
-    invoke("startup_sound_name")
-      .then((n) => (name.textContent = n || t("setSoundGlass")))
-      .catch(() => {});
-    b.appendChild(
-      blockRow(name, [
-        button("p-link", t("setSoundTest"), () => playStartSound(true)),
-        button("p-link", t("setSoundPick"), () =>
-          invoke("pick_startup_sound")
-            .then((n) => {
-              if (!n) return;
-              name.textContent = n;
-              playStartSound(true);
-            })
-            .catch(fail)
-        ),
-        button("p-link", t("setSoundReset"), () =>
-          invoke("reset_startup_sound")
-            .then(() => {
-              name.textContent = t("setSoundGlass");
-              playStartSound(true);
-            })
-            .catch(fail)
-        ),
-      ])
-    );
-    return b;
-  }
 
-  function playStartSound(force) {
-    if (!force && !pref("startSound", false)) return;
-    invoke("play_startup_sound", { volume: pref("startSoundVolume", 0.35) }).catch(() => {});
-  }
 
   // Info: Wortmarke mit Claim, dann Zahlen zur Sammlung und das Kleingedruckte
   function renderAbout() {
@@ -4236,10 +4162,11 @@
   function isShots(zonePath) {
     return String(zonePath || "").split("/")[0] === SHOTS;
   }
-  // Reiter Screenshots (0.48.0): sobald die Bildschirmfotos hierher gehen oder
-  // schon welche im Ordner liegen
+  // Reiter Screenshots (0.48.0): sobald es den Ordner gibt. Bis 0.48.0 hing er
+  // zusätzlich an screenshot_target und fehlte, wenn macOS den Ort anders
+  // schrieb, bis man die Bildschirmfotos aus- und wieder anschaltete (0.48.1)
   function hasShots() {
-    return !!state.shotZone && (state.shots === true || state.shotZone.count > 0);
+    return !!state.shotZone;
   }
   // Objekte in Zonen, ohne Screenshots (Kopf der Übersicht und von Alle Objekte)
   function zonedCount() {
@@ -8142,6 +8069,8 @@
 
     zones.addEventListener("scroll", () => {
       if (document.querySelector(".p-ctx-menu, .zone-menu.floating")) closeMenus();
+      // Titelzeile: Band erst, wenn Inhalt darunter läuft (topfade "band", 0.48.1)
+      document.documentElement.classList.toggle("is-scrolled", zones.scrollTop > 4);
     }, { passive: true, capture: true });
 
     zones.addEventListener("contextmenu", (e) => {
@@ -8600,13 +8529,17 @@
     return b;
   }
 
-  // 0.30.1: Ordner außerhalb der Bibliothek als Zone. Nur hier anzulegen;
-  // im Raster, in Tray, Zonenleiste und Extension wie jede andere Zone.
+  // 0.30.1: Ordner außerhalb der Bibliothek als Zone; im Raster, in Tray,
+  // Zonenleiste und Extension wie jede andere Zone. Seit 0.48.1 (Lukas 26.11.)
+  // lassen sich keine neuen mehr anlegen; der Block steht nur noch, solange es
+  // verknüpfte Ordner gibt, damit man sie lösen kann.
   function renderExternalZones() {
     const b = block(t("extZones"));
+    b.hidden = true;
     const list = el("div");
     b.appendChild(list);
     const fill = (rows) => {
+      b.hidden = !rows.length;
       list.replaceChildren(
         ...rows.map(({ zone, path, online }) =>
           blockRow(
@@ -8624,26 +8557,6 @@
       );
     };
     invoke("external_zones").then(fill, () => fill([]));
-    b.appendChild(
-      blockRow(
-        el("div", "p-block-text", t("extZonesHint")),
-        button("p-link", t("extZonesAdd"), async () => {
-          const path = await invoke("pick_folder");
-          if (!path) return;
-          try {
-            const zone = await invoke("link_folder", { path });
-            await refresh();
-            toast(t("extZonesAdded", { zone }));
-          } catch (e) {
-            const msg = String(e && e.message ? e.message : e);
-            const key = { "zone-system": "zoneSystem", "zone-large": "zoneLarge", "zone-slow": "zoneSlow", "zone-overlap": "zoneOverlap", "zone-missing": "zoneMissing" }[msg];
-            if (key) toast(t(key), false, 5200);
-            else fail(e);
-          }
-          renderPage(true);
-        })
-      )
-    );
     return b;
   }
 
@@ -8780,7 +8693,6 @@
       onStart: () => {
         if (cover) cover.remove();
       },
-      onOpen: () => playStartSound(),
     });
   }
 
@@ -8847,15 +8759,13 @@
   // Animation beginnt erst, wenn es zu sehen ist, läuft einmal ganz durch,
   // und erst dann gibt die schwarze Fläche die Oberfläche frei.
   const SPLASH_MS = matchMedia("(prefers-reduced-motion: reduce)").matches ? 300 : 2500;
-  const SOUND_DELAY_MS = 350;
   useWordmark(document.querySelector(".splash-word"));
   const splashPlayed = new Promise((resolve) => {
     const win = TAURI.window && TAURI.window.getCurrentWindow && TAURI.window.getCurrentWindow();
     const started = Date.now();
     const play = () => {
       $("splash").classList.add("play");
-      // Ton setzt ein, wenn die Wortmarke ins Bild gleitet
-      setTimeout(playStartSound, SOUND_DELAY_MS);
+      // Startton entfällt seit 0.48.1 (Lukas 26.11.)
       setTimeout(resolve, SPLASH_MS);
     };
     const poll = () => {
