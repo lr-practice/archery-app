@@ -264,13 +264,10 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   Fensterknöpfe. Kein Glas, nur Schrift: inaktiv ink × 0.5, aktiv Text; die
   Gleitfläche beim Hover bleibt (`html[data-navlab="title"]`, 4.2a). Bis
   0.48.0 eine Glas-Pille mit gefüllten aktiven Knöpfen.
-- **Beim Scrollen (0.48.1, Test):** Läuft Inhalt unter die Titelzeile
-  (`html.is-scrolled`), braucht die Schrift Ruhe. Zum Testen in Einstellungen
-  › Darstellung › Test, `archiver.topFade`: `band` (Standard) Glasband in
-  Höhe `--top-h` hinter der Titelzeile, Grund × 0.72, blur 24 px, saturate
-  1.4, Haarlinie `--p-rule` unten, blendet in 0.2 s ein (ohne Bewegung bei
-  `prefers-reduced-motion`); `fade` Inhalt blendet aus (bisher Standard);
-  `glass` Unschärfe, die nach unten ausläuft. Nach Lukas' Wahl bleibt eine.
+- **Beim Scrollen (0.48.1, Lukas 26.11.):** Läuft Inhalt unter die
+  Titelzeile, verschwimmt er und läuft nach unten aus (Glasverlauf,
+  `html[data-topfade="glass"]`, fest). Verglichen mit Glasband und reinem
+  Verlauf; beide sind raus.
 - **Screenshots (0.47.0, Lukas 11.11.; eigener Bereich seit 0.48.0, Lukas
   26.11.):** Screenshots ist keine Zone, sondern ein eigener Bereich. Der
   Ordner Screenshots oben in der Bibliothek bleibt, fehlt aber in der
@@ -1073,7 +1070,7 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   nur, solange es welche gibt). Darstellung = Ansicht, Aussehen (Thema,
   Ecken, Bildtext, Auswahl), Glas, Ziehen & Ablegen (Active Zones beim
   Ziehen, Drop-Feedback), Zonen beim Ziehen (Zonenglas), bis zur Wahl Test
-  (Titelzeile beim Scrollen, Glas im hellen Modus). Start (Öffnung) und
+  (Glas im hellen Modus). Start (Öffnung) und
   Startton sind entfallen; die Öffnung läuft wie gewählt, ein Startton
   spielt nicht mehr. Mac & Browser = Extension, Tray und Zonenleiste, Vorschau-Formate.
   App = Version und Updates (4.22a), Sprache, Feedback, Tasten.

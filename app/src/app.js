@@ -62,11 +62,10 @@
     else delete document.documentElement.dataset.radius;
   }
 
-  // Oben beim Scrollen: Inhalt läuft unter der Titelzeile aus. Seit 0.48.1 zum
-  // Testen (Einstellungen › Darstellung › Test): Band (Standard), Verlauf oder Glas
-  const TOP_FADES = ["band", "fade", "glass"];
-  function applyTopFade(id) {
-    document.documentElement.dataset.topfade = TOP_FADES.includes(id) ? id : "band";
+  // Oben beim Scrollen: Inhalt verschwimmt unter der Titelzeile und läuft aus.
+  // Seit 0.48.1 fest der Glasverlauf (Lukas 26.11., vorher wählbar mit Verlauf)
+  function applyTopFade() {
+    document.documentElement.dataset.topfade = "glass";
   }
   // Glas im hellen Modus, zum Testen (0.48.1): heute, weiß, Popover oder beides.
   // i18n.js liest archiver.glassLight für set_appearance und html[data-glasslight].
@@ -549,7 +548,7 @@
   ]; // state.focus für „Alle Bilder“
 
   applyRadius(pref("radius", "soft"));
-  applyTopFade(pref("topFade", "band"));
+  applyTopFade();
   applyFocusAnim(pref("focusAnim", false));
   applyWinAlpha();
   applyNavLab();
@@ -3280,21 +3279,11 @@
     const I = window.ArchiverI18n;
     return glassSlider("setGlass", "setGlassText", 40, I.glass, I.setGlass, () => (document.documentElement.classList.contains("light") ? 0.78 : 0.72));
   }
-  // Test (0.48.1, Lukas 26.11.): Titelzeile beim Scrollen und Glas im hellen
-  // Modus. Nur bis Lukas gewählt hat, dann fest und dieser Block entfällt.
+  // Test (0.48.1, Lukas 26.11.): Glas im hellen Modus. Nur bis Lukas gewählt
+  // hat, dann fest und dieser Block entfällt.
   function renderGlassLab(rerender) {
     const b = block(t("labTest"));
     b.appendChild(blockRow(el("div", "p-block-text", t("labTestText"))));
-    b.appendChild(
-      blockRow(
-        t("setTopFade"),
-        choice(TOP_FADES.map((id) => [id, t("topFade_" + id)]), document.documentElement.dataset.topfade, (id) => {
-          setPref("topFade", id);
-          applyTopFade(id);
-          rerender();
-        })
-      )
-    );
     b.appendChild(
       blockRow(
         t("setGlassLight"),
@@ -8069,8 +8058,6 @@
 
     zones.addEventListener("scroll", () => {
       if (document.querySelector(".p-ctx-menu, .zone-menu.floating")) closeMenus();
-      // Titelzeile: Band erst, wenn Inhalt darunter läuft (topfade "band", 0.48.1)
-      document.documentElement.classList.toggle("is-scrolled", zones.scrollTop > 4);
     }, { passive: true, capture: true });
 
     zones.addEventListener("contextmenu", (e) => {

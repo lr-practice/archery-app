@@ -3,8 +3,8 @@
 ## App 0.48.1
 
 - Navigation: Die Titelzeile ist jetzt fest die Navigation (aus dem Labor).
-  Beim Scrollen bleibt sie lesbar; zum Vergleichen gibt es in Einstellungen ›
-  Darstellung › Test Band (Standard), Verlauf und Glasverlauf.
+  Beim Scrollen verschwimmt der Inhalt darunter und läuft aus (Glasverlauf),
+  so bleibt sie lesbar.
 - Glas im hellen Modus zum Testen: heute, weiß, Popover oder beides.
 - Einstellungen aufgeräumt: Darstellung hat jetzt Ansicht, Aussehen, Glas und
   Ziehen & Ablegen. Navigation (Labor), Start (Öffnung) und Startton sind
