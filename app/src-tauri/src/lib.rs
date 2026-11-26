@@ -365,7 +365,7 @@ fn activate(app: &AppHandle, root: &Path) -> Result<(), String> {
     let inbox_app = app.clone();
     std::thread::spawn(move || {
         while let Some(lib) = inbox.upgrade() {
-            let shots = lib.expire_shots(library::DELETED_DAYS).unwrap_or(0);
+            let shots = lib.expire_shots().unwrap_or(0);
             if lib.expire_inbox(library::DELETED_DAYS).unwrap_or(0) + shots > 0 {
                 let _ = inbox_app.emit("library-changed", ());
             }
@@ -882,8 +882,9 @@ struct Snapshot {
     inbox_seen: std::collections::HashMap<String, i64>,
     /// Zone, die sich nach 7 Tagen leert; None = aus (0.33.1)
     expire_zone: Option<String>,
-    /// Screenshots räumt nach 7 Tagen auf, und seit wann ein Objekt dort liegt (0.47.0)
-    shots_expire: bool,
+    /// Nach wie vielen Tagen Screenshots aufräumt (7, 30, None = nie), und seit
+    /// wann ein Objekt dort liegt (0.47.0, Frist wählbar seit 0.48.0)
+    shots_days: Option<i64>,
     shots_seen: std::collections::HashMap<String, i64>,
 }
 
@@ -977,8 +978,8 @@ async fn set_screenshot_target(app: AppHandle, state: State<'_, AppState>, on: b
 }
 
 #[tauri::command]
-async fn set_shots_expire(app: AppHandle, state: State<'_, AppState>, on: bool) -> Result<(), String> {
-    current(&state)?.set_shots_expire(on)?;
+async fn set_shots_days(app: AppHandle, state: State<'_, AppState>, days: Option<i64>) -> Result<(), String> {
+    current(&state)?.set_shots_days(days)?;
     let _ = app.emit("library-changed", ());
     Ok(())
 }
@@ -1004,7 +1005,7 @@ async fn snapshot(state: State<'_, AppState>) -> Result<Snapshot, String> {
             zone_order: lib.zone_order().0,
             inbox_seen: lib.inbox_seen(),
             expire_zone: lib.expire_zone(),
-            shots_expire: lib.shots_expire(),
+            shots_days: lib.shots_days(),
             shots_seen: lib.shots_seen(),
         })
     })
@@ -1850,7 +1851,7 @@ pub fn run() {
             set_expire_zone,
             screenshot_target,
             set_screenshot_target,
-            set_shots_expire,
+            set_shots_days,
             set_structure,
             set_look,
             trash_zone,

@@ -1,5 +1,14 @@
 # Changelog
 
+## App 0.48.0
+
+- Screenshots ist ein eigener Bereich statt einer Zone. Der Reiter oben
+  bleibt, die Karte „Screenshots“ in der Übersicht fällt weg, ebenso in
+  Alle Objekte, „Verschieben nach“, Palette, Zonenleiste und in der
+  Zonenliste der Extension. Die Suche findet Screenshots weiter.
+- Einstellungen › Bibliothek › Screenshots: löschen nach 7 Tagen, 30 Tagen
+  oder nie (bisher An/Aus mit 7 Tagen). An wird zu 7 Tagen, Aus zu nie.
+
 ## App 0.47.8
 
 - Neues App-Icon: das kalligrafische A in Schwarz auf Hellgrau (#141414 auf

@@ -397,6 +397,8 @@ fn visible_zones(zones: Vec<Zone>) -> Vec<Zone> {
     zones
         .into_iter()
         .filter(|z| !z.path.is_empty())
+        // Screenshots ist ein eigener Bereich der App, kein Ziel (0.48.0)
+        .filter(|z| z.path.split('/').next() != Some(crate::library::SHOTS))
         .filter(|z| z.count > 0 || !paths.iter().any(|p| p.starts_with(&format!("{}/", z.path))))
         .collect()
 }
@@ -755,7 +757,7 @@ mod tests {
     #[test]
     fn hides_root_and_empty_parents() {
         let z = |p: &str, c| Zone { path: p.into(), name: p.into(), count: c, external: false };
-        let out = visible_zones(vec![z("Inbox", 1), z("", 2), z("Kunden", 0), z("Kunden/A", 3), z("Leer", 0)]);
+        let out = visible_zones(vec![z("Inbox", 1), z("", 2), z("Kunden", 0), z("Kunden/A", 3), z("Leer", 0), z("Screenshots", 4), z("Screenshots/Alt", 1)]);
         let paths: Vec<_> = out.iter().map(|z| z.path.as_str()).collect();
         assert_eq!(paths, ["Inbox", "Kunden/A", "Leer"]);
     }

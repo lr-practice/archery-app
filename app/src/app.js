@@ -838,11 +838,25 @@
       syncedOrder = JSON.stringify(state.zoneOrder);
       if (JSON.stringify(pref("zoneOrder", [])) !== syncedOrder) setPref("zoneOrder", state.zoneOrder);
     }
-    if (snap.root !== state.root) state.shots = undefined; // andere Bibliothek, anderer Ordner
+    if (snap.root !== state.root) {
+      state.shots = undefined; // andere Bibliothek, anderer Ordner
+      // Reiter Screenshots: wissen, ob die Bildschirmfotos hierher gehen (hasShots)
+      if (isMac)
+        invoke("screenshot_target")
+          .then((on) => {
+            state.shots = on;
+            renderToolbar();
+          })
+          .catch(() => (state.shots = null));
+    }
     state.root = snap.root;
     state.name = snap.name;
     state.defaultZone = snap.defaultZone || "Unsorted";
-    state.zones = orderZones(displayZones(snap.zones));
+    // 0.48.0 (Lukas 26.11.): Screenshots ist ein eigener Bereich, keine Zone. Der
+    // Ordner bleibt, steht aber nicht in der Übersicht, in Alle Objekte und in
+    // „Verschieben nach“; der Reiter öffnet ihn über state.shotZone.
+    state.shotZone = snap.zones.find((z) => z.path === SHOTS) || null;
+    state.zones = orderZones(displayZones(snap.zones.filter((z) => !isShots(z.path))));
     syncZoneOrder();
     state.items = snap.items;
     state.byPath = new Map(snap.items.map((i) => [i.path, i]));
@@ -851,14 +865,14 @@
     applyLock();
     state.inboxSeen = snap.inboxSeen || {};
     state.expireZone = snap.expireZone === undefined ? "Unsorted" : snap.expireZone;
-    state.shotsExpire = !!snap.shotsExpire;
+    state.shotsDays = snap.shotsDays || null;
     state.shotsSeen = snap.shotsSeen || {};
     state.structure = snap.structure || { depth: 2, skip: [], subzones: false };
     state.user = snap.user || "";
     state.folders = snap.folders || [];
     state.deletedCount = snap.deleted || 0;
     if (state.focus === DELETED) state.deletedItems = await invoke("deleted_items").catch(() => []);
-    if (isZone(state.focus) && !state.zones.some((z) => z.path === state.focus)) state.focus = null;
+    if (isZone(state.focus) && !zoneAt(state.focus)) state.focus = null;
     for (const p of [...state.selection]) if (!state.byPath.has(p)) state.selection.delete(p);
     // Offenes Menü nicht unter der Maus wegzeichnen (z. B. während „Wirklich löschen?“)
     if (document.querySelector(".zone-menu")) pendingRender = true;
@@ -1747,6 +1761,8 @@
     const filtering = filtersActive();
     const dupes = state.filters.dup ? duplicateHashes() : null;
     state.lists = new Map(state.zones.map((z) => [z.path, []]));
+    // Screenshots: nur im eigenen Reiter und in der Suche, nicht in Alle Objekte
+    if (state.shotZone && (state.focus === SHOTS || words.length)) state.lists.set(SHOTS, []);
     const found = [];
     for (const item of state.items) {
       const list = state.lists.get(item.zone);
@@ -1876,7 +1892,7 @@
     hero.appendChild(
       headline(
         t("headHomeTitle"),
-        state.items.length ? t("headHome", { zones: zonesText(state.zones.length), images: countText(state.items.length) }) : t("headHomeEmpty")
+        zonedCount() ? t("headHome", { zones: zonesText(state.zones.length), images: countText(zonedCount()) }) : t("headHomeEmpty")
       )
     );
     return hero;
@@ -2614,9 +2630,11 @@
       b.appendChild(el("p", "p-block-hint", t("setShotsHint")));
     }
     if (hasShots()) {
-      const expire = choice([["on", t("setOn")], ["off", t("setOff")]], state.shotsExpire ? "on" : "off", async (id) => {
+      // 0.48.0: Frist wählbar, 7 Tage, 30 Tage oder nie (library.rs SHOTS_DAYS)
+      const opts = [["7", t("shotsDays", { n: 7 })], ["30", t("shotsDays", { n: 30 })], ["never", t("shotsNever")]];
+      const expire = choice(opts, state.shotsDays ? String(state.shotsDays) : "never", async (id) => {
         try {
-          await invoke("set_shots_expire", { on: id === "on" });
+          await invoke("set_shots_days", { days: id === "never" ? null : Number(id) });
           await refresh();
           renderPage(true);
         } catch (e) {
@@ -3659,7 +3677,7 @@
 
   function renderGallery(searching) {
     const single = !state.query.trim() && isZone(state.focus);
-    const shown = single ? state.zones.filter((z) => z.path === state.focus) : state.zones;
+    const shown = single ? [zoneAt(state.focus)].filter(Boolean) : state.zones;
     const wrap = el("div", "p-page p-gallery");
 
     const all = single && shown[0] ? zoneItems(shown[0].path) : [];
@@ -3678,8 +3696,9 @@
         : t("headZoneEmpty");
       // 0.32: Unsorted räumt sich nach 7 Tagen selbst auf (library.rs expire_inbox).
       // 0.33: dort steht nur dieser Satz, ohne Anzahl, Datum und Quellen
-      const h = headline(lastSegment(zone.path), isInbox(zone.path) ? t("headUnsorted") : sentence);
-      if (canEdit(zone.path)) {
+      const h = headline(lastSegment(zone.path), isInbox(zone.path) ? (isShots(zone.path) ? t("headShots", { n: state.shotsDays }) : t("headUnsorted")) : sentence);
+      // Screenshots ist ein fester Bereich, sein Ordnername bleibt (0.48.0)
+      if (canEdit(zone.path) && !isShots(zone.path)) {
         const title = h.querySelector(".p-head-title");
         title.classList.add("zone-card-name");
         title.title = t("renameHint");
@@ -3718,7 +3737,7 @@
     } else {
       wrap.classList.add("p-find");
       wrap.appendChild(
-        headline(t("navAll"), t("headAll", { images: countText(state.items.length), zones: zonesText(state.zones.length) }))
+        headline(t("navAll"), t("headAll", { images: countText(zonedCount()), zones: zonesText(state.zones.length) }))
       );
       analysisLine(wrap);
     }
@@ -4217,18 +4236,30 @@
   function isShots(zonePath) {
     return String(zonePath || "").split("/")[0] === SHOTS;
   }
+  // Reiter Screenshots (0.48.0): sobald die Bildschirmfotos hierher gehen oder
+  // schon welche im Ordner liegen
   function hasShots() {
-    return state.zones.some((z) => z.path === SHOTS);
+    return !!state.shotZone && (state.shots === true || state.shotZone.count > 0);
+  }
+  // Objekte in Zonen, ohne Screenshots (Kopf der Übersicht und von Alle Objekte)
+  function zonedCount() {
+    return state.items.filter((i) => !isShots(i.zone)).length;
+  }
+  // Zone oder der Bereich Screenshots unter diesem Pfad
+  function zoneAt(path) {
+    return state.zones.find((z) => z.path === path) || (path === SHOTS ? state.shotZone : null);
   }
   function isInbox(zonePath) {
-    return (!!state.expireZone && isUnsortedPath(zonePath)) || (state.shotsExpire && isShots(zonePath));
+    return (!!state.expireZone && isUnsortedPath(zonePath)) || (!!state.shotsDays && isShots(zonePath));
   }
   // Resttage eines Objekts in Unsorted, gezählt ab dem ersten Sehen (library.rs inbox_seen)
   function inboxDaysLeft(item) {
     if (!isInbox(item.zone)) return Infinity;
-    const since = ((isShots(item.zone) ? state.shotsSeen : state.inboxSeen) || {})[item.hash];
-    if (!since) return DELETED_DAYS;
-    return Math.max(1, Math.ceil(DELETED_DAYS - (Date.now() - since) / 86400000));
+    const shot = isShots(item.zone);
+    const days = shot ? state.shotsDays : DELETED_DAYS; // Screenshots: 7 oder 30 (0.48.0)
+    const since = ((shot ? state.shotsSeen : state.inboxSeen) || {})[item.hash];
+    if (!since) return days;
+    return Math.max(1, Math.ceil(days - (Date.now() - since) / 86400000));
   }
 
   // ---- Bildtext (0.29): Kennung, Text, Notiz – in der Lightbox ----

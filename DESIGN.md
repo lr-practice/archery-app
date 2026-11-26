@@ -254,12 +254,17 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   bleibt oben rechts im Reiter `#libTab`.
 - **Form:** Eine Glas-Pille oben, auf der Mittellinie der Fensterknöpfe.
   Aktive Knöpfe sind gefüllt.
-- **Screenshots (0.47.0, Lukas 11.11.):** Gibt es den Ordner Screenshots
-  oben in der Bibliothek, steht nach „Alle Objekte“ der Reiter „Screenshots“
-  (auch auf Deutsch so, wie der Ordner). Er öffnet die Zone; dort ist er
-  gefüllt und an Stelle des Pfads steht „Alle Objekte“. In anderen Zonen und
-  unter „Zuletzt gelöscht“ fehlt er. Woher die Bilder kommen und wie sie
-  aufräumen: 4.6 „Screenshots“.
+- **Screenshots (0.47.0, Lukas 11.11.; eigener Bereich seit 0.48.0, Lukas
+  26.11.):** Screenshots ist keine Zone, sondern ein eigener Bereich. Der
+  Ordner Screenshots oben in der Bibliothek bleibt, fehlt aber in der
+  Übersicht, in „Alle Objekte“, in „Verschieben nach“, in Palette und
+  Zonenleiste und in der Zonenliste der Extension; die Suche findet seine
+  Bilder weiter. Der Reiter „Screenshots“ (auch auf Deutsch so, wie der
+  Ordner) steht nach „Alle Objekte“, sobald „Bildschirmfotos in Archery“ an
+  ist oder Bilder im Ordner liegen (`hasShots`, `state.shotZone` in app.js).
+  Offen ist er gefüllt und an Stelle des Pfads steht „Alle Objekte“. In
+  anderen Zonen und unter „Zuletzt gelöscht“ fehlt er. Woher die Bilder
+  kommen und wie sie aufräumen: 4.6 „Screenshots“.
 - **Nicht:** Keine Icons neben Wörtern und keine zweite Leiste.
 
 ### 4.2a Labor › Navigation (App 0.47.4, Lukas 17.11.)
@@ -383,10 +388,13 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   stellt den Ort von vorher wieder her (`shots_prev` in den App-Einstellungen,
   leer = Schreibtisch). Ein eigener Ordner statt Unsorted, damit die
   Bildschirmfotos einen festen Ort haben (Reiter 4.2, Knopf im Tray 4.12).
-  „Screenshots nach 7 Tagen gelöscht“ räumt wie Unsorted auf und hat einen
-  eigenen Schalter. Er geht erst beim ersten Einschalten der Bildschirmfotos
-  an (`shotsExpire` in zones.json), damit ein eigener Ordner gleichen Namens
-  nicht geleert wird.
+  „Screenshots löschen nach“ (7 Tagen) (30 Tagen) (nie) räumt wie Unsorted
+  auf (0.48.0, Lukas 26.11., bisher An/Aus mit 7 Tagen). Der Kopf des
+  Bereichs sagt „Nach 30 Tagen gelöscht.“ mit der gewählten Frist. Die Frist
+  gilt erst ab dem ersten Einschalten der Bildschirmfotos, dann 7 Tage
+  (`shotsDays` in zones.json, 0 = nie; das alte `shotsExpire` An gilt als 7),
+  damit ein eigener Ordner gleichen Namens nicht geleert wird. Ein Wechsel
+  zwischen 7 und 30 behält die Fristen, „nie“ und wieder an beginnt neu.
 - **Liste (0.34):** dritte Ansicht neben Raster und Original, Chip
   „(Liste)“. Zeilen wie im Finder: Bild, Name, Format, Maße, Größe, Quelle,
   Gesichert. Dateiname in Geist 13 px/500 (`--p-text`), Angaben in 12 px
@@ -612,7 +620,8 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   gemerkten Rahmen zurück. Mit „Bewegung reduzieren“ ohne Animation. Klick in ein anderes Programm
   blendet sie aus.
 - **Screenshots (0.47.0, Lukas 11.11.):** Gibt es den Ordner Screenshots,
-  steht rechts neben dem Suchfeld ein eigener Knopf in derselben Höhe (44 px)
+  steht rechts neben dem Suchfeld (seit 0.48.0 nur dort, nicht mehr als
+  Zone in Start und Reitern) ein eigener Knopf in derselben Höhe (44 px)
   und Fläche (`--pal-field`): „Screenshots“ 15 px, dahinter die Anzahl in Mono
   gedimmt. Er öffnet die Zone; offen ist er gefüllt (`--chip-on`) wie ein
   aktiver Reiter, ein zweiter Klick führt zurück zum Start. Das Suchfeld wird

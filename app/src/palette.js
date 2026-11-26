@@ -119,7 +119,8 @@
       state.snap = null;
     }
     state.dirty = false;
-    state.zones = state.snap ? orderZones(state.snap.zones) : [];
+    // Screenshots ist keine Zone, nur der eigene Knopf (0.48.0, app.js state.shotZone)
+    state.zones = state.snap ? orderZones(state.snap.zones.filter((z) => z.path.split("/")[0] !== SHOTS)) : [];
   }
 
   function itemsOf(zone) {
@@ -285,7 +286,7 @@
     $("crumb").hidden = state.view !== "zone";
     $("hits").textContent = "";
     // 0.47.0: Knopf „Screenshots“, solange es den Ordner gibt (app.js hasShots)
-    const shots = state.zones.find((z) => z.path === SHOTS);
+    const shots = state.snap && state.snap.zones.find((z) => z.path === SHOTS);
     $("shots").hidden = !shots;
     $("shots").classList.toggle("on", state.view === "zone" && state.zone === SHOTS);
     if (shots) $("shots").lastElementChild.textContent = shots.count;
@@ -380,7 +381,7 @@
       head.appendChild(name);
       head.appendChild(el("span", "pal-crumb-name", "/ " + state.level.split("/").join(" / ")));
     } else head.appendChild(name);
-    const zone = state.zones.find((z) => z.path === state.zone);
+    const zone = state.zones.find((z) => z.path === state.zone) || (state.zone === SHOTS && state.snap.zones.find((z) => z.path === SHOTS));
     const i = state.zones.indexOf(zone);
     const n = state.level != null ? itemsOf(state.zone).filter((it) => inFolder(it, state.level)).length : zone && zone.count;
     let meta = zone ? countText(n) : "";
