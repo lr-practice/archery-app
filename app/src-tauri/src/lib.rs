@@ -1502,7 +1502,7 @@ fn set_system_prefs(app: AppHandle, prefs: system::SystemPrefs) -> Result<(), St
 static TRAY_RADIUS: std::sync::atomic::AtomicU32 = std::sync::atomic::AtomicU32::new(12);
 
 #[tauri::command]
-fn set_appearance(window: tauri::WebviewWindow, light: bool, radius: Option<f64>, glass: Option<String>) {
+fn set_appearance(window: tauri::WebviewWindow, light: bool, radius: Option<f64>, glass: Option<String>, mat: Option<String>) {
     let _ = window.set_theme(Some(if light { tauri::Theme::Light } else { tauri::Theme::Dark }));
     if let Some(r) = radius.filter(|_| window.label() == system::PALETTE) {
         TRAY_RADIUS.store(r.clamp(0.0, 24.0) as u32, std::sync::atomic::Ordering::Relaxed);
@@ -1511,7 +1511,9 @@ fn set_appearance(window: tauri::WebviewWindow, light: bool, radius: Option<f64>
         use tauri::window::{Effect, EffectState, EffectsBuilder};
         // Hell: Seitenleiste, zum Testen (0.48.1) das hellere Popover
         let popover = matches!(glass.as_deref(), Some("popover") | Some("both"));
-        let effect = if !light { Effect::HudWindow } else if popover { Effect::Popover } else { Effect::Sidebar };
+        // App-Glas „Material“ (Test 0.48.1): kräftigeres Material, nur im Hauptfenster
+        let under = mat.as_deref() == Some("material") && window.label() == "main";
+        let effect = if under { Effect::UnderWindowBackground } else if !light { Effect::HudWindow } else if popover { Effect::Popover } else { Effect::Sidebar };
         let radius = if window.label() == system::PALETTE { TRAY_RADIUS.load(std::sync::atomic::Ordering::Relaxed) as f64 } else { 0.0 };
         let mut fx = EffectsBuilder::new().effect(effect).state(EffectState::Active);
         if radius > 0.0 {

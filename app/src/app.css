@@ -8184,3 +8184,30 @@ html[data-navlab="title"] .p-nav .p-nav-btn.active {
 html.light:is([data-glasslight="white"], [data-glasslight="both"]) {
   --bg-solid: #ffffff;
 }
+
+/* ---- 0.48.1: App-Glas, Test (Lukas 26.11., DESIGN 2.4) ----
+   thin: dünner Schleier; material: Under-Window-Material (lib.rs), etwas
+   dünner; light: Schleier oben heller, unten dichter, Lichtkante oben.
+   Ein gesetzter Glas-Regler (Inline --win-alpha) geht vor. */
+html.mac[data-glassmat="thin"] { --win-alpha: 0.48; }
+html.mac.light[data-glassmat="thin"] { --win-alpha: 0.52; }
+html.mac[data-glassmat="material"] { --win-alpha: 0.56; }
+html.mac.light[data-glassmat="material"] { --win-alpha: 0.62; }
+html.mac[data-winalpha][data-glassmat="light"] body {
+  background:
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0) 1px),
+    radial-gradient(120% 70% at 18% 0%, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0) 62%),
+    linear-gradient(172deg,
+      color-mix(in srgb, var(--bg-solid) calc(var(--win-alpha, 0.6) * 64%), transparent) 0%,
+      color-mix(in srgb, var(--bg-solid) calc(var(--win-alpha, 0.6) * 100%), transparent) 55%,
+      color-mix(in srgb, var(--bg-solid) calc(min(1, var(--win-alpha, 0.6) * 1.14) * 100%), transparent) 100%);
+}
+html.mac.light[data-winalpha][data-glassmat="light"] body {
+  background:
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0) 1px),
+    radial-gradient(120% 70% at 18% 0%, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 62%),
+    linear-gradient(172deg,
+      color-mix(in srgb, var(--bg-solid) calc(var(--win-alpha, 0.6) * 64%), transparent) 0%,
+      color-mix(in srgb, var(--bg-solid) calc(var(--win-alpha, 0.6) * 100%), transparent) 55%,
+      color-mix(in srgb, var(--bg-solid) calc(min(1, var(--win-alpha, 0.6) * 1.14) * 100%), transparent) 100%);
+}

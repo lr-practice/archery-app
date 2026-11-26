@@ -6,6 +6,7 @@
   Beim Scrollen verschwimmt der Inhalt darunter und läuft aus (Glasverlauf),
   so bleibt sie lesbar.
 - Glas im hellen Modus zum Testen: heute, weiß, Popover oder beides.
+- App-Glas zum Testen: heute, dünn, Material oder Licht.
 - Einstellungen aufgeräumt: Darstellung hat jetzt Ansicht, Aussehen, Glas und
   Ziehen & Ablegen. Navigation (Labor), Start (Öffnung) und Startton sind
   raus, ebenso „Ordner außerhalb der Bibliothek“ (steht nur noch, solange

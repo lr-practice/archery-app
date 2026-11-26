@@ -855,7 +855,7 @@
     root.style.setProperty("--pal-radius", r + "px");
     window.ArchiverI18n.applyTheme();
     const light = root.classList.contains("light");
-    invoke("set_appearance", { light, radius: r, glass: window.ArchiverI18n.glassLight() }).catch(() => {});
+    invoke("set_appearance", { light, radius: r, glass: window.ArchiverI18n.glassLight(), mat: window.ArchiverI18n.glassMat() }).catch(() => {});
   }
   applyLook();
 

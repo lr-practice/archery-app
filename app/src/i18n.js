@@ -746,6 +746,12 @@
       makeHot: "Make Active Zone",
       labTest: "Test",
       labTestText: "Only until we have decided. Try it over bright and dark windows, then this block goes away again.",
+      setGlassMat: "App glass",
+      glassMat_now: "Today",
+      glassMat_thin: "Thin",
+      glassMat_material: "Material",
+      glassMat_light: "Light",
+      setGlassMatText: "Today: veil at 72 % (light 78 %). Thin: veil at 48 %, more colour from behind. Material: stronger Mac material that tints with the desktop, veil at 56 %. Light: veil brighter at the top and denser at the bottom, with a fine light edge. Set the Glass slider to Default first.",
       setGlassLight: "Glass in light mode",
       glassLight_now: "Today",
       glassLight_white: "White",
@@ -1578,6 +1584,12 @@
       makeHot: "Zur Active Zone machen",
       labTest: "Test",
       labTestText: "Nur bis wir entschieden haben. Am besten über hellen und dunklen Fenstern ausprobieren, danach fällt der Block wieder weg.",
+      setGlassMat: "App-Glas",
+      glassMat_now: "Heute",
+      glassMat_thin: "Dünn",
+      glassMat_material: "Material",
+      glassMat_light: "Licht",
+      setGlassMatText: "Heute: Schleier 72 % (hell 78 %). Dünn: Schleier 48 %, mehr Farbe von hinten. Material: kräftigeres Mac-Material, das sich mit dem Desktop färbt, Schleier 56 %. Licht: Schleier oben heller, unten dichter, dazu eine feine Lichtkante. Den Regler Glas vorher auf Standard stellen.",
       setGlassLight: "Glas im hellen Modus",
       glassLight_now: "Heute",
       glassLight_white: "Weiß",
@@ -1698,7 +1710,7 @@
     document.documentElement.classList.toggle("light", light);
     // Fensterrahmen und Glas (lib.rs set_appearance); im Browser-Test fehlt Tauri
     const tauri = global.__TAURI__;
-    if (tauri && tauri.core) tauri.core.invoke("set_appearance", { light, glass: glassLight() }).catch(() => {});
+    if (tauri && tauri.core) tauri.core.invoke("set_appearance", { light, glass: glassLight(), mat: glassMat() }).catch(() => {});
   }
   // Glas im hellen Modus, Test 0.48.1 (app.js renderGlassLab): "now" Seitenleiste
   // mit hellgrauem Schleier, "white" weißer Schleier, "popover" helleres
@@ -1723,6 +1735,30 @@
     applyTheme();
   }
   applyGlassLight();
+  // App-Glas, Test 0.48.1 (Lukas 26.11.): "now" wie bisher, "thin" dünner
+  // Schleier, "material" kräftigeres Mac-Material (lib.rs), "light" Lichtführung
+  // im Schleier. Setzt html[data-glassmat], app.css malt.
+  const GLASS_MATS = ["thin", "material", "light"];
+  function glassMat() {
+    try {
+      const v = JSON.parse(localStorage.getItem("archiver.glassMat"));
+      if (GLASS_MATS.includes(v)) return v;
+    } catch (e) {}
+    return "now";
+  }
+  function applyGlassMat() {
+    const v = glassMat();
+    if (v === "now") delete document.documentElement.dataset.glassmat;
+    else document.documentElement.dataset.glassmat = v;
+  }
+  function setGlassMat(v) {
+    try {
+      localStorage.setItem("archiver.glassMat", JSON.stringify(v));
+    } catch (e) {}
+    applyGlassMat();
+    applyTheme();
+  }
+  applyGlassMat();
   // Farbschema: seit 0.27 nur noch "standard" (Salbei entfernt)
   function scheme() {
     return "standard";
@@ -1789,8 +1825,9 @@
   applyGlass();
   global.addEventListener("storage", (e) => {
     if (e.key === "archiver.glassLight") (applyGlassLight(), applyTheme());
+    if (e.key === "archiver.glassMat") (applyGlassMat(), applyTheme());
     if (e.key === "archiver.glass" || e.key === "archiver.zoneGlass") applyGlass();
   });
 
-  global.ArchiverI18n = { t, lang, theme, setTheme, applyTheme, scheme, setScheme, glass, zoneGlass, setGlass, setZoneGlass, glassLight, setGlassLight };
+  global.ArchiverI18n = { t, lang, theme, setTheme, applyTheme, scheme, setScheme, glass, zoneGlass, setGlass, setZoneGlass, glassLight, setGlassLight, glassMat, setGlassMat };
 })(window);

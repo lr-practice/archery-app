@@ -70,6 +70,8 @@
   // Glas im hellen Modus, zum Testen (0.48.1): heute, weiß, Popover oder beides.
   // i18n.js liest archiver.glassLight für set_appearance und html[data-glasslight].
   const GLASS_LIGHTS = ["now", "white", "popover", "both"];
+  // App-Glas, Test 0.48.1 (i18n.js archiver.glassMat)
+  const GLASS_MATS = ["now", "thin", "material", "light"];
 
   // Auswahl: ruhige gestrichelte Outline oder eine, die langsam um das Objekt läuft
   // Fensterhintergrund (Mac): --win-alpha deckt die macOS-Unschärfe. Den Wert setzt
@@ -3279,11 +3281,21 @@
     const I = window.ArchiverI18n;
     return glassSlider("setGlass", "setGlassText", 40, I.glass, I.setGlass, () => (document.documentElement.classList.contains("light") ? 0.78 : 0.72));
   }
-  // Test (0.48.1, Lukas 26.11.): Glas im hellen Modus. Nur bis Lukas gewählt
-  // hat, dann fest und dieser Block entfällt.
+  // Test (0.48.1, Lukas 26.11.): App-Glas und Glas im hellen Modus. Nur bis
+  // Lukas gewählt hat, dann fest und dieser Block entfällt.
   function renderGlassLab(rerender) {
     const b = block(t("labTest"));
     b.appendChild(blockRow(el("div", "p-block-text", t("labTestText"))));
+    b.appendChild(
+      blockRow(
+        t("setGlassMat"),
+        choice(GLASS_MATS.map((id) => [id, t("glassMat_" + id)]), window.ArchiverI18n.glassMat(), (id) => {
+          window.ArchiverI18n.setGlassMat(id);
+          rerender();
+        })
+      )
+    );
+    b.appendChild(blockRow(el("div", "p-block-text", t("setGlassMatText"))));
     b.appendChild(
       blockRow(
         t("setGlassLight"),

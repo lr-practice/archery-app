@@ -193,6 +193,17 @@ Schleier `#ffffff` (`html.light[data-glasslight]`), `popover` Material Popover
 statt Seitenleiste (lib.rs `set_appearance`, Parameter `glass`), `both`
 beides. Nach Lukas' Wahl bleibt eine, der Test entfällt.
 
+**App-Glas (0.48.1, Test, Lukas 26.11.):** Der Schleier deckt 72 / 78 %,
+deshalb kommt kaum Farbe von hinten durch und das Glas wirkt flach.
+Einstellungen › Darstellung › Test „App-Glas“, `archiver.glassMat`
+(`html[data-glassmat]`, Regler Glas auf Standard): `now` wie bisher; `thin`
+Schleier 0.48 (hell 0.52); `material` Material Under Window statt HUD bzw.
+Seitenleiste, nur Hauptfenster (lib.rs `set_appearance`, Parameter `mat`),
+Schleier 0.56 (hell 0.62); `light` Schleier im Verlauf 172°, oben × 0.64,
+Mitte × 1, unten × 1.14, dazu Lichtkante oben 1 px (weiß 0.14, hell 0.7) und
+weicher Lichtfleck links oben. Gilt vor „Glas im hellen Modus“. Echtes
+Liquid Glass (macOS 26) ist offen. Nach Lukas' Wahl bleibt eine.
+
 ### 2.5 Bewegung
 
 | Zweck | Dauer | Kurve |
@@ -1070,7 +1081,7 @@ Alle Angaben sind Klassen in `app.css`. Die Extension hat ihre eigenen Namen
   nur, solange es welche gibt). Darstellung = Ansicht, Aussehen (Thema,
   Ecken, Bildtext, Auswahl), Glas, Ziehen & Ablegen (Active Zones beim
   Ziehen, Drop-Feedback), Zonen beim Ziehen (Zonenglas), bis zur Wahl Test
-  (Glas im hellen Modus). Start (Öffnung) und
+  (App-Glas, Glas im hellen Modus). Start (Öffnung) und
   Startton sind entfallen; die Öffnung läuft wie gewählt, ein Startton
   spielt nicht mehr. Mac & Browser = Extension, Tray und Zonenleiste, Vorschau-Formate.
   App = Version und Updates (4.22a), Sprache, Feedback, Tasten.
